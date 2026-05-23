@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="../assets/css/tokens.css" />
   <link rel="stylesheet" href="../assets/css/base.css" />
   <link rel="stylesheet" href="../assets/css/dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
 </head>
 <body>
   <div data-include="components/header.html"></div>
@@ -15,15 +16,110 @@
 
   <main id="main" class="container">
     <div class="page-head">
-      <h1>Finances &amp; savings <span class="badge">Phase 5</span></h1>
-      <p>Deposit goal, savings progress graph, and SDLT / LISA / cost calculators.</p>
+      <h1>Finances &amp; savings</h1>
+      <p>Deposit progress, full budget breakdown, and quick calculators.</p>
     </div>
+
+    <section class="tiles" aria-label="Headline figures">
+      <div class="tile">
+        <p class="tile-label">Deposit progress</p>
+        <p class="tile-value accent" id="tile-progress">0%</p>
+        <div class="progress"><span id="progress-bar"></span></div>
+      </div>
+      <div class="tile">
+        <p class="tile-label">Total savings</p>
+        <p class="tile-value" id="tile-saved">—</p>
+        <p class="tile-sub">incl. gift cards</p>
+      </div>
+      <div class="tile">
+        <p class="tile-label">Monthly contribution</p>
+        <p class="tile-value" id="tile-monthly">—</p>
+        <p class="tile-sub">deposit pot</p>
+      </div>
+      <div class="tile">
+        <p class="tile-label">Months to target</p>
+        <p class="tile-value" id="tile-months">—</p>
+        <p class="tile-sub" id="tile-months-sub">at current pace</p>
+      </div>
+    </section>
+
     <section class="card">
-      <p class="placeholder-note">The savings tracker (Chart.js progress graph) and calculators (Stamp Duty, LISA bonus, LTV, cost breakdown) are built in <strong>Phase 5</strong>. Template data is in <code>data/finances.json</code>.</p>
+      <h2>Savings projection</h2>
+      <div class="chart-wrap chart-tall"><canvas id="savings-chart"></canvas></div>
+    </section>
+
+    <div class="dash-grid">
+      <section class="card span-6"><h2>Income</h2><div id="sum-income"></div></section>
+      <section class="card span-6"><h2>Goal</h2><div id="sum-goal"></div></section>
+      <section class="card span-6"><h2>Mortgage</h2><div id="sum-mortgage"></div></section>
+      <section class="card span-6"><h2>Savings</h2><div id="sum-savings"></div></section>
+    </div>
+
+    <section class="card">
+      <h2>One-time purchase costs</h2>
+      <div id="tbl-onetime"></div>
+    </section>
+    <section class="card">
+      <h2>Ongoing bills</h2>
+      <div id="tbl-bills"></div>
+    </section>
+    <section class="card">
+      <h2>Living expenses</h2>
+      <div id="tbl-expenses"></div>
+    </section>
+    <section class="card">
+      <h2>Home setup shopping list</h2>
+      <div id="tbl-shopping"></div>
+    </section>
+    <section class="card">
+      <h2>Gift cards</h2>
+      <div id="tbl-giftcards"></div>
+    </section>
+
+    <section class="card">
+      <h2>Calculators</h2>
+      <p class="muted">Edit any field — results recalculate live. UK rules (Apr 2025+).</p>
+      <div class="calc-grid">
+        <fieldset>
+          <legend>Stamp Duty (SDLT)</legend>
+          <label for="calc-price">Purchase price (£)</label>
+          <input id="calc-price" type="number" min="0" step="1000" />
+          <label class="check-row" style="margin-top: 0.5rem;">
+            <input id="calc-ftb" type="checkbox" />
+            <span>First-time buyer</span>
+          </label>
+          <p class="calc-result">SDLT payable: <strong id="calc-sdlt-out">—</strong></p>
+        </fieldset>
+        <fieldset>
+          <legend>Monthly mortgage (P&amp;I)</legend>
+          <label for="calc-loan">Loan (£)</label>
+          <input id="calc-loan" type="number" min="0" step="1000" />
+          <label for="calc-rate">Rate (% per year)</label>
+          <input id="calc-rate" type="number" min="0" step="0.01" />
+          <label for="calc-term">Term (years)</label>
+          <input id="calc-term" type="number" min="1" max="40" step="1" />
+          <p class="calc-result">Monthly payment: <strong id="calc-mortgage-out">—</strong></p>
+        </fieldset>
+        <fieldset>
+          <legend>Loan-to-value (LTV)</legend>
+          <label for="calc-value">Property value (£)</label>
+          <input id="calc-value" type="number" min="0" step="1000" />
+          <p class="muted" style="font-size: var(--text-xs); margin: 0.25rem 0 0;">Loan from the Mortgage calculator above.</p>
+          <p class="calc-result">LTV: <strong id="calc-ltv-out">—</strong></p>
+        </fieldset>
+        <fieldset>
+          <legend>LISA bonus</legend>
+          <label for="calc-lisa">Annual contribution (£)</label>
+          <input id="calc-lisa" type="number" min="0" max="4000" step="100" />
+          <p class="calc-result"><strong id="calc-lisa-out">—</strong></p>
+          <p class="muted" style="font-size: var(--text-xs); margin: 0;">Property cap £450k. Eligible at the price above? <strong id="calc-lisa-eligible">—</strong></p>
+        </fieldset>
+      </div>
     </section>
   </main>
 
   <div data-include="components/footer.html"></div>
   <script type="module" src="../assets/js/components.js"></script>
+  <script type="module" src="../assets/js/page-finances.js"></script>
 </body>
 </html>
