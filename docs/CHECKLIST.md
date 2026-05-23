@@ -174,6 +174,20 @@ Each item below is one commit + push milestone. Anchor in commit message (Stripe
       at full; segmented control List / Map / Split
 - [ ] Port `page-map.js`: markers, shortlist toggle, drawn-zones persistence (unchanged storage API)
 
+### 8F · iPhone mobile-first finalisation
+- [x] `.page-head.has-actions` class (stacks below 640px, side-by-side ≥640px) replaces inline
+      `display:flex` hacks on area-detail / journey / criteria / map page-heads
+- [x] `.page-actions` buttons fill width on mobile (<480px), ≥44 px touch targets, gap-wrapped
+- [x] `main.container` padding tracks safe-area-inset (left/right) and is fluid
+      (`clamp(0.75rem, 4vw, 2rem)`)
+- [x] `.stat-strip` collapses to 2-col below 540px with reset borders + smaller dd; long .is-text
+      values now wrap rather than overflow
+- [x] `<dialog>` mobile-fullscreen (100svh, safe-area-inset all four sides, no border-radius);
+      desktop stays as a centred card. Scrolls inside the form, not the dialog.
+- [x] Bottom sheet on map: tappable head with rotating ↑ chevron affordance, larger 40×5 handle,
+      page-head shrinks to just the h1 on mobile so the map gets ~12 svh more vertical space
+- [x] Brand caption hidden below 380px so the header doesn't crowd the theme toggle
+
 ### 8C · Per-page redesigns (in plan order)
 - [x] `index.html` — bento dashboard, SVG progress ring with Fraunces centre, themed chart, journey step strip
 - [x] `pages/profile.html` — editorial article layout, native `<dialog>` edit panel, chip-grid priorities
