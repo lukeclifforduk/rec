@@ -102,3 +102,38 @@ main.container { width: 100%; max-width: var(--rec-maxw); margin-inline: auto; f
 .muted { color: var(--pico-muted-color); }
 .row { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
 .mt-0 { margin-top: 0; } .mb-0 { margin-bottom: 0; }
+
+/* ---- Profile page: field lists, edit rows, action bar ---- */
+.page-actions button { margin: 0; padding: 0.45rem 0.9rem; }
+
+.status-line { min-height: 1.25rem; margin: 0 0 1rem; font-size: 0.9rem; }
+.status-line[data-kind="ok"]  { color: var(--accent); }
+.status-line[data-kind="err"] { color: #c53030; }
+
+.lead { font-size: 1.05rem; line-height: 1.5; margin: 0; }
+
+.field-list { margin: 0; }
+.field-list .field-view { display: grid; grid-template-columns: 9rem 1fr; gap: 0.5rem 1rem; padding: 0.45rem 0; border-bottom: 1px solid var(--pico-muted-border-color); }
+.field-list .field-view:last-child { border-bottom: 0; }
+.field-list dt { color: var(--pico-muted-color); font-size: 0.85rem; margin: 0; }
+.field-list dd { margin: 0; }
+
+.field-edit { margin-bottom: 0.85rem; }
+.field-edit label { display: block; font-size: 0.85rem; color: var(--pico-muted-color); margin-bottom: 0.25rem; }
+.field-edit input,
+.field-edit textarea { margin: 0; }
+
+.edit-list { list-style: none; margin: 0 0 0.6rem; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.edit-list .edit-row {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: var(--pico-secondary-background);
+  border-radius: 999px; padding: 0.25rem 0.35rem 0.25rem 0.75rem;
+  font-size: 0.9rem;
+}
+.chip-x {
+  width: 1.5rem; height: 1.5rem; padding: 0; line-height: 1;
+  border-radius: 999px; margin: 0; font-size: 1rem;
+}
+.add-row { gap: 0.5rem; }
+.add-row input { flex: 1 1 12rem; margin: 0; }
+.add-row button { margin: 0; }

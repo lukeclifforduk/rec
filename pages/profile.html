@@ -14,16 +14,56 @@
   <div data-include="components/nav.html"></div>
 
   <main class="container">
-    <div class="page-head">
-      <h1>Profile <span class="badge">Phase 2</span></h1>
-      <p>Who's buying, how you want to live, and what you're looking for.</p>
+    <div class="page-head row" style="justify-content: space-between; align-items: flex-start;">
+      <div>
+        <h1>Profile <span class="badge" id="overlay-badge" hidden>Local edits</span></h1>
+        <p>About the buyer — who you are, how you want to live, what you're looking for.</p>
+      </div>
+      <div class="row page-actions">
+        <button id="btn-edit">Edit</button>
+        <button id="btn-save" hidden>Save</button>
+        <button id="btn-cancel" class="secondary" hidden>Cancel</button>
+        <button id="btn-reset" class="outline secondary" hidden>Reset to defaults</button>
+      </div>
     </div>
-    <section class="card">
-      <p class="placeholder-note">An editable profile form (saved in your browser) is built in <strong>Phase 2</strong>. It will capture buyers, lifestyle, priorities and deal-breakers — see <code>docs/USER_PROFILE.md</code>.</p>
+    <p class="muted status-line" id="status" aria-live="polite"></p>
+
+    <section class="tiles" aria-label="Headline figures">
+      <div class="tile">
+        <p class="tile-label">Max property price</p>
+        <p class="tile-value accent" id="tile-budget">—</p>
+        <p class="tile-sub">from criteria</p>
+      </div>
+      <div class="tile">
+        <p class="tile-label">Deposit target</p>
+        <p class="tile-value" id="tile-deposit">—</p>
+        <p class="tile-sub">10%</p>
+      </div>
+      <div class="tile">
+        <p class="tile-label">Saved to date</p>
+        <p class="tile-value" id="tile-saved">—</p>
+        <p class="tile-sub">deposit pot</p>
+      </div>
+      <div class="tile">
+        <p class="tile-label">Moving window</p>
+        <p class="tile-value" id="tile-window">—</p>
+        <p class="tile-sub">target</p>
+      </div>
     </section>
+
+    <section class="card" id="card-headline"></section>
+
+    <div class="dash-grid">
+      <section class="card span-6" id="card-buyer"></section>
+      <section class="card span-6" id="card-lifestyle"></section>
+      <section class="card span-6" id="card-priorities"></section>
+      <section class="card span-6" id="card-dealbreakers"></section>
+      <section class="card span-12" id="card-notes"></section>
+    </div>
   </main>
 
   <div data-include="components/footer.html"></div>
   <script type="module" src="../assets/js/components.js"></script>
+  <script type="module" src="../assets/js/page-profile.js"></script>
 </body>
 </html>
