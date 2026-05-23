@@ -73,8 +73,11 @@ for the next pass: Playwright screenshot harness, axe-core CLI in tests, `<dialo
 - [x] Request user's area list + resources (191 villages received)
 - [x] `data/source/villages.csv` + `postcode-regions.csv` + `tools/build-areas.mjs` generator
 - [x] `data/areas.json` (191) generated + `docs/AREAS.md` auto-generated with statuses
-- [ ] `pages/areas.html` (search/filter/sort by county/town/postcode, cards)
-- [ ] `pages/area-detail.html` (renders by `?id=`, 9-category framework)
+- [x] `pages/areas.html` (search/filter/sort by county/town/postcode/status, responsive card grid,
+      shortlist toggle persisted to localStorage) → `5b08ac8`
+- [x] `pages/area-detail.html` (renders by `?id=`, 9-category framework: Overview · Amenities · Schools ·
+      Transport · Prices · Things to do · Places to eat · Pros/Cons · Who it suits; tiles + image gallery
+      + sources; shortlist toggle; not-found fallback)
 - [ ] Geocode coords (for the map) — currently null
 - [ ] Area content batches for priority villages first (research → temp file → splice → licence-safe images → tests → commit per batch)
 

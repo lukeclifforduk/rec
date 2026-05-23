@@ -14,16 +14,82 @@
   <div data-include="components/nav.html"></div>
 
   <main id="main" class="container">
-    <div class="page-head">
-      <h1 id="area-title">Area profile <span class="badge">Phase 3</span></h1>
-      <p>Opened via <code>?id=&lt;area&gt;</code> from the Areas directory.</p>
+    <p class="back-link"><a href="areas.html">← Back to areas</a></p>
+
+    <div class="page-head row" style="justify-content: space-between; align-items: flex-start;">
+      <div>
+        <h1 id="area-title">Area</h1>
+        <p class="area-detail-village muted" id="area-village"></p>
+        <p class="area-card-meta" id="area-meta"></p>
+      </div>
+      <div class="row page-actions">
+        <button id="btn-star" aria-pressed="false">☆ Add to shortlist</button>
+      </div>
     </div>
-    <section class="card">
-      <p class="placeholder-note">The single-area profile template (9-category framework, image gallery, key-facts tiles) is built in <strong>Phase 3</strong>.</p>
+
+    <section class="tiles" aria-label="Key facts">
+      <div class="tile">
+        <p class="tile-label">Status</p>
+        <p class="tile-value" id="tile-status">—</p>
+      </div>
+      <div class="tile">
+        <p class="tile-label">Sub-region</p>
+        <p class="tile-value" id="tile-subregion">—</p>
+      </div>
+      <div class="tile">
+        <p class="tile-label">Postcode</p>
+        <p class="tile-value" id="tile-postcode">—</p>
+      </div>
+      <div class="tile">
+        <p class="tile-label">County</p>
+        <p class="tile-value" id="tile-county">—</p>
+      </div>
     </section>
+
+    <div class="dash-grid">
+      <section class="card span-12">
+        <h2>Overview</h2>
+        <div id="sec-overview"></div>
+      </section>
+      <section class="card span-6">
+        <h2>Amenities</h2>
+        <div id="sec-amenities"></div>
+      </section>
+      <section class="card span-6">
+        <h2>Schools</h2>
+        <div id="sec-schools"></div>
+      </section>
+      <section class="card span-6">
+        <h2>Transport &amp; commutes</h2>
+        <div id="sec-transport"></div>
+      </section>
+      <section class="card span-6">
+        <h2>Prices</h2>
+        <div id="sec-prices"></div>
+      </section>
+      <section class="card span-6">
+        <h2>Things to do</h2>
+        <div id="sec-things"></div>
+      </section>
+      <section class="card span-6">
+        <h2>Places to eat</h2>
+        <div id="sec-eat"></div>
+      </section>
+      <section class="card span-12">
+        <h2>Pros &amp; cons</h2>
+        <div id="sec-proscons"></div>
+      </section>
+      <section class="card span-12">
+        <h2>Who it suits</h2>
+        <div id="sec-suits"></div>
+      </section>
+    </div>
+
+    <div id="extras"></div>
   </main>
 
   <div data-include="components/footer.html"></div>
   <script type="module" src="../assets/js/components.js"></script>
+  <script type="module" src="../assets/js/page-area-detail.js"></script>
 </body>
 </html>
