@@ -3,7 +3,7 @@
 Tick items as completed and **commit**. To resume in a fresh chat: read this file, then `docs/PLAN.md` +
 `docs/CONTEXT.md`, run a Haiku scan, run tests, continue at the first unchecked box.
 
-**Status:** Phase 0 complete · Phase 1 in progress.
+**Status:** Phase 0 complete · Phase 1 build complete · **awaiting design review** before Phase 2.
 
 ---
 
@@ -20,24 +20,26 @@ Tick items as completed and **commit**. To resume in a fresh chat: read this fil
 - [x] Commit + push Phase 0
 
 ## Phase 1 — App skeleton & shared shell
-- [ ] Create folders: `assets/css`, `assets/js`, `assets/img/{areas,house-types}`, `components`, `data`, `pages`
-- [ ] `assets/css/tokens.css` (design tokens: colour, spacing, type; light/dark)
-- [ ] `assets/css/base.css` (Pico import + global layout, top-nav, cards)
-- [ ] `assets/css/dashboard.css` (dashboard grid + component styles)
-- [ ] `components/header.html` (brand + theme toggle)
-- [ ] `components/nav.html` (7-page top nav)
-- [ ] `components/footer.html`
-- [ ] `assets/js/components.js` (fetch-inject partials, active-nav, theme toggle)
-- [ ] `assets/js/storage.js` (storage abstraction)
-- [ ] `assets/js/data-loader.js` (load `data/*.json`, cache, errors)
-- [ ] `index.html` (dashboard shell: stat tiles, savings sparkline slot, areas slot, map slot)
-- [ ] Stub pages: `pages/{profile,criteria,areas,area-detail,house-types,finances,map}.html`
-- [ ] Seed minimal `data/*.json` so the shell renders without errors
-- [ ] `tests/assert.js`, `tests/schemas.js`, `tests/tests.html` (smoke: pages 200, partials mount)
-- [ ] `.github/workflows/pages.yml` + `.nojekyll`
-- [ ] Verify locally (`python3 -m http.server`) — shell loads, nav highlights, theme toggles
-- [ ] Commit + push
-- [ ] **Design review checkpoint with user** (appearance/tokens/layout before content)
+- [x] Create folders: `assets/css`, `assets/js`, `assets/img/{areas,house-types}`, `components`, `data`, `pages`
+- [x] `assets/css/tokens.css` (design tokens: colour, spacing, type; light/dark)
+- [x] `assets/css/base.css` (Pico import + global layout, top-nav, cards)
+- [x] `assets/css/dashboard.css` (dashboard grid + component styles)
+- [x] `assets/js/config.js` (base-URL resolver — works locally and under /rec/ on Pages)
+- [x] `components/header.html` (brand + theme toggle)
+- [x] `components/nav.html` (7-page top nav)
+- [x] `components/footer.html`
+- [x] `assets/js/components.js` (fetch-inject partials, active-nav, theme toggle)
+- [x] `assets/js/storage.js` (storage abstraction)
+- [x] `assets/js/data-loader.js` (load `data/*.json`, cache, errors)
+- [x] `assets/js/page-home.js` (dashboard tiles + lists)
+- [x] `index.html` (dashboard shell: stat tiles, savings slot, areas slot, map slot)
+- [x] Stub pages: `pages/{profile,criteria,areas,area-detail,house-types,finances,map}.html`
+- [x] Seed minimal `data/*.json` so the shell renders without errors
+- [x] `tests/assert.js`, `tests/schemas.js`, `tests/tests.html` (schema + smoke + storage checks)
+- [x] `.github/workflows/pages.yml` + `.nojekyll`
+- [x] Verify: all 28 routes 200, JSON + schema valid, ESM syntax valid (Node) — browser render to be confirmed at review
+- [x] Commit + push
+- [ ] **Design review checkpoint with user** (appearance/tokens/layout before content) — view via Pages or `python3 -m http.server`
 
 ## Phase 2 — Profile & criteria *(priority pillar)*
 - [ ] Request profile + criteria details from user

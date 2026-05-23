@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard · rec</title>
+  <meta name="description" content="First-time buyer dashboard for Hampshire & Wiltshire." />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="assets/css/tokens.css" />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/dashboard.css" />
+</head>
+<body>
+  <div data-include="components/header.html"></div>
+  <div data-include="components/nav.html"></div>
+
+  <main class="container">
+    <div class="page-head">
+      <h1>Dashboard</h1>
+      <p>Your first-time-buyer search for Hampshire &amp; Wiltshire, all in one place.</p>
+    </div>
+
+    <section class="tiles" aria-label="Key figures">
+      <div class="tile">
+        <p class="tile-label">Deposit progress</p>
+        <p class="tile-value accent" id="tile-progress">0%</p>
+        <div class="progress"><span id="progress-bar"></span></div>
+      </div>
+      <div class="tile">
+        <p class="tile-label">Saved to date</p>
+        <p class="tile-value" id="tile-saved">£0</p>
+        <p class="tile-sub">deposit pot</p>
+      </div>
+      <div class="tile">
+        <p class="tile-label">Deposit target</p>
+        <p class="tile-value" id="tile-target">£0</p>
+        <p class="tile-sub" id="tile-target-sub"></p>
+      </div>
+      <div class="tile">
+        <p class="tile-label">Shortlisted areas</p>
+        <p class="tile-value" id="tile-shortlist">0</p>
+        <p class="tile-sub">across Hants &amp; Wilts</p>
+      </div>
+    </section>
+
+    <div class="dash-grid">
+      <section class="card span-8">
+        <h2>Savings progress</h2>
+        <div class="chart-wrap">
+          <p class="placeholder-note">The savings-progress chart is wired up in <strong>Phase 5 (Finances)</strong>. The figures above already read from your data.</p>
+        </div>
+      </section>
+
+      <section class="card span-4">
+        <h2>Your areas</h2>
+        <ul class="mini-list" id="home-areas">
+          <li class="muted">Loading…</li>
+        </ul>
+        <p><a data-nav="pages/areas.html">Browse all areas →</a></p>
+      </section>
+
+      <section class="card span-6">
+        <h2>Map</h2>
+        <p class="placeholder-note">An interactive map with your search zones arrives in <strong>Phase 6</strong>.</p>
+        <p><a data-nav="pages/map.html">Open map →</a></p>
+      </section>
+
+      <section class="card span-6">
+        <h2>Quick links</h2>
+        <ul class="mini-list">
+          <li><a data-nav="pages/profile.html">Profile — about us</a></li>
+          <li><a data-nav="pages/criteria.html">Search criteria</a></li>
+          <li><a data-nav="pages/house-types.html">House types</a></li>
+          <li><a data-nav="pages/finances.html">Finances &amp; savings</a></li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <div data-include="components/footer.html"></div>
+
+  <script type="module" src="assets/js/components.js"></script>
+  <script type="module" src="assets/js/page-home.js"></script>
+</body>
+</html>

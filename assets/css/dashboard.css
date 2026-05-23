@@ -1,0 +1,45 @@
+/* dashboard.css — home dashboard specifics: stat tiles + section layout. */
+
+.tiles {
+  display: grid; gap: var(--rec-gap);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-bottom: 1.5rem;
+}
+.tile {
+  background: var(--pico-card-background-color);
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: var(--rec-radius);
+  padding: 1rem 1.1rem;
+  box-shadow: var(--rec-shadow);
+}
+.tile .tile-label { color: var(--pico-muted-color); font-size: 0.85rem; margin: 0 0 0.35rem; }
+.tile .tile-value { font-size: 1.7rem; font-weight: 700; line-height: 1.1; margin: 0; }
+.tile .tile-sub { font-size: 0.8rem; color: var(--pico-muted-color); margin: 0.35rem 0 0; }
+.tile .accent { color: var(--accent); }
+
+/* Progress bar inside a tile */
+.progress { height: 8px; border-radius: 999px; background: var(--pico-secondary-background); overflow: hidden; margin-top: 0.6rem; }
+.progress > span { display: block; height: 100%; background: var(--accent); width: 0%; transition: width 0.4s ease; }
+
+/* Dashboard section grid (cards of varied size) */
+.dash-grid {
+  display: grid; gap: var(--rec-gap);
+  grid-template-columns: repeat(12, 1fr);
+}
+.dash-grid > .span-8 { grid-column: span 8; }
+.dash-grid > .span-6 { grid-column: span 6; }
+.dash-grid > .span-4 { grid-column: span 4; }
+.dash-grid > .span-12 { grid-column: span 12; }
+
+@media (max-width: 800px) {
+  .dash-grid > [class^="span-"] { grid-column: 1 / -1; }
+}
+
+/* Chart canvas placeholder sizing */
+.chart-wrap { position: relative; height: 240px; }
+.chart-wrap canvas { max-height: 240px; }
+
+/* Simple list inside dashboard cards */
+.mini-list { list-style: none; margin: 0; padding: 0; }
+.mini-list li { padding: 0.5rem 0; border-bottom: 1px solid var(--pico-muted-border-color); }
+.mini-list li:last-child { border-bottom: 0; }

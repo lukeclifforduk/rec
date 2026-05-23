@@ -1,0 +1,11 @@
+{
+  "budget": { "min": null, "max": null, "targetDeposit": null },
+  "size": { "minBeds": null, "minBaths": null, "minSqm": null },
+  "propertyTypes": [],
+  "tenurePref": "freehold",
+  "outsideSpace": "",
+  "parking": "",
+  "epcMin": "",
+  "mustHaves": [],
+  "niceToHaves": []
+}
