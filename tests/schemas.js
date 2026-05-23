@@ -33,8 +33,11 @@ export function validateAreas(arr) {
     check(e, typeOf(a.id) === 'string', `areas[${i}].id must be a string`);
     check(e, typeOf(a.name) === 'string', `areas[${i}].name must be a string`);
     check(e, typeOf(a.county) === 'string', `areas[${i}].county must be a string`);
-    check(e, typeOf(a.coords) === 'object' && typeof a.coords?.lat === 'number' && typeof a.coords?.lng === 'number',
-      `areas[${i}].coords must have numeric lat/lng`);
+    check(e, typeOf(a.town) === 'string', `areas[${i}].town must be a string`);
+    check(e, typeOf(a.postcode) === 'string', `areas[${i}].postcode must be a string`);
+    const c = a.coords;
+    check(e, c === null || (typeOf(c) === 'object' && typeof c.lat === 'number' && typeof c.lng === 'number'),
+      `areas[${i}].coords must be null or have numeric lat/lng`);
     check(e, typeOf(a.images) === 'array', `areas[${i}].images must be an array`);
     check(e, typeOf(a.houseTypeIds) === 'array', `areas[${i}].houseTypeIds must be an array`);
   });
@@ -58,9 +61,24 @@ export function validateFinances(o) {
   const e = [];
   check(e, typeOf(o) === 'object', 'finances must be an object');
   if (typeOf(o) !== 'object') return e;
+  check(e, typeOf(o.income) === 'object', 'finances.income must be an object');
   check(e, typeOf(o.goal) === 'object', 'finances.goal must be an object');
   check(e, typeof o.goal?.targetDeposit === 'number', 'finances.goal.targetDeposit must be a number');
-  check(e, typeOf(o.contributions) === 'array', 'finances.contributions must be an array');
-  check(e, typeOf(o.lisa) === 'object', 'finances.lisa must be an object');
+  check(e, typeOf(o.savings) === 'object', 'finances.savings must be an object');
+  check(e, typeOf(o.oneTimeCosts) === 'array', 'finances.oneTimeCosts must be an array');
+  check(e, typeOf(o.ongoingBills) === 'array', 'finances.ongoingBills must be an array');
+  check(e, typeOf(o.expenses) === 'array', 'finances.expenses must be an array');
+  check(e, typeOf(o.shoppingList) === 'array', 'finances.shoppingList must be an array');
+  check(e, typeOf(o.giftCards) === 'array', 'finances.giftCards must be an array');
+  return e;
+}
+
+export function validateChecklists(o) {
+  const e = [];
+  check(e, typeOf(o) === 'object', 'checklists must be an object');
+  if (typeOf(o) !== 'object') return e;
+  check(e, typeOf(o.viewing) === 'array', 'checklists.viewing must be an array');
+  check(e, typeOf(o.process) === 'array', 'checklists.process must be an array');
+  check(e, typeOf(o.moving) === 'array', 'checklists.moving must be an array');
   return e;
 }

@@ -1,10 +1,24 @@
 {
-  "buyers": "",
-  "household": "",
-  "lifestyle": "",
-  "headline": "",
-  "priorities": [],
-  "dealBreakers": [],
-  "locationFocus": "Hampshire & Wiltshire",
-  "notes": ""
+  "buyers": "Solo first-time buyer",
+  "household": "No dependents",
+  "employment": "Permanent — £64,000 base salary + ~£3,000 average annual bonus",
+  "creditProfile": "Excellent (no adverse history)",
+  "headline": "First-time buyer seeking a 2–3 bed freehold home with a garden and parking in the Hampshire countryside near Winchester/Salisbury — move-in ready, EPC C or above.",
+  "lifestyle": "Countryside living in a low-population village; quiet rural setting preferred.",
+  "priorities": [
+    "Countryside / rural setting",
+    "Near Winchester or Salisbury",
+    "Low population village",
+    "Garden",
+    "Off-street parking",
+    "Move-in ready"
+  ],
+  "dealBreakers": [
+    "Leasehold (wants freehold)",
+    "EPC below C",
+    "Major works needed (roof / boiler / damp)"
+  ],
+  "locationFocus": "Hampshire (near Winchester / Salisbury), countryside",
+  "movingTimeline": "March – September 2026",
+  "notes": "Comfortable maximising borrowing as salary increases are expected. Prefers a 2-year fixed rate. Keen to reduce mortgage/arrangement fees where possible."
 }

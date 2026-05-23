@@ -3,7 +3,13 @@
 Tick items as completed and **commit**. To resume in a fresh chat: read this file, then `docs/PLAN.md` +
 `docs/CONTEXT.md`, run a Haiku scan, run tests, continue at the first unchecked box.
 
-**Status:** Phase 0 complete · Phase 1 build complete · **awaiting design review** before Phase 2.
+**Status:** Phases 0–1 complete (shell live). **Intake data captured** from user (profile, criteria, full
+finances/budget, two checklists, 191-village master directory). Next: build the Profile, Criteria, Areas
+directory and Finances pages from this data.
+
+**New since plan:** user supplied a full budget (one-time costs, bills, expenses, shopping list, gift cards)
+→ Finances page expands to a budget dashboard; and viewing/moving **checklists** (`data/checklists.json`)
+→ likely a new "Journey" tab (confirming with user).
 
 ---
 
@@ -42,32 +48,39 @@ Tick items as completed and **commit**. To resume in a fresh chat: read this fil
 - [ ] **Design review checkpoint with user** (appearance/tokens/layout before content) — view via Pages or `python3 -m http.server`
 
 ## Phase 2 — Profile & criteria *(priority pillar)*
-- [ ] Request profile + criteria details from user
-- [ ] `data/profile.json` + `data/criteria.json`
-- [ ] `pages/profile.html` (editable form → storage)
+- [x] Request profile + criteria details from user
+- [x] `data/profile.json` + `data/criteria.json` (real data)
+- [x] `docs/USER_PROFILE.md` filled from user input
+- [ ] `pages/profile.html` (render + editable form → storage)
 - [ ] `pages/criteria.html` (must-haves vs nice-to-haves, editable)
-- [ ] `docs/USER_PROFILE.md` filled from user input
 - [ ] Tests: schemas + persistence round-trip
-- [ ] Commit + push
+- [ ] Commit + push (pages)
 
 ## Phase 3 — Areas directory & profiles (batched) *(priority pillar)*
-- [ ] Request user's area list + resources; merge with seed
-- [ ] `data/areas.json` seeded + `docs/AREAS.md` updated with statuses
-- [ ] `pages/areas.html` (search/filter/sort, county tabs, cards)
+- [x] Request user's area list + resources (191 villages received)
+- [x] `data/source/villages.csv` + `postcode-regions.csv` + `tools/build-areas.mjs` generator
+- [x] `data/areas.json` (191) generated + `docs/AREAS.md` auto-generated with statuses
+- [ ] `pages/areas.html` (search/filter/sort by county/town/postcode, cards)
 - [ ] `pages/area-detail.html` (renders by `?id=`, 9-category framework)
-- [ ] Area content batches (research → temp file → splice → licence-safe images → tests → commit per batch)
+- [ ] Geocode coords (for the map) — currently null
+- [ ] Area content batches for priority villages first (research → temp file → splice → licence-safe images → tests → commit per batch)
 
 ## Phase 4 — House-types gallery (batched)
 - [ ] `data/house-types.json` seeded
 - [ ] `pages/house-types.html` gallery + cross-links to areas
 - [ ] House-type content + imagery batches (tests → commit per batch)
 
-## Phase 5 — Finances & savings tracker
-- [ ] `data/finances.json` template
-- [ ] `assets/js/finances.js` calculators (SDLT, LISA, LTV, progress) — pure & tested
-- [ ] `pages/finances.html` (savings chart + cost breakdown + tools)
+## Phase 5 — Finances & budget dashboard
+- [x] `data/finances.json` (full real data: income, goal, savings, mortgage, one-time costs, bills, expenses, shopping list, gift cards)
+- [ ] `assets/js/finances.js` calculators (SDLT, LISA, LTV, progress, totals) — pure & tested
+- [ ] `pages/finances.html` (savings chart + cost/bill/expense breakdowns + shopping + gift cards + tools)
 - [ ] Tests: calculator benchmarks
 - [ ] Commit + push
+
+## Phase 4.5 — Journey / checklists (NEW, pending IA confirmation)
+- [x] `data/checklists.json` captured (viewing, buying process, moving/packing)
+- [ ] Surface as a "Journey" tab or fold into Finances (confirming with user)
+- [ ] Interactive checkable lists persisted to storage
 
 ## Phase 6 — Interactive map
 - [ ] `assets/js/map.js` (Leaflet + Geoman, OSM tiles)
