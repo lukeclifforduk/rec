@@ -3,9 +3,9 @@
 Tick items as completed and **commit**. To resume in a fresh chat: read this file, then `docs/PLAN.md` +
 `docs/CONTEXT.md`, run a Haiku scan, run tests, continue at the first unchecked box.
 
-**Status:** Phases 0–1 complete (shell live). **Intake data captured** from user (profile, criteria, full
-finances/budget, two checklists, 191-village master directory). Next: build the Profile, Criteria, Areas
-directory and Finances pages from this data.
+**Status:** Phases 0–1 complete (shell live). **Intake data captured** from user (profile, criteria
+including full filter table, full finances/budget, three checklists, 191-village master directory). Next:
+build the Profile, Criteria, Areas directory and Finances pages from this data.
 
 **New since plan:** user supplied a full budget (one-time costs, bills, expenses, shopping list, gift cards)
 → Finances page expands to a budget dashboard; and viewing/moving **checklists** (`data/checklists.json`)
@@ -50,7 +50,9 @@ directory and Finances pages from this data.
 ## Phase 2 — Profile & criteria *(priority pillar)*
 - [x] Request profile + criteria details from user
 - [x] `data/profile.json` + `data/criteria.json` (real data)
-- [x] `docs/USER_PROFILE.md` filled from user input
+- [x] **Full filter table captured** in `data/criteria.json` (location, price, types, tenure, status,
+      features, EPC, freshness, keywords); schema extended in `tests/schemas.js`
+- [x] `docs/USER_PROFILE.md` filled from user input (incl. portal-ready filter summary)
 - [ ] `pages/profile.html` (render + editable form → storage)
 - [ ] `pages/criteria.html` (must-haves vs nice-to-haves, editable)
 - [ ] Tests: schemas + persistence round-trip

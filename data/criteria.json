@@ -1,19 +1,87 @@
 {
   "budget": {
-    "min": null,
+    "min": 200000,
     "max": 400000,
     "offerTarget": 380000,
     "offerStrategy": "Offer 5–10% under asking",
     "targetDeposit": 38000,
     "depositPct": 10
   },
-  "size": { "minBeds": 2, "idealBeds": 3, "minBaths": null, "minSqm": null },
-  "propertyTypes": ["House — 2+ bedrooms (3 ideal)"],
+  "size": {
+    "minBeds": 2,
+    "idealBeds": 3,
+    "minBaths": 1,
+    "idealBaths": 2,
+    "minSqm": null
+  },
+  "location": {
+    "areaSource": "data/areas.json (191 villages — Hampshire + Wiltshire)",
+    "searchRadiusMiles": 1
+  },
+  "propertyTypes": [
+    "Detached",
+    "Bungalow",
+    "Semi-detached",
+    "Terraced"
+  ],
+  "propertyTypePrefs": {
+    "preferred": ["Detached", "Bungalow"],
+    "acceptable": ["Semi-detached", "Terraced"],
+    "excluded": ["Flat / Apartment", "Park / Mobile Home"]
+  },
   "tenurePref": "freehold",
+  "tenure": {
+    "preferred": ["Freehold"],
+    "excluded": ["Leasehold", "Shared Ownership"]
+  },
+  "propertyStatus": {
+    "include": ["For Sale", "Under Offer / Sold STC"],
+    "exclude": ["Retirement", "Auction"],
+    "consider": ["New Build"],
+    "favourableFlags": ["Chain-Free", "Price Reduced"]
+  },
   "outsideSpace": "Garden required",
   "parking": "Off-street parking required",
+  "features": {
+    "mustHave": ["Garden", "Off-street parking"],
+    "niceToHave": [
+      "Garage",
+      "Driveway",
+      "Balcony / Terrace",
+      "En-suite",
+      "Conservatory",
+      "Home office / Study",
+      "EV charging point"
+    ]
+  },
   "epcMin": "C",
   "condition": "Move-in ready preferred (check roof, boiler, damp)",
+  "listingFreshness": {
+    "addedWithinHours": 24
+  },
+  "keywords": {
+    "include": [
+      "village",
+      "rural",
+      "countryside",
+      "freehold",
+      "EPC C",
+      "EPC B",
+      "EPC A"
+    ],
+    "exclude": [
+      "leasehold",
+      "shared ownership",
+      "retirement",
+      "auction",
+      "cash buyers only",
+      "needs modernisation",
+      "in need of refurbishment",
+      "investment opportunity",
+      "mobile home",
+      "park home"
+    ]
+  },
   "mortgage": {
     "targetMax": 360000,
     "ratePctAssumed": 5.35,
@@ -32,8 +100,12 @@
   ],
   "niceToHaves": [
     "3 bedrooms",
+    "2 bathrooms",
+    "Detached or bungalow",
     "Move-in ready (no major works)",
     "Near Winchester or Salisbury",
-    "Low-population village"
+    "Low-population village",
+    "Chain-free seller",
+    "Recently price-reduced"
   ]
 }

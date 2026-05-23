@@ -18,10 +18,38 @@ export function validateCriteria(o) {
   check(e, typeOf(o) === 'object', 'criteria must be an object');
   if (typeOf(o) !== 'object') return e;
   check(e, typeOf(o.budget) === 'object', 'criteria.budget must be an object');
+  check(e, typeof o.budget?.max === 'number', 'criteria.budget.max must be a number');
   check(e, typeOf(o.size) === 'object', 'criteria.size must be an object');
   check(e, typeOf(o.propertyTypes) === 'array', 'criteria.propertyTypes must be an array');
   check(e, typeOf(o.mustHaves) === 'array', 'criteria.mustHaves must be an array');
   check(e, typeOf(o.niceToHaves) === 'array', 'criteria.niceToHaves must be an array');
+  if ('location' in o) check(e, typeOf(o.location) === 'object', 'criteria.location must be an object');
+  if ('propertyTypePrefs' in o) {
+    check(e, typeOf(o.propertyTypePrefs) === 'object', 'criteria.propertyTypePrefs must be an object');
+    check(e, typeOf(o.propertyTypePrefs?.preferred) === 'array', 'criteria.propertyTypePrefs.preferred must be an array');
+    check(e, typeOf(o.propertyTypePrefs?.acceptable) === 'array', 'criteria.propertyTypePrefs.acceptable must be an array');
+    check(e, typeOf(o.propertyTypePrefs?.excluded) === 'array', 'criteria.propertyTypePrefs.excluded must be an array');
+  }
+  if ('tenure' in o) {
+    check(e, typeOf(o.tenure) === 'object', 'criteria.tenure must be an object');
+    check(e, typeOf(o.tenure?.preferred) === 'array', 'criteria.tenure.preferred must be an array');
+    check(e, typeOf(o.tenure?.excluded) === 'array', 'criteria.tenure.excluded must be an array');
+  }
+  if ('propertyStatus' in o) {
+    check(e, typeOf(o.propertyStatus) === 'object', 'criteria.propertyStatus must be an object');
+    check(e, typeOf(o.propertyStatus?.include) === 'array', 'criteria.propertyStatus.include must be an array');
+    check(e, typeOf(o.propertyStatus?.exclude) === 'array', 'criteria.propertyStatus.exclude must be an array');
+  }
+  if ('features' in o) {
+    check(e, typeOf(o.features) === 'object', 'criteria.features must be an object');
+    check(e, typeOf(o.features?.mustHave) === 'array', 'criteria.features.mustHave must be an array');
+    check(e, typeOf(o.features?.niceToHave) === 'array', 'criteria.features.niceToHave must be an array');
+  }
+  if ('keywords' in o) {
+    check(e, typeOf(o.keywords) === 'object', 'criteria.keywords must be an object');
+    check(e, typeOf(o.keywords?.include) === 'array', 'criteria.keywords.include must be an array');
+    check(e, typeOf(o.keywords?.exclude) === 'array', 'criteria.keywords.exclude must be an array');
+  }
   return e;
 }
 
