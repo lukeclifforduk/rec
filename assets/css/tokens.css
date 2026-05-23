@@ -1,0 +1,56 @@
+/* tokens.css — design tokens. Neutral base + a single accent, light/dark aware.
+   Pico v2 reads --pico-* custom properties; we map them to our --accent. */
+
+:root {
+  --accent: #2e7d5b;
+  --accent-hover: #266b4e;
+  --accent-contrast: #ffffff;
+
+  /* Pico primary (buttons, links, focus) */
+  --pico-primary-background: var(--accent);
+  --pico-primary-hover-background: var(--accent-hover);
+  --pico-primary-inverse: var(--accent-contrast);
+  --pico-primary: var(--accent);
+  --pico-primary-hover: var(--accent-hover);
+  --pico-primary-focus: rgba(46, 125, 91, 0.3);
+  --pico-primary-underline: rgba(46, 125, 91, 0.5);
+
+  /* Layout tokens */
+  --rec-radius: 12px;
+  --rec-radius-sm: 8px;
+  --rec-gap: 1rem;
+  --rec-maxw: 1120px;
+  --rec-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Forced dark theme */
+[data-theme="dark"] {
+  --accent: #46b58a;
+  --accent-hover: #5cc79c;
+  --accent-contrast: #06281d;
+  --pico-primary-background: var(--accent);
+  --pico-primary-hover-background: var(--accent-hover);
+  --pico-primary-inverse: var(--accent-contrast);
+  --pico-primary: #6fd1ad;
+  --pico-primary-hover: #8bdcbf;
+  --pico-primary-focus: rgba(70, 181, 138, 0.35);
+  --pico-primary-underline: rgba(111, 209, 173, 0.5);
+  --rec-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Follow system when no explicit theme is chosen */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --accent: #46b58a;
+    --accent-hover: #5cc79c;
+    --accent-contrast: #06281d;
+    --pico-primary-background: var(--accent);
+    --pico-primary-hover-background: var(--accent-hover);
+    --pico-primary-inverse: var(--accent-contrast);
+    --pico-primary: #6fd1ad;
+    --pico-primary-hover: #8bdcbf;
+    --pico-primary-focus: rgba(70, 181, 138, 0.35);
+    --pico-primary-underline: rgba(111, 209, 173, 0.5);
+    --rec-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+}

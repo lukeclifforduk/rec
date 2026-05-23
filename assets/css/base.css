@@ -1,0 +1,104 @@
+/* base.css — global layout: header, top nav, container, cards, footer.
+   Loaded after Pico + tokens. */
+
+body { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ---- Header ---- */
+.site-header {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--rec-gap);
+  padding: 0.6rem clamp(0.75rem, 3vw, 2rem);
+  background: var(--pico-background-color);
+  border-bottom: 1px solid var(--pico-muted-border-color);
+}
+.brand {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-weight: 700; font-size: 1.15rem; letter-spacing: 0.2px;
+  color: var(--pico-color); text-decoration: none;
+}
+.brand .brand-mark {
+  display: inline-grid; place-items: center;
+  width: 1.75rem; height: 1.75rem; border-radius: var(--rec-radius-sm);
+  background: var(--accent); color: var(--accent-contrast); font-weight: 800;
+}
+.brand small { font-weight: 400; color: var(--pico-muted-color); font-size: 0.7rem; }
+
+#theme-toggle {
+  width: auto; padding: 0.4rem 0.7rem; margin: 0;
+  background: transparent; color: var(--pico-color);
+  border: 1px solid var(--pico-muted-border-color);
+}
+#theme-toggle:hover { background: var(--pico-secondary-background); }
+
+/* ---- Top nav ---- */
+.site-nav {
+  position: sticky; top: 0; z-index: 19;
+  background: var(--pico-background-color);
+  border-bottom: 1px solid var(--pico-muted-border-color);
+}
+.site-nav ul {
+  display: flex; gap: 0.25rem; margin: 0;
+  padding: 0 clamp(0.75rem, 3vw, 2rem);
+  list-style: none; max-width: var(--rec-maxw); margin-inline: auto;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.site-nav a {
+  display: inline-block; white-space: nowrap;
+  padding: 0.7rem 0.9rem; text-decoration: none;
+  color: var(--pico-muted-color); font-size: 0.95rem;
+  border-bottom: 2px solid transparent;
+}
+.site-nav a:hover { color: var(--pico-color); }
+.site-nav a[aria-current="page"] {
+  color: var(--pico-color); font-weight: 600;
+  border-bottom-color: var(--accent);
+}
+
+/* ---- Layout ---- */
+main.container { width: 100%; max-width: var(--rec-maxw); margin-inline: auto; flex: 1 0 auto; padding-block: 1.5rem; }
+.page-head { margin-bottom: 1.25rem; }
+.page-head h1 { margin-bottom: 0.25rem; }
+.page-head p { color: var(--pico-muted-color); margin: 0; }
+
+/* ---- Card ---- */
+.card {
+  background: var(--pico-card-background-color);
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: var(--rec-radius);
+  padding: 1.1rem 1.2rem;
+  box-shadow: var(--rec-shadow);
+}
+.card h2, .card h3 { margin-top: 0; }
+.card-link { text-decoration: none; color: inherit; display: block; }
+.card-link:hover { border-color: var(--accent); }
+
+/* ---- Generic grid ---- */
+.grid { display: grid; gap: var(--rec-gap); }
+.grid.cols-auto { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+
+/* ---- Badges / placeholder ---- */
+.badge {
+  display: inline-block; font-size: 0.72rem; font-weight: 600;
+  padding: 0.15rem 0.5rem; border-radius: 999px;
+  background: var(--pico-secondary-background); color: var(--pico-secondary-inverse);
+}
+.placeholder-note {
+  border: 1px dashed var(--pico-muted-border-color);
+  border-radius: var(--rec-radius); padding: 1rem 1.2rem;
+  color: var(--pico-muted-color); background: var(--pico-card-sectioning-background-color);
+}
+
+/* ---- Footer ---- */
+.site-footer {
+  flex-shrink: 0; margin-top: 2rem;
+  border-top: 1px solid var(--pico-muted-border-color);
+  padding: 1.25rem clamp(0.75rem, 3vw, 2rem);
+  color: var(--pico-muted-color); font-size: 0.85rem;
+}
+.site-footer .container { max-width: var(--rec-maxw); margin-inline: auto; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+
+/* Utilities */
+.muted { color: var(--pico-muted-color); }
+.row { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+.mt-0 { margin-top: 0; } .mb-0 { margin-bottom: 0; }

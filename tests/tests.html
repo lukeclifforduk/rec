@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>tests · rec</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <link rel="stylesheet" href="../assets/css/tokens.css" />
+  <link rel="stylesheet" href="../assets/css/base.css" />
+  <link rel="stylesheet" href="../assets/css/dashboard.css" />
+</head>
+<body>
+  <main class="container">
+    <div class="page-head">
+      <h1>Test results</h1>
+      <p class="muted">Schema, smoke and storage checks. Serve over HTTP (e.g. <code>python3 -m http.server</code>).</p>
+    </div>
+    <section class="card" id="results"><p class="muted">Running…</p></section>
+  </main>
+
+  <script type="module">
+    import { url, APP_BASE } from '../assets/js/config.js';
+    import { loadJSON } from '../assets/js/data-loader.js';
+    import * as storage from '../assets/js/storage.js';
+    import * as schema from './schemas.js';
+    import { test, assert, assertEqual, render } from './assert.js';
+
+    const fetchOk = async (path) => (await fetch(url(path))).ok;
+
+    // --- config ---
+    await test('APP_BASE ends with /', () => assert(APP_BASE.endsWith('/'), APP_BASE));
+    await test('url() resolves data path', () => assert(url('data/areas.json').endsWith('/data/areas.json')));
+
+    // --- data load + schema ---
+    await test('profile.json loads & valid', async () => { const e = schema.validateProfile(await loadJSON('profile')); assert(e.length === 0, e.join('; ')); });
+    await test('criteria.json loads & valid', async () => { const e = schema.validateCriteria(await loadJSON('criteria')); assert(e.length === 0, e.join('; ')); });
+    await test('areas.json loads & valid', async () => { const e = schema.validateAreas(await loadJSON('areas')); assert(e.length === 0, e.join('; ')); });
+    await test('house-types.json loads & valid', async () => { const e = schema.validateHouseTypes(await loadJSON('house-types')); assert(e.length === 0, e.join('; ')); });
+    await test('finances.json loads & valid', async () => { const e = schema.validateFinances(await loadJSON('finances')); assert(e.length === 0, e.join('; ')); });
+
+    // --- partials reachable ---
+    for (const p of ['components/header.html', 'components/nav.html', 'components/footer.html'])
+      await test(`partial ${p} reachable`, async () => assert(await fetchOk(p), 'not 200'));
+
+    // --- pages reachable ---
+    for (const p of ['index.html', 'pages/profile.html', 'pages/criteria.html', 'pages/areas.html', 'pages/area-detail.html', 'pages/house-types.html', 'pages/finances.html', 'pages/map.html'])
+      await test(`page ${p} reachable`, async () => assert(await fetchOk(p), 'not 200'));
+
+    // --- storage round-trip (throwaway key, no real data touched) ---
+    await test('storage round-trips values', () => {
+      const { writeLocal, readLocal, removeLocal } = storage._internal;
+      writeLocal('__selftest__', { a: 1 });
+      assertEqual(JSON.stringify(readLocal('__selftest__')), JSON.stringify({ a: 1 }));
+      removeLocal('__selftest__');
+      assert(readLocal('__selftest__') === null, 'cleanup failed');
+    });
+
+    document.getElementById('results').innerHTML = '';
+    render(document.getElementById('results'));
+  </script>
+</body>
+</html>

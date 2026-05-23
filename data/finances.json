@@ -1,0 +1,6 @@
+{
+  "goal": { "targetDeposit": 25000, "targetPrice": 250000, "depositPct": 10, "targetDate": "" },
+  "contributions": [],
+  "lisa": { "contribYTD": 0, "bonusYTD": 0 },
+  "settings": { "currency": "GBP", "firstTimeBuyer": true }
+}
