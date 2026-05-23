@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Dashboard · rec</title>
   <meta name="description" content="First-time buyer dashboard for Hampshire & Wiltshire." />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
@@ -17,68 +17,61 @@
   <div data-include="components/nav.html"></div>
 
   <main id="main" class="container">
-    <div class="page-head">
-      <h1>Dashboard</h1>
-      <p>Your first-time-buyer search for Hampshire &amp; Wiltshire, all in one place.</p>
-    </div>
+    <header class="page-head">
+      <p class="eyebrow">Hampshire &amp; Wiltshire · First-time buyer</p>
+      <h1>Where you&rsquo;re at</h1>
+      <p class="lead" id="page-lead">A snapshot of your search — progress, shortlist, journey.</p>
+    </header>
 
-    <section class="tiles" aria-label="Key figures">
-      <div class="tile">
-        <p class="tile-label">Deposit progress</p>
-        <p class="tile-value accent" id="tile-progress">0%</p>
-        <div class="progress"><span id="progress-bar"></span></div>
-      </div>
-      <div class="tile">
-        <p class="tile-label">Saved to date</p>
-        <p class="tile-value" id="tile-saved">£0</p>
-        <p class="tile-sub">deposit pot</p>
-      </div>
-      <div class="tile">
-        <p class="tile-label">Deposit target</p>
-        <p class="tile-value" id="tile-target">£0</p>
-        <p class="tile-sub" id="tile-target-sub"></p>
-      </div>
-      <div class="tile">
-        <p class="tile-label">Shortlisted areas</p>
-        <p class="tile-value" id="tile-shortlist">0</p>
-        <p class="tile-sub">across Hants &amp; Wilts</p>
-      </div>
-    </section>
-
-    <div class="dash-grid">
-      <section class="card span-8">
-        <h2>Savings projection</h2>
-        <div class="chart-wrap"><canvas id="home-savings-chart"></canvas></div>
-        <p class="muted mb-0" id="home-savings-sub"></p>
+    <div class="bento" aria-label="Dashboard">
+      <section class="bento-cell bento-hero" aria-labelledby="hero-label">
+        <p class="eyebrow" id="hero-label">Deposit progress</p>
+        <div class="hero-ring">
+          <div class="ring" role="img" aria-label="Deposit progress">
+            <svg viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="ring-track" cx="60" cy="60" r="52"/>
+              <circle class="ring-bar" id="ring-bar" cx="60" cy="60" r="52"
+                      pathLength="100" stroke-dasharray="100 100" stroke-dashoffset="100"/>
+            </svg>
+            <div class="ring-value"><span class="num" id="ring-pct">0</span><small>%</small></div>
+          </div>
+          <dl class="hero-stats">
+            <div><dt>Saved</dt>      <dd class="num" id="hero-saved">£0</dd></div>
+            <div><dt>Target</dt>     <dd class="num" id="hero-target">£0</dd></div>
+            <div><dt>Per month</dt>  <dd class="num" id="hero-monthly">£0</dd></div>
+          </dl>
+        </div>
+        <p class="hero-eta" id="hero-eta">Calculating…</p>
       </section>
 
-      <section class="card span-4">
-        <h2>Shortlisted areas</h2>
-        <ul class="mini-list" id="home-areas">
-          <li class="muted">Loading…</li>
+      <section class="bento-cell bento-shortlist" aria-labelledby="sl-label">
+        <header class="cell-head">
+          <h2 id="sl-label">Shortlist</h2>
+          <span class="cell-count num" id="sl-count">0 areas</span>
+        </header>
+        <ul class="shortlist-list" id="home-areas">
+          <li class="empty-note">Loading…</li>
         </ul>
-        <p class="row" style="justify-content: space-between; margin-top: var(--space-3);">
+        <footer class="cell-foot">
           <a data-nav="pages/areas.html">Browse directory →</a>
           <a data-nav="pages/map.html">See on map →</a>
-        </p>
+        </footer>
       </section>
 
-      <section class="card span-6">
-        <h2>Journey progress</h2>
-        <div id="home-journey"></div>
-        <p><a data-nav="pages/journey.html">Open journey →</a></p>
+      <section class="bento-cell bento-chart" aria-labelledby="ch-label">
+        <header class="cell-head">
+          <h2 id="ch-label">Savings projection</h2>
+          <p class="muted" id="home-savings-sub" style="margin:0;font-size:var(--text-sm);"></p>
+        </header>
+        <div class="chart-wrap"><canvas id="home-savings-chart"></canvas></div>
       </section>
 
-      <section class="card span-6">
-        <h2>Quick links</h2>
-        <ul class="mini-list">
-          <li><a data-nav="pages/profile.html">Profile — about you</a></li>
-          <li><a data-nav="pages/criteria.html">Search criteria &amp; filters</a></li>
-          <li><a data-nav="pages/areas.html">Areas directory (191)</a></li>
-          <li><a data-nav="pages/house-types.html">House types</a></li>
-          <li><a data-nav="pages/finances.html">Finances &amp; calculators</a></li>
-          <li><a data-nav="pages/map.html">Interactive map</a></li>
-        </ul>
+      <section class="bento-cell bento-journey" aria-labelledby="jr-label">
+        <header class="cell-head">
+          <h2 id="jr-label">Journey</h2>
+          <a data-nav="pages/journey.html" style="font-size:var(--text-sm);color:var(--ink);text-decoration:none;font-weight:500;">Open journey →</a>
+        </header>
+        <div class="step-strip" id="home-journey"></div>
       </section>
     </div>
   </main>

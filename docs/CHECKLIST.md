@@ -142,3 +142,50 @@ for the next pass: Playwright screenshot harness, axe-core CLI in tests, `<dialo
 - [x] Full regression run of `tests.html` (all 6 JSON schemas pass, all 10 page routes return 200,
       skip-link + no-horizontal-scroll smoke tests, 15 calculator benchmarks, storage round-trip)
 - [x] Commit + push
+
+## Phase 8 — Editorial redesign (May 2026 →)
+Goal: take the app from "functional" to "stunning, mobile-first, award-quality" per `DESIGN.md`.
+Each item below is one commit + push milestone. Anchor in commit message (Stripe-docs / Linear-dense).
+
+### 8A · Foundation
+- [x] `DESIGN.md` (anchors, tokens, bans, verification) + CLAUDE.md link
+- [x] Self-host fonts: Fraunces (display) + Instrument Sans (body) + JetBrains Mono (data),
+      `tools/fetch-fonts.mjs`, `assets/css/fonts.css`, woff2 latin + latin-ext subsets committed
+- [x] Rewrite `tokens.css` on OKLCH + `color-mix`; paper/ink/hairline/accent-soft derived;
+      Pico vars re-mapped; dark theme flipped on same hue ladder
+- [x] Apply Fraunces to h1–h4 with optical sizing; `.num` utility for tabular mono numerals;
+      cross-document View Transitions opt-in
+- [ ] Split `base.css` into `assets/css/components/{card,tile,sheet,chip,segmented,table,field,dialog}.css`
+      and add container queries on cards / sidebar
+- [ ] `tools/verify-ui.mjs` (Playwright + axe + Lighthouse) producing `artifacts/screenshots/<task>/`;
+      `.mcp.json` with Playwright MCP entry; baseline screenshots of current state
+
+### 8B · Map (anchor: Linear-dense; biggest single perceptual upgrade)
+- [ ] Swap Leaflet + Geoman → MapLibre GL JS v5 + maplibre-gl-draw
+- [ ] Hampshire/Wiltshire PMTiles slice at `assets/maps/uk-south.pmtiles` from Protomaps
+- [ ] Token-driven map style (light + dark variants); markers carry the only saturation
+- [ ] Mobile bottom-sheet component: 15svh / 50svh / 92svh detents, drag handle, body-scroll-lock
+      at full; segmented control List / Map / Split
+- [ ] Port `page-map.js`: markers, shortlist toggle, drawn-zones persistence (unchanged storage API)
+
+### 8C · Per-page redesigns (in plan order)
+- [ ] `index.html` — bento dashboard, oversized progress, shortlist with thumbs
+- [ ] `pages/profile.html` — article layout, dialog-based edit panel
+- [ ] `pages/criteria.html` — single dense form, sticky section nav, sticky save bar
+- [ ] `pages/areas.html` — editorial list view, URL-driven filters, dialog filter sheet
+- [ ] `pages/area-detail.html` — magazine layout, sticky anchored TOC, inline mini-map, footnote sources
+- [ ] `pages/house-types.html` — two-up editorial gallery with type-locked imagery
+- [ ] `pages/journey.html` — tabbed checklists, large touch targets, per-section progress bar
+- [ ] `pages/finances.html` — hero stat tiles in Fraunces, themed chart, tabular-num tables
+- [ ] Shared shell (`components/header.html`, `nav.html`, `footer.html`): scroll-shrink header,
+      animated active-link indicator via View Transition
+
+### 8D · Imagery
+- [ ] `tools/fetch-images.mjs` (CSV → assets/img + JSON credit/licence write-back)
+- [ ] 4 drafted villages (Stockbridge, Broughton, Wherwell, Hambledon) imaged
+- [ ] 8 house-types imaged with type-locked CC sources
+
+### 8E · Final sweep
+- [ ] All pages clean axe + Lighthouse ≥ thresholds in `CLAUDE.md` §13
+- [ ] Screenshot grid (320/375/768/1280, light+dark, reduced-motion) visibly reads as the named anchor
+- [ ] Update `docs/PLAN.md` to mark Phase 8 complete
