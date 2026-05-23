@@ -53,7 +53,8 @@ build the Profile, Criteria, Areas directory and Finances pages from this data.
 - [x] **Full filter table captured** in `data/criteria.json` (location, price, types, tenure, status,
       features, EPC, freshness, keywords); schema extended in `tests/schemas.js`
 - [x] `docs/USER_PROFILE.md` filled from user input (incl. portal-ready filter summary)
-- [ ] `pages/profile.html` (render + editable form → storage)
+- [x] `pages/profile.html` (renders tiles + cards from `data/profile.json`; edit/save/cancel/reset
+      with localStorage overlay via `assets/js/page-profile.js`)
 - [ ] `pages/criteria.html` (must-haves vs nice-to-haves, editable)
 - [ ] Tests: schemas + persistence round-trip
 - [ ] Commit + push (pages)
