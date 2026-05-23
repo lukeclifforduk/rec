@@ -1,11 +1,39 @@
 {
-  "budget": { "min": null, "max": null, "targetDeposit": null },
-  "size": { "minBeds": null, "minBaths": null, "minSqm": null },
-  "propertyTypes": [],
+  "budget": {
+    "min": null,
+    "max": 400000,
+    "offerTarget": 380000,
+    "offerStrategy": "Offer 5–10% under asking",
+    "targetDeposit": 38000,
+    "depositPct": 10
+  },
+  "size": { "minBeds": 2, "idealBeds": 3, "minBaths": null, "minSqm": null },
+  "propertyTypes": ["House — 2+ bedrooms (3 ideal)"],
   "tenurePref": "freehold",
-  "outsideSpace": "",
-  "parking": "",
-  "epcMin": "",
-  "mustHaves": [],
-  "niceToHaves": []
+  "outsideSpace": "Garden required",
+  "parking": "Off-street parking required",
+  "epcMin": "C",
+  "condition": "Move-in ready preferred (check roof, boiler, damp)",
+  "mortgage": {
+    "targetMax": 360000,
+    "ratePctAssumed": 5.35,
+    "termYears": 35,
+    "ltvRange": "90–95%",
+    "monthlyPaymentRange": { "min": 1800, "max": 2000 },
+    "fixedRatePref": "2-year"
+  },
+  "mustHaves": [
+    "Freehold",
+    "2+ bedrooms",
+    "Garden",
+    "Off-street parking",
+    "EPC C or above",
+    "Countryside / rural setting"
+  ],
+  "niceToHaves": [
+    "3 bedrooms",
+    "Move-in ready (no major works)",
+    "Near Winchester or Salisbury",
+    "Low-population village"
+  ]
 }

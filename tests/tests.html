@@ -37,6 +37,7 @@
     await test('areas.json loads & valid', async () => { const e = schema.validateAreas(await loadJSON('areas')); assert(e.length === 0, e.join('; ')); });
     await test('house-types.json loads & valid', async () => { const e = schema.validateHouseTypes(await loadJSON('house-types')); assert(e.length === 0, e.join('; ')); });
     await test('finances.json loads & valid', async () => { const e = schema.validateFinances(await loadJSON('finances')); assert(e.length === 0, e.join('; ')); });
+    await test('checklists.json loads & valid', async () => { const e = schema.validateChecklists(await loadJSON('checklists')); assert(e.length === 0, e.join('; ')); });
 
     // --- partials reachable ---
     for (const p of ['components/header.html', 'components/nav.html', 'components/footer.html'])

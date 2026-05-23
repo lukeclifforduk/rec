@@ -1,32 +1,42 @@
-# USER PROFILE — about the buyer(s)
+# USER PROFILE — about the buyer
 
-> **Template.** To be filled at the Phase 2 supply checkpoint from your input. The human, narrative version
-> of `data/profile.json`. Replace the prompts in _italics_ with real detail.
+The narrative version of `data/profile.json` (and related figures in `data/criteria.json` /
+`data/finances.json`).
 
 ## Who's buying
-_Solo / couple / family? Names or initials, ages bracket, working situation, any dependents or pets._
+Solo **first-time buyer**, no dependents. Permanent employment — **£64,000** base salary plus a consistent
+**~£3,000** annual bonus. **Excellent** credit profile, no adverse history.
 
 ## How we want to live
-_Lifestyle and day-to-day: town buzz vs rural quiet, commuting vs WFH, garden/outdoor needs, hobbies,
-proximity to family/friends, community feel you want._
+Countryside living in a **low-population village** — a quiet, rural setting. Hampshire countryside near
+**Winchester / Salisbury** is the focus.
 
 ## What we're looking for (headline)
-_The one-paragraph summary of the ideal home and location._
+A **2–3 bedroom freehold** home (3 ideal) with a **garden** and **off-street parking**, **move-in ready**
+(no major works), **EPC C or above**, in a rural Hampshire village near Winchester or Salisbury.
 
 ## Budget & finances (headline)
-_Target purchase price range, target deposit, rough timescale. (Detailed savings live in the Finances page.)_
+- **Target property price:** up to **£400,000** (plan to offer 5–10% under, e.g. **£380,000**).
+- **Deposit:** ~**£38,000** (10%); target overall savings **£50–65k** for deposit + extras.
+- **Mortgage:** up to **£360,000**, **35-year** term, **90–95% LTV**, **2-year fixed** preferred,
+  ~£1,800–£2,000/month affordable.
+- **Moving window:** **March – September 2026**.
+- Detailed savings, costs, bills, expenses, shopping list and gift cards live on the Finances page
+  (`data/finances.json`).
 
 ## Must-haves (deal-breakers)
-- _e.g. freehold; min 2 bedrooms; off-street parking; good broadband; EPC D+_
+Freehold · 2+ bedrooms · garden · off-street parking · EPC C or above · countryside/rural setting.
 
 ## Nice-to-haves
-- _e.g. period character; south-facing garden; garage; walkable to a station_
+3 bedrooms · move-in ready · near Winchester or Salisbury · low-population village.
 
 ## Hard noes / areas to avoid
-- _e.g. flood-risk zones; busy main roads; specific areas_
+Leasehold · EPC below C · properties needing major works (roof / boiler / damp).
 
 ## Location focus
-_Which parts of Hampshire/Wiltshire matter most and why (commute anchors, family, work). Feeds AREAS.md._
+Hampshire countryside near **Winchester** and **Salisbury**. The full target list (191 villages across
+Hampshire & Wiltshire) is in `docs/AREAS.md` / `data/areas.json`.
 
 ## Notes
-_Anything else important to the search._
+Comfortable maximising borrowing as salary increases are expected. Keen to keep mortgage/arrangement fees
+low. Prefers a short (2-year) fixed rate.
