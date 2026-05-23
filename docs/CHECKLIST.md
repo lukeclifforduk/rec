@@ -88,9 +88,13 @@ for the next pass: Playwright screenshot harness, axe-core CLI in tests, `<dialo
 
 ## Phase 5 — Finances & budget dashboard
 - [x] `data/finances.json` (full real data: income, goal, savings, mortgage, one-time costs, bills, expenses, shopping list, gift cards)
-- [ ] `assets/js/finances.js` calculators (SDLT, LISA, LTV, progress, totals) — pure & tested
-- [ ] `pages/finances.html` (savings chart + cost/bill/expense breakdowns + shopping + gift cards + tools)
-- [ ] Tests: calculator benchmarks
+- [x] `assets/js/finances.js` calculators — pure & tested (SDLT FTB + standard Apr 2025+, monthly P&I
+      mortgage, LTV, LISA bonus, LISA eligibility cap, deposit progress, months-to-target, savings
+      projection, initial outlay) → `336f0ff`
+- [x] `pages/finances.html` (4 headline tiles, income/goal/mortgage/savings summaries, savings projection
+      Chart.js line graph, 5 breakdown tables — one-time costs, bills, expenses, shopping, gift cards —
+      with totals; 4 live calculators — SDLT, mortgage, LTV, LISA — driving off the pure functions)
+- [x] Tests: 15 calculator benchmarks in `tests/tests.html` (all known-input → known-output cases pass)
 - [ ] Commit + push
 
 ## Phase 4.5 — Journey / checklists (NEW, pending IA confirmation)

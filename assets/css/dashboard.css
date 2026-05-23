@@ -123,3 +123,25 @@
 }
 
 #btn-star.is-starred { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
+
+/* ---- Finances page ---- */
+.chart-tall { height: 320px; }
+.chart-tall canvas { max-height: 320px; }
+
+.table-wrap { overflow-x: auto; }
+.table-wrap table { width: 100%; margin: 0; font-size: var(--text-sm); }
+.table-wrap th, .table-wrap td { padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--pico-muted-border-color); vertical-align: top; }
+.table-wrap th.num, .table-wrap td.num { text-align: right; white-space: nowrap; }
+.table-wrap tfoot td { border-top: 2px solid var(--pico-muted-border-color); border-bottom: 0; }
+
+.calc-grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr 1fr; }
+.calc-grid fieldset { border: 1px solid var(--pico-muted-border-color); border-radius: var(--rec-radius-sm); padding: var(--space-3) var(--space-4); margin: 0; }
+.calc-grid legend { font-weight: 600; padding: 0 var(--space-2); }
+.calc-grid label { display: block; font-size: var(--text-xs); color: var(--pico-muted-color); margin-top: var(--space-2); }
+.calc-grid input { margin: 0.25rem 0 0; }
+.calc-result { margin: var(--space-3) 0 0; font-size: var(--text-base); }
+.calc-result strong { color: var(--accent); }
+
+@media (max-width: 768px) {
+  .calc-grid { grid-template-columns: 1fr; }
+}
