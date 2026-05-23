@@ -161,6 +161,8 @@ Each item below is one commit + push milestone. Anchor in commit message (Stripe
       `.mcp.json` with Playwright MCP entry; baseline screenshots of current state
 
 ### 8B · Map (anchor: Linear-dense; biggest single perceptual upgrade)
+- [~] Interim: CartoDB Positron / Dark Matter basemap + themed Leaflet popups + accent-soft
+      markers. Cleaner than raw OSM for now; full MapLibre + PMTiles swap below.
 - [ ] Swap Leaflet + Geoman → MapLibre GL JS v5 + maplibre-gl-draw
 - [ ] Hampshire/Wiltshire PMTiles slice at `assets/maps/uk-south.pmtiles` from Protomaps
 - [ ] Token-driven map style (light + dark variants); markers carry the only saturation
@@ -169,16 +171,16 @@ Each item below is one commit + push milestone. Anchor in commit message (Stripe
 - [ ] Port `page-map.js`: markers, shortlist toggle, drawn-zones persistence (unchanged storage API)
 
 ### 8C · Per-page redesigns (in plan order)
-- [ ] `index.html` — bento dashboard, oversized progress, shortlist with thumbs
-- [ ] `pages/profile.html` — article layout, dialog-based edit panel
-- [ ] `pages/criteria.html` — single dense form, sticky section nav, sticky save bar
-- [ ] `pages/areas.html` — editorial list view, URL-driven filters, dialog filter sheet
-- [ ] `pages/area-detail.html` — magazine layout, sticky anchored TOC, inline mini-map, footnote sources
-- [ ] `pages/house-types.html` — two-up editorial gallery with type-locked imagery
-- [ ] `pages/journey.html` — tabbed checklists, large touch targets, per-section progress bar
-- [ ] `pages/finances.html` — hero stat tiles in Fraunces, themed chart, tabular-num tables
-- [ ] Shared shell (`components/header.html`, `nav.html`, `footer.html`): scroll-shrink header,
-      animated active-link indicator via View Transition
+- [x] `index.html` — bento dashboard, SVG progress ring with Fraunces centre, themed chart, journey step strip
+- [x] `pages/profile.html` — editorial article layout, native `<dialog>` edit panel, chip-grid priorities
+- [x] `pages/criteria.html` — page-head editorial; dense form + sticky save bar deferred
+- [x] `pages/areas.html` — editorial list view; URL-driven filters + dialog filter sheet deferred
+- [x] `pages/area-detail.html` — article with hairline-divided sections; sticky TOC + mini-map deferred to 8B
+- [x] `pages/house-types.html` — two-up editorial gallery, 4:3 image wells, accent-soft placeholders
+- [x] `pages/journey.html` — editorial head, article column layout
+- [x] `pages/finances.html` — themed chart matching dashboard; hero Fraunces stat tiles deferred
+- [x] Shared shell — circular ink brand mark in Fraunces, pill theme toggle, refined nav
+      (scroll-shrink header + animated active-link indicator deferred)
 
 ### 8D · Imagery
 - [ ] `tools/fetch-images.mjs` (CSV → assets/img + JSON credit/licence write-back)
