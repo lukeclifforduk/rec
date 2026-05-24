@@ -949,3 +949,423 @@
   "status": "researched"
 }
 ```
+
+# Area Batch 03 — Andover (SP11) + Basingstoke Candovers (RG25) + Wield (East Hants)
+
+```json
+{
+  "id": "newton-stacey-sp11",
+  "overview": "Newton Stacey is a hamlet of around fifty households in the civil parish of Barton Stacey, in the Test Valley district, set on the south bank of the River Dever roughly one and a half miles west of Barton Stacey village and four and a half miles south-west of the railway town of Andover. The hamlet lies between the A303 (a mile to the north) and the A30 (a mile to the south) on lanes that cross both trunk roads, giving an unusually quick exit east to Winchester or west to Stockbridge. The seed CSV tags this record SP11 but the Royal Mail post town is Stockbridge and Newton Stacey's actual postcode area is SO20 (residential addresses sit in SO20 6BP and nearby sectors); the Wikipedia infobox confirms SO20. Historically the hamlet's most-cited resident is the 17th-century preacher Stephen Bachiler, whose zealous followers from Newton Stacey settled in New England. The 2012 closure of the Newton Stacey post office means daily-need shopping is now at Barton Stacey or Andover.",
+  "character": "Tiny linear hamlet of detached cottages, period farmhouses and a small number of modern infill plots, set in arable chalkland with the Dever as a southern boundary. No village centre and no formal conservation-area designation. Building stock includes brick, flint and rendered cottages alongside larger 20th-century houses.",
+  "amenities": [
+    "Newton Stacey ford on the River Dever",
+    "Access to Bransbury Common SSSI (south-east)",
+    "Direct lane access to Barton Stacey amenities (1.5 mi)",
+    "Close to Naomi House Children's Hospice at Sutton Scotney (~3 mi)"
+  ],
+  "schools": [
+    { "name": "Barton Stacey Church of England Primary School", "phase": "Primary", "ofsted": null, "distance": "1.6 mi", "url": "https://reports.ofsted.gov.uk/" },
+    { "name": "The Swan Inn / Barton Stacey village amenities", "phase": "Amenity", "ofsted": null, "distance": "1.5 mi", "url": "https://www.bartonstacey.org.uk/" },
+    { "name": "Test Valley School / Danebury School, Stockbridge", "phase": "Secondary", "ofsted": "Inadequate (2022)", "distance": "5.0 mi", "url": "https://reports.ofsted.gov.uk/" }
+  ],
+  "transport": {
+    "nearestStation": "Andover (5.0 mi)",
+    "commutes": [
+      { "to": "London Waterloo", "time": "1h 10m", "mode": "drive to Andover + direct train (South Western Railway)", "source": "https://www.thetrainline.com/train-times/andover-to-london-waterloo" },
+      { "to": "London Waterloo (fastest)", "time": "1h 2m", "mode": "drive + train", "source": "https://www.thetrainline.com/train-times/andover-to-london-waterloo" },
+      { "to": "Winchester (by road)", "time": "~20m", "mode": "drive (A30 / A33)", "source": "https://www.nationalrail.co.uk/" }
+    ],
+    "roads": "A303 ~1 mi (Bransbury junction); A30 ~1 mi; A34 (Sutton Scotney) ~2 mi"
+  },
+  "prices": {
+    "avgSold12Mo": null,
+    "avgDetached": null,
+    "avgSemi": null,
+    "avgTerraced": null,
+    "avgFlat": null,
+    "source": "https://www.rightmove.co.uk/house-prices/so20.html",
+    "asOf": "2026-05"
+  },
+  "thingsToDo": [
+    "Walking Bransbury Common SSSI",
+    "Dever and Test footpaths to Barton Stacey",
+    "Naomi House and Jacksplace open days (~3 mi)",
+    "Hampshire CC Wherwell-to-Chilbolton riverside trail (~4 mi)",
+    "Sutton Scotney village shops and Tarrant's farm shop (~3 mi)"
+  ],
+  "placesToEat": [
+    { "name": "The Swan Inn, Barton Stacey", "type": "Village pub", "notes": "Closest pub; 1.5 mi east in Barton Stacey", "url": "https://www.useyourlocal.com/" }
+  ],
+  "pros": [
+    "Quick A303 / A30 / A34 access in three directions",
+    "Andover station 5 mi for direct Waterloo trains in 1h 2-10m",
+    "Bransbury Common SSSI within walking distance",
+    "Period and modern stock available at lower prices than Stockbridge or Wherwell"
+  ],
+  "cons": [
+    "Seed CSV tags this record SP11; the real postcode area is SO20",
+    "No shop, pub, school or church within the hamlet itself",
+    "Secondary catchment school rated Inadequate in 2022",
+    "A303 traffic noise audible from northern lanes"
+  ],
+  "whoItSuits": "Buyers wanting a quieter and cheaper alternative to Stockbridge or Wherwell, accepting that the hamlet has no in-village amenities and that day-to-day life is oriented to Barton Stacey, Sutton Scotney or Andover. Particularly suited to remote workers needing fast trunk-road access (A303 east-west, A34 north-south) and to families willing to drive children to Barton Stacey Primary. Not appropriate for buyers needing public transport, a village school in walking distance, or in-village social anchor like a pub.",
+  "councilTaxBand": null,
+  "broadbandMedianMbps": null,
+  "nearestStation": "Andover (5.0 mi)",
+  "primarySupermarket": "Sainsbury's, Andover (5.5 mi); Waitrose, Stockbridge (5.5 mi)",
+  "images": [],
+  "sources": [
+    "https://en.wikipedia.org/wiki/Newton_Stacey",
+    "https://en.wikipedia.org/wiki/Barton_Stacey",
+    "https://getoutside.ordnancesurvey.co.uk/local/newton-stacey-test-valley",
+    "https://mapcarta.com/N1272258398",
+    "https://www.thetrainline.com/train-times/andover-to-london-waterloo",
+    "https://www.testvalley.gov.uk/benefitsandcounciltax/counciltax/council-tax-charges"
+  ],
+  "status": "researched"
+}
+```
+
+```json
+{
+  "id": "wherwell-sp11",
+  "overview": "Wherwell is a thatched village of around 500 residents on the banks of the upper River Test, three miles south of Andover in the Test Valley district. The village shows some of the most consistently surviving straw-thatching in southern England — black-and-white timber-framed cottages along Church Street and Winchester Street whose thatch sweeps almost to the ground and curls over the casement windows. The village owes its preserved appearance to long single-estate ownership: the Wherwell Estate has held most of the surrounding land and many of the cottages since the 19th century, and continues to manage the river beats and arable acreage as a working sporting estate. The parish church of St Peter and Holy Cross was rebuilt in 1856 by Henry Woodyer on the site of an earlier 12th-century church, retaining 11th-century fragments. The White Lion Inn (1611) and the Mayfly nearby at Fullerton are the village's anchor hospitality. Harewood Forest — the largest contiguous woodland in Hampshire — wraps the village to the east.",
+  "character": "Pure thatched estate village in conservation area: chocolate-box visual identity, working sporting tradition, deliberately tourist-aware. Building stock is overwhelmingly 16th–17th-century timber-frame with thatch, with a small number of Georgian and Victorian additions. Tight planning constraints under Test Valley local plan and the estate's own oversight.",
+  "amenities": [
+    "The White Lion Inn (oak-beamed coaching inn, 1611)",
+    "Church of St Peter and Holy Cross (1856 rebuild on 12th-century foundations)",
+    "Village hall",
+    "Wherwell Primary School",
+    "Wherwell Estate offices",
+    "Active village community newsletter",
+    "Riverside footpath access to Test"
+  ],
+  "schools": [
+    { "name": "Wherwell Primary School", "phase": "Primary", "ofsted": null, "distance": "0.2 mi", "url": "https://reports.ofsted.gov.uk/" },
+    { "name": "Test Valley School / Danebury School, Stockbridge", "phase": "Secondary", "ofsted": "Inadequate (2022)", "distance": "5.5 mi", "url": "https://reports.ofsted.gov.uk/" },
+    { "name": "Harrow Way Community School, Andover", "phase": "Secondary", "ofsted": null, "distance": "3.5 mi", "url": "https://reports.ofsted.gov.uk/" }
+  ],
+  "transport": {
+    "nearestStation": "Andover (3.0 mi)",
+    "commutes": [
+      { "to": "London Waterloo", "time": "1h 10m", "mode": "drive + direct train (South Western Railway)", "source": "https://www.thetrainline.com/train-times/andover-to-london-waterloo" },
+      { "to": "London Waterloo (fastest)", "time": "1h 2m", "mode": "drive + train", "source": "https://www.thetrainline.com/train-times/andover-to-london-waterloo" },
+      { "to": "Winchester (by road)", "time": "~25m", "mode": "drive (A3057 / A303)", "source": "https://www.nationalrail.co.uk/" }
+    ],
+    "roads": "A303 ~1 mi; A3057 (through village); A34 ~3 mi"
+  },
+  "prices": {
+    "avgSold12Mo": null,
+    "avgDetached": null,
+    "avgSemi": null,
+    "avgTerraced": null,
+    "avgFlat": null,
+    "source": "https://www.rightmove.co.uk/house-prices/sp11.html",
+    "asOf": "2026-05"
+  },
+  "thingsToDo": [
+    "Wherwell-to-Chilbolton riverside trail (Hampshire CC)",
+    "Harewood Forest circular walks (largest woodland in Hampshire)",
+    "Trout and grayling fishing on Wherwell Estate beats",
+    "Test Way long-distance footpath",
+    "The Mayfly riverside pub at Fullerton (1 mi)",
+    "Andover Museum of the Iron Age (3 mi)",
+    "Danebury Hill Fort (6 mi)"
+  ],
+  "placesToEat": [
+    { "name": "The White Lion", "type": "Village coaching inn", "notes": "Oak-beamed 1611 inn at the centre of the village; pub food and rooms", "url": "https://www.whitelionwherwell.co.uk/" },
+    { "name": "The Mayfly, Fullerton", "type": "Riverside pub", "notes": "Test-side pub in adjacent Wherwell parish, mains around £16–£24", "url": "https://www.themayfly.co.uk/" }
+  ],
+  "pros": [
+    "Outstanding visual character — one of England's best-preserved thatched villages",
+    "Andover station 3 mi for direct Waterloo trains in 1h 2-10m",
+    "Walking and fishing on the doorstep; Harewood Forest immediately east",
+    "Working primary school in the village"
+  ],
+  "cons": [
+    "House prices reflect the postcard appeal — heritage premium",
+    "Thatch maintenance cycle ~25–35 years (£15–30k per re-thatching)",
+    "Tourist traffic on the A3057 through-route in summer",
+    "Secondary catchment school (Stockbridge) rated Inadequate in 2022"
+  ],
+  "whoItSuits": "Buyers willing to pay for one of the most consistently preserved thatched chalk-stream villages in England, and to accept the ongoing maintenance cost and tourist footfall that come with it. The village offers a rare combination — a working primary school, a 1611 inn, walking and fishing on the doorstep, and a direct Waterloo train from a station three miles away. Particularly suited to anglers, walkers, weekending households and downsizers from south-east commuter towns. Less suited to buyers needing the secondary catchment school or wanting absolute quiet during peak tourist months.",
+  "councilTaxBand": "D",
+  "broadbandMedianMbps": null,
+  "nearestStation": "Andover (3.0 mi)",
+  "primarySupermarket": "Sainsbury's, Andover (3.5 mi); Waitrose, Stockbridge (6.0 mi)",
+  "images": [],
+  "sources": [
+    "https://en.wikipedia.org/wiki/Wherwell",
+    "https://www.wherwellestate.co.uk/fishing",
+    "https://www.hants.gov.uk/thingstodo/countryside/walking/wherwellchilbolton",
+    "https://www.whitelionwherwell.co.uk/",
+    "https://www.themayfly.co.uk/",
+    "https://www.thetrainline.com/train-times/andover-to-london-waterloo",
+    "https://www.testvalley.gov.uk/benefitsandcounciltax/counciltax/council-tax-charges"
+  ],
+  "status": "researched"
+}
+```
+
+```json
+{
+  "id": "wield-gu35",
+  "overview": "Wield is a small civil parish in the East Hampshire district, on the chalk uplands between Alresford and Basingstoke, containing two villages — Upper Wield and Lower Wield — about a mile apart. The parish population at the 2021 census was 237. The parish church of St James in Upper Wield is mainly Norman, Grade I-listed, and contains a notable monument to William Wallop (c. 1553–1617), who served as MP for Southampton, justice of the peace and three-times mayor of Southampton. The Yew Tree, in Lower Wield, is the parish's pub. The seed CSV records this entry as GU35 but the actual postcode area is SO24 (post town Alresford) — the Yew Tree's address is SO24 9RX. The parish lies in a wide stretch of chalk downland with no significant numbered roads through it; the closest is the B3046 between Alresford and Basingstoke, about a mile and a half west.",
+  "character": "Loose two-village civil parish on high chalk downland with mature beechwoods, an active parish hall in Upper Wield and a fishing-and-shooting estate culture. Building stock is predominantly 17th–19th-century brick-and-flint farmhouses and thatched cottages, with a Grade I-listed Norman church anchoring Upper Wield. Strict planning regime; turnover is rare.",
+  "amenities": [
+    "St James's Church, Upper Wield (Grade I, mainly Norman)",
+    "The Yew Tree, Lower Wield (village pub)",
+    "Parish Hall, Upper Wield",
+    "Village green at Upper Wield",
+    "Active quarterly parish council meetings",
+    "Open chalk downland walking from both villages"
+  ],
+  "schools": [
+    { "name": "Preston Candover Church of England Primary School", "phase": "Primary", "ofsted": "Good", "distance": "3.0 mi", "url": "https://files.ofsted.gov.uk/v1/file/50209502" },
+    { "name": "Bentworth Church of England Primary School", "phase": "Primary", "ofsted": null, "distance": "2.5 mi", "url": "https://reports.ofsted.gov.uk/" },
+    { "name": "Perins School, Alresford", "phase": "Secondary", "ofsted": null, "distance": "5.5 mi", "url": "https://reports.ofsted.gov.uk/" }
+  ],
+  "transport": {
+    "nearestStation": "Alton (5.5 mi)",
+    "commutes": [
+      { "to": "London Waterloo (via Alton)", "time": "1h 13m", "mode": "drive + direct train (South Western Railway)", "source": "https://www.thetrainline.com/stations/alton" },
+      { "to": "London Waterloo (via Basingstoke, fastest)", "time": "42m + drive", "mode": "drive ~8 mi + direct train (SWR)", "source": "https://www.thetrainline.com/train-times/basingstoke-to-london-waterloo" }
+    ],
+    "roads": "B3046 ~1.5 mi; A339 ~3 mi; A31 ~5 mi; M3 J7 (Basingstoke) ~9 mi"
+  },
+  "prices": {
+    "avgSold12Mo": null,
+    "avgDetached": null,
+    "avgSemi": null,
+    "avgTerraced": null,
+    "avgFlat": null,
+    "source": "https://www.rightmove.co.uk/house-prices/so24.html",
+    "asOf": "2026-05"
+  },
+  "thingsToDo": [
+    "Walking the chalk downland circular Wield–Bentworth–Bradley",
+    "St James's Church visit (Grade I Norman building, Wallop memorial)",
+    "Hattingley Valley Wines tour (3 mi south)",
+    "The Grange, Northington estate (5 mi)",
+    "Watercress Line heritage railway from Alresford (5 mi)"
+  ],
+  "placesToEat": [
+    { "name": "The Yew Tree, Lower Wield", "type": "Country pub", "notes": "Sole village pub; traditional menu", "url": "http://www.the-yewtree.org.uk/" }
+  ],
+  "pros": [
+    "Grade I-listed Norman church (one of the finest in north Hampshire)",
+    "Two-station optionality: Alton (slow direct) or Basingstoke (fast direct)",
+    "Open chalk downland walking from both villages",
+    "Strict planning protects rural character"
+  ],
+  "cons": [
+    "Seed CSV records this record as GU35; the actual postal district is SO24",
+    "No shop, post office or school within the parish (Lower Wield's Yew Tree is the only commercial venue)",
+    "Mobile signal patchy across the chalk downs",
+    "Property stock is small and rarely turns over"
+  ],
+  "whoItSuits": "Cash-buyer households wanting a chalk-downland setting with two-station train optionality (the Basingstoke route to Waterloo is one of the fastest in this whole batch) and accepting that day-to-day life is car-dependent. Best fit for retirees, remote workers, and downsizers from Alresford or Basingstoke. The Wield parish duplicates with the seed CSV's separate `upper-wield-gu35` record (batch 11); Luke should consider consolidating these into one record covering the parish, since the seed-data split between Upper Wield and the parish-level Wield is not reflected in the 2021 census or in the Wikipedia entry.",
+  "councilTaxBand": null,
+  "broadbandMedianMbps": null,
+  "nearestStation": "Alton (5.5 mi)",
+  "primarySupermarket": "Waitrose, Alresford (5.5 mi); Sainsbury's, Basingstoke (8.5 mi)",
+  "images": [],
+  "sources": [
+    "https://en.wikipedia.org/wiki/Wield",
+    "https://en.wikipedia.org/wiki/Lower_Wield",
+    "https://fancyfreewalks.org/Hampshire/Wield.pdf",
+    "https://files.ofsted.gov.uk/v1/file/50209502",
+    "https://www.thetrainline.com/stations/alton",
+    "https://www.thetrainline.com/train-times/basingstoke-to-london-waterloo"
+  ],
+  "status": "researched"
+}
+```
+
+```json
+{
+  "id": "brown-candover-rg25",
+  "overview": "Brown Candover is a small village in the Candovers civil parish, in the Basingstoke and Deane district, set on chalk downland at the head of the Candover Brook (a tributary of the River Itchen) about five miles north of New Alresford. The village population was 236 at the 2011 census. It is the southernmost of three former Candover parishes — Chilton, Brown and Preston — strung along the B3046 between Alresford and Basingstoke; Chilton Candover and Brown Candover were merged into a single Candovers civil parish in 1932. The parish church of St Peter, built in 1845 chiefly at the expense of Lord Ashburton, is a Tudor-style structure that replaced an earlier medieval church; the nearby Grange at Northington, a 19th-century country house and English landscape park owned by the Baring family, is two miles south-west. Brown Candover is home to Candover Cricket Club, who play home matches with the 19th-century St Peter's church as backdrop. The seed CSV records this as RG25 but Wikipedia gives the post town as Alresford and postcode district as SO24; some properties straddle both designations.",
+  "character": "Small estate-influenced linear village strung along the B3046 with brick-and-flint cottages, period farmhouses and 20th-century additions. Open arable downland on three sides. No conservation area but tight planning regime in line with the wider Candover Valley character.",
+  "amenities": [
+    "Church of St Peter (1845 Tudor-style rebuild)",
+    "Candover Valley Club (community centre)",
+    "Candover Cricket Club (idyllic St Peter's backdrop)",
+    "The Grange, Northington (English landscape park, 2 mi)",
+    "Nearest shop and post office: Preston Candover (1.5 mi)",
+    "Preston Candover village hall (1.5 mi)"
+  ],
+  "schools": [
+    { "name": "Preston Candover Church of England Primary School", "phase": "Primary", "ofsted": "Good", "distance": "1.5 mi", "url": "https://files.ofsted.gov.uk/v1/file/50209502" },
+    { "name": "Preston Candover Pre-school Kindergarten", "phase": "Pre-school", "ofsted": null, "distance": "1.5 mi", "url": "http://candovervalley.org/about/" },
+    { "name": "Perins School, Alresford", "phase": "Secondary", "ofsted": null, "distance": "5.0 mi", "url": "https://reports.ofsted.gov.uk/" }
+  ],
+  "transport": {
+    "nearestStation": "Basingstoke (8.0 mi)",
+    "commutes": [
+      { "to": "London Waterloo (via Basingstoke, fastest)", "time": "42m + drive", "mode": "drive ~8 mi + direct train (SWR)", "source": "https://www.thetrainline.com/train-times/basingstoke-to-london-waterloo" },
+      { "to": "London Waterloo (via Alton)", "time": "1h 13m + drive", "mode": "drive ~8 mi + direct train (SWR)", "source": "https://www.thetrainline.com/stations/alton" },
+      { "to": "London Waterloo (via Winchester)", "time": "55m + drive", "mode": "drive ~10 mi + direct train (SWR)", "source": "https://www.nationalrail.co.uk/" }
+    ],
+    "roads": "B3046 (through village); A339 ~5 mi; A31 (Alresford) ~5 mi; M3 J7 (Basingstoke) ~9 mi"
+  },
+  "prices": {
+    "avgSold12Mo": null,
+    "avgDetached": null,
+    "avgSemi": null,
+    "avgTerraced": null,
+    "avgFlat": null,
+    "source": "https://www.rightmove.co.uk/house-prices/so24.html",
+    "asOf": "2026-05"
+  },
+  "thingsToDo": [
+    "Watching Candover Cricket Club with St Peter's church as backdrop",
+    "Walking the chalk-stream Candover Brook footpaths",
+    "The Grange, Northington (English landscape park, NT-managed events)",
+    "Hattingley Valley Wines tour and tasting (~3 mi)",
+    "Watercress Line heritage railway from Alresford (5 mi)",
+    "Jane Austen's House Museum, Chawton (10 mi)"
+  ],
+  "placesToEat": [
+    { "name": "The Purefoy Arms, Preston Candover", "type": "Gastropub", "notes": "Closed long-term as of late 2024 for refurbishment; planning approvals October 2024 for reopening with guest accommodation and deli/café — reopening date not confirmed", "url": "https://www.purefoyarms.co.uk/" },
+    { "name": "The Woolpack Inn, Chilton Candover", "type": "Country pub", "notes": "Nearest alternative pub (~1 mi north)", "url": "https://www.useyourlocal.com/" }
+  ],
+  "pros": [
+    "Basingstoke station 8 mi for fastest direct Waterloo trains (42m)",
+    "Good Ofsted primary 1.5 mi away at Preston Candover",
+    "St Peter's church and Candover Valley Club provide social anchors",
+    "Equidistant from Alresford, Basingstoke and Winchester"
+  ],
+  "cons": [
+    "Seed CSV records this as RG25 but Wikipedia gives postal district as SO24",
+    "No shop, school, station or post office within the village itself",
+    "Purefoy Arms (the nearest gastropub) closed long-term as of 2024",
+    "Mobile signal patchy on chalk downland sections"
+  ],
+  "whoItSuits": "Buyers wanting estate-village quiet with three-way commuter optionality (Basingstoke for speed, Alton/Winchester for direct alternatives), and accepting that day-to-day amenities live at Preston Candover, Alresford or Basingstoke. Particularly suited to families willing to make the short drive to a Good Ofsted primary, downsizers from Basingstoke and London-commuting households who value the unusually fast Waterloo time from Basingstoke. Less suited to first-time buyers (limited stock) or buyers needing a working village shop and pub within walking distance.",
+  "councilTaxBand": null,
+  "broadbandMedianMbps": null,
+  "nearestStation": "Basingstoke (8.0 mi)",
+  "primarySupermarket": "Waitrose, Alresford (5.5 mi); Sainsbury's, Basingstoke (8.5 mi)",
+  "images": [],
+  "sources": [
+    "https://en.wikipedia.org/wiki/Brown_Candover",
+    "https://www.genuki.org.uk/big/eng/HAM/BrownCandover",
+    "http://candovervalley.org/about/",
+    "https://files.ofsted.gov.uk/v1/file/50209502",
+    "https://www.thetrainline.com/train-times/basingstoke-to-london-waterloo",
+    "https://wikishire.co.uk/wiki/Brown_Candover"
+  ],
+  "status": "researched"
+}
+```
+
+```json
+{
+  "id": "farley-mount-rg25",
+  "overview": "REJECTED — this record corresponds to no real village. Farley Mount is a chalk hill four miles west of Winchester (OS grid SU403290, postcode SO21 2JG) topped by an 18th-century pyramid folly built in 1734 as a monument and burial marker to a horse named 'Beware Chalk Pit'; the surrounding area is Farley Mount Country Park, an 1,500-acre area of chalk grassland and ancient woodland (Crab Wood SSSI) managed by Hampshire County Council. It is not a village, has no resident population, and is not in postcode district RG25. The seed CSV entry 'Hampshire,Basingstoke,Farley Mount,RG25' appears to be a transcription error. The most likely intended village is Farleigh Wallop, a small estate village four miles south of Basingstoke (RG25 2HT) owned by the Earl of Portsmouth's family — please confirm before re-issuing. This record should be deleted from areas.json or re-assigned to farleigh-wallop-rg25.",
+  "character": "",
+  "amenities": [],
+  "schools": [],
+  "transport": { "commutes": [] },
+  "prices": {},
+  "thingsToDo": [],
+  "placesToEat": [],
+  "pros": [],
+  "cons": [],
+  "whoItSuits": "",
+  "councilTaxBand": null,
+  "broadbandMedianMbps": null,
+  "nearestStation": null,
+  "primarySupermarket": null,
+  "images": [],
+  "sources": [
+    "https://en.wikipedia.org/wiki/Farley_Mount",
+    "https://www.hants.gov.uk/thingstodo/countryside/finder/farleymount",
+    "https://www.visit-hampshire.co.uk/things-to-do/farley-mount-monument-p1414861"
+  ],
+  "status": "needs_redo"
+}
+```
+
+```json
+{
+  "id": "preston-candover-rg25",
+  "overview": "Preston Candover is a village in the now-merged Preston Candover, Nutley and Axford civil parish, in the Basingstoke and Deane district, four and a half miles south of Basingstoke and five miles north of New Alresford on the B3046 chalk-valley road. The 2011 census recorded a parish population of 357 (510 including Bradley and Moundsmere). The village pump in the centre of the village is a Grade II-listed structure; one of the village's two churches (St Mary the Virgin) remains in active use, while the other is redundant. Preston Candover is home to Lord Sainsbury of Preston Candover (the supermarket family) and to the Purefoy Arms — a Grade II-listed Modern British / French gastropub which previously held a Michelin Guide listing and 2 AA Rosettes until early 2024, and which secured planning approval in October 2024 for refurbishment including guest accommodation and a deli/café (reopening date not yet confirmed). The village retains a working village store, village hall, tennis club, pre-school kindergarten and Preston Candover Church of England Primary School (Good, Ofsted January 2023).",
+  "character": "Working chalk-valley village with intact 19th-century B3046 frontage of brick-and-flint cottages, Victorian estate housing, and 20th-century additions on the village fringes. Two churches, a working primary school, a village hall and a Grade II village pump anchor the centre. Tight Basingstoke and Deane planning regime; conservation-area sensibility without formal designation.",
+  "amenities": [
+    "Preston Candover Church of England Primary School",
+    "Preston Candover Pre-school Kindergarten",
+    "Village shop and post office",
+    "Village hall",
+    "Tennis club",
+    "Church of St Mary the Virgin",
+    "Redundant second church (open by appointment)",
+    "Grade II-listed village pump",
+    "Active Candover Valley community network"
+  ],
+  "schools": [
+    { "name": "Preston Candover Church of England Primary School", "phase": "Primary", "ofsted": "Good", "distance": "0.2 mi", "url": "https://files.ofsted.gov.uk/v1/file/50209502" },
+    { "name": "Perins School, Alresford", "phase": "Secondary", "ofsted": null, "distance": "5.5 mi", "url": "https://reports.ofsted.gov.uk/" },
+    { "name": "Cranbourne Business and Enterprise College, Basingstoke", "phase": "Secondary", "ofsted": null, "distance": "5.5 mi", "url": "https://reports.ofsted.gov.uk/" }
+  ],
+  "transport": {
+    "nearestStation": "Basingstoke (6.5 mi)",
+    "commutes": [
+      { "to": "London Waterloo (via Basingstoke, fastest)", "time": "42m + drive", "mode": "drive ~7 mi + direct train (South Western Railway)", "source": "https://www.thetrainline.com/train-times/basingstoke-to-london-waterloo" },
+      { "to": "London Waterloo (typical)", "time": "54m + drive", "mode": "drive + train", "source": "https://www.thetrainline.com/train-times/basingstoke-to-london-waterloo" },
+      { "to": "Winchester (by road)", "time": "~25m", "mode": "drive (B3046 / A33)", "source": "https://www.nationalrail.co.uk/" }
+    ],
+    "roads": "B3046 (through village); A339 ~3 mi; A31 (Alresford) ~5 mi; M3 J7 (Basingstoke) ~7 mi"
+  },
+  "prices": {
+    "avgSold12Mo": null,
+    "avgDetached": null,
+    "avgSemi": null,
+    "avgTerraced": null,
+    "avgFlat": null,
+    "source": "https://www.rightmove.co.uk/house-prices/rg25.html",
+    "asOf": "2026-05"
+  },
+  "thingsToDo": [
+    "Walking the chalk-stream Candover Brook footpaths",
+    "Candover Cricket Club home matches at Brown Candover (1.5 mi)",
+    "Hattingley Valley Wines tour and tasting (~3 mi)",
+    "The Grange, Northington estate (~4 mi)",
+    "Watercress Line heritage railway from Alresford (5 mi)",
+    "Annual Preston Candover horticultural show"
+  ],
+  "placesToEat": [
+    { "name": "The Purefoy Arms", "type": "Gastropub", "notes": "Grade II-listed; previously Michelin Guide-listed and 2 AA Rosettes; closed for refurbishment from 2024 — reopening date not yet confirmed; planning approval October 2024 includes guest accommodation and deli/café", "url": "https://www.purefoyarms.co.uk/" },
+    { "name": "The Woolpack Inn, Chilton Candover", "type": "Country pub", "notes": "Nearest alternative pub (~1.5 mi south)", "url": "https://www.useyourlocal.com/" }
+  ],
+  "pros": [
+    "Working Ofsted Good primary school in the village",
+    "Basingstoke station 6.5 mi for the fastest direct Waterloo trains in this batch (42m)",
+    "Full village amenity set (shop, post office, hall, two churches, tennis)",
+    "Lord Sainsbury connection has historically attracted careful stewardship of the area"
+  ],
+  "cons": [
+    "Purefoy Arms (the village's destination gastropub) closed for refurbishment from 2024",
+    "B3046 traffic through the village can be heavy at peak times",
+    "Limited choice of pubs while Purefoy reopening pending",
+    "No mainline station within the parish (Basingstoke is 6.5 mi by road)"
+  ],
+  "whoItSuits": "Buyers wanting a working village with a Good Ofsted primary, an intact retail and community offering, and the fastest direct-Waterloo commute in this batch (42 minutes from Basingstoke, 7 miles away). Particularly suited to families with primary-age children, Basingstoke-bound commuters who want a village setting, and downsizers from busier south-east towns. The current Purefoy Arms closure removes the destination dining option for the time being; buyers attracted by gastronomy should weigh this against the village's other strengths until the reopening date is confirmed.",
+  "councilTaxBand": "D",
+  "broadbandMedianMbps": null,
+  "nearestStation": "Basingstoke (6.5 mi)",
+  "primarySupermarket": "Sainsbury's, Basingstoke (7.5 mi); Waitrose, Alresford (5.5 mi); village shop in Preston Candover for daily basics",
+  "images": [],
+  "sources": [
+    "https://en.wikipedia.org/wiki/Preston_Candover",
+    "http://candovervalley.org/about/",
+    "https://files.ofsted.gov.uk/v1/file/50209502",
+    "https://www.themobilefoodguide.com/restaurants/preston-candover/purefoy-arms",
+    "https://camra.org.uk/pubs/purefoy-arms-preston-candover-179309",
+    "https://www.thetrainline.com/train-times/basingstoke-to-london-waterloo",
+    "https://en.wikipedia.org/wiki/Brown_Candover"
+  ],
+  "status": "researched"
+}
+```
