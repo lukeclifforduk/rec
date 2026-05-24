@@ -213,3 +213,43 @@ Each item below is one commit + push milestone. Anchor in commit message (Stripe
       full 36-shot baseline grid; review under `artifacts/screenshots/baseline/`
 - [ ] Layer axe-core CLI + lighthouse-ci on top of verify-ui.mjs (thresholds per CLAUDE.md §13)
 - [ ] Update `docs/PLAN.md` to mark Phase 8 complete
+
+## Phase 9 — Finalisation (May 2026 →)
+Confirmed via 25-question scope review with the user. See `docs/PLAN.md` §"Phase 9 — Finalisation"
+for the full spec. Network policy of the current sandbox blocks all research / imagery / tile
+sources, so 9F items are queued behind tools to be run from a connected host.
+
+### 9A · Information architecture (on-sandbox)
+- [ ] Merge `pages/profile.html` + `pages/criteria.html` → `pages/about-search.html` (Stripe-docs).
+      Old URLs redirect via `<meta refresh>`. Nav updated: `Profile · Criteria` → `About`.
+- [ ] Dashboard reorganisation: magazine lead-in + bento that aggregates from every page
+      (Linear-dense hybrid).
+- [ ] Finances kept as one page, restructured into "Now vs Later" sections.
+- [ ] Journey checklists global (no per-area state) + "what unlocks next" hint per section.
+
+### 9B · Areas page improvements (on-sandbox)
+- [ ] URL-driven filter state on `pages/areas.html` (`q`/`county`/`sub`/`sort`/`starred` params).
+- [ ] `<dialog>` full-filter sheet on mobile.
+- [ ] Sticky anchored TOC on `area-detail.html` (left rail desktop / chip row mobile).
+- [ ] Animated active-link nav indicator (View Transitions cross-document).
+
+### 9C · Schema additions (on-sandbox)
+- [ ] `areas.json` schema: `councilTaxBand`, `broadbandMedianMbps`, `nearestStation`,
+      `primarySupermarket`. Schema validator updated. UI hides empty rows.
+- [ ] House types expanded 8 → 15 with `status: "draft-no-sources"`.
+
+### 9D · CSS component split & polish (on-sandbox)
+- [ ] Extract `assets/css/components/{card,tile,sheet,chip,segmented,table,field,dialog}.css`.
+- [ ] Container queries on `.card` and map sidebar.
+
+### 9E · On-sandbox housekeeping
+- [ ] `tests/schemas.js` updated for new fields.
+- [ ] `README.md` localStorage section updated.
+- [ ] Run `tests/tests.html` before each push.
+
+### 9F · Needs-network (queued; run from a connected host) — ⚠ blocked here
+- [ ] `node tools/geocode-areas.mjs` → 191/191 precise coords.
+- [ ] `tools/research-areas.mjs` (to write): 9-category content + 3-source min / 5 for top-N.
+- [ ] `tools/fetch-images.mjs` (to write): 2–3 licensed images per village + credit/licence write-back.
+- [ ] `tools/research-house-types.mjs` (to write): 15 house types fully described + cited.
+- [ ] `npm install && npx playwright install chromium && npm run verify` baseline grid.

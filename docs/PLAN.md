@@ -317,3 +317,99 @@ estates, New Forest cottages, garrison/Service Family Accommodation (Tidworth/Bu
   reload.
 - **Resumability**: a fresh chat can read `docs/CHECKLIST.md` + `docs/PLAN.md` + `docs/CONTEXT.md` and
   continue at the first unticked item.
+
+---
+
+## Phase 9 — Finalisation (May 2026 →)
+
+Confirmed via 25-question scope review with the user. Move-in target **<6 months**, single buyer,
+ship straight to `main`, do everything possible without external help. Network policy of the current
+managed sandbox **blocks** every research / imagery / tile source we'd need (Nominatim, postcodes.io,
+Wikimedia, Geograph, Ofcom, OS, Fontsource). Phase 9 is therefore split into **on-sandbox** front-end /
+IA work (do now) and **needs-network** content / geocoding work (queued behind one-command tools so a
+host session with outbound HTTPS finishes it in minutes).
+
+Each milestone is one commit + push. Anchor named in commit (Stripe-docs / Linear-dense).
+
+### 9A · Information architecture (on-sandbox)
+- [ ] **Merge Profile + Criteria → `pages/about-search.html`** (anchor: Stripe-docs). Single editorial
+      "About my search" page: Buyer / Lifestyle / Priorities & Deal-breakers / Search criteria
+      (budget, types, must-haves, nice-to-haves). Old `profile.html` and `criteria.html` redirect via
+      `<meta http-equiv="refresh" content="0;url=about-search.html#…">` so existing bookmarks survive.
+      Nav `Profile · Criteria` → single `About`.
+- [ ] **Dashboard reorganisation** (anchor: Linear-dense, hybrid magazine + bento). Lead-in editorial
+      banner (Fraunces, current criteria summary + moving window) + bento below that aggregates from
+      every page: deposit ring, savings projection, shortlist top 6, journey progress, next-step nudge
+      derived from checklist state, mini-map preview with shortlisted markers.
+- [ ] **Finances kept as one page**, but rearranged into "Now vs Later" sections (current savings /
+      one-time costs / post-move bills) for clearer scan.
+- [ ] **Journey checklists stay global** (per user). Add per-section "what unlocks next" hint.
+
+### 9B · Areas page improvements (on-sandbox)
+- [ ] **URL-driven filter state** on `pages/areas.html` (A6): query params for
+      `q` `county` `sub` `sort` `starred`; `history.replaceState` on change; restore on load.
+      Result: every filter combination has a shareable URL.
+- [ ] **`<dialog>` full-filter sheet on mobile** with backdrop-blur, sticky apply/clear.
+- [ ] **Sticky anchored TOC on `area-detail.html`** (A4): left rail ≥1024 px, sticky chip row
+      <1024 px (scroll-snap-x). Jump to Overview / Amenities / Schools / Transport / Prices / Things to
+      do / Places to eat / Pros & Cons / Who it suits.
+- [ ] **Animated active-link nav indicator** (A5): CSS underline that morphs via View Transition on
+      cross-document navigation.
+
+### 9C · Schema additions (on-sandbox; values populated by 9F)
+- [ ] Extend `areas.json` schema with `councilTaxBand`, `broadbandMedianMbps`, `nearestStation`,
+      `primarySupermarket` (string + miles). Schema validator updated in `tests/schemas.js`. UI on
+      `area-detail.html` renders only when populated (no empty rows).
+- [ ] **House types expanded 8 → 15** (per user): add modern eco-build, Grade II listed cottage, barn
+      conversion, chalk-cob, Edwardian villa, post-war semi, mid-century bungalow. Names + eras only;
+      `description: ""` with `status: "draft-no-sources"` so CLAUDE.md §7 isn't violated. Filled in
+      by 9F on a connected host.
+
+### 9D · CSS component split & polish (on-sandbox)
+- [ ] Extract `base.css` + `dashboard.css` into `assets/css/components/{card,tile,sheet,chip,segmented,table,field,dialog}.css`.
+- [ ] Container queries (`container-type: inline-size`) on `.card` and the map sidebar so they reflow
+      at component-width, not page-width.
+
+### 9E · On-sandbox housekeeping
+- [ ] Update `tests/schemas.js` for the new village fields.
+- [ ] Update `README.md` localStorage section with `rec:areas-filter` (URL-driven state cache).
+- [ ] Run `tests/tests.html` (open in browser) — all green before push of each milestone.
+
+### 9F · Needs-network (queued; run from a connected host) — ⚠ blocked here
+- [ ] `tools/geocode-areas.mjs` — already shipped. Run once on a connected host:
+      `node tools/geocode-areas.mjs --provider nominatim`. Caches to
+      `data/source/geocode-cache.json`; writes precise coords back to `data/areas.json`. 191/191.
+- [ ] `tools/research-areas.mjs` — **needs writing** (sketched in 9F.notes below). For each village:
+      fetch Wikipedia summary (CC BY-SA 3.0 with attribution), Geograph featured image (CC BY-SA 2.0),
+      Land Registry price-paid median, Ofcom broadband median, nearest station from National Rail
+      open data. Writes `overview`, `character`, `amenities`, `prices`, `transport.commutes`,
+      `images[]`, `sources[]` per village. **3 sources minimum for "directory" tier; 5 for top-N
+      (user supplies top-N list at run time).**
+- [ ] `tools/fetch-images.mjs` — **needs writing**. CSV input (`data/source/images.csv` with
+      `area-id,url,credit,licence`) → downloads to `assets/img/areas/<id>/<n>.{webp,jpg}`, writes
+      back `images[]` entries with `credit` + `licence`. 2–3 per village (per user).
+- [ ] `tools/research-house-types.mjs` — **needs writing**. For each of the 15 house types: era,
+      materials, regional incidence, what-to-look-out-for, indicative price range. Cited.
+- [ ] `npm install && npx playwright install chromium` then `npm run verify` for the 36-shot
+      baseline grid + axe-core CLI + lighthouse-ci (looser thresholds per user: warn-only).
+
+### 9F.notes — research tool design (for the host session)
+- One file per source so the orchestrator can resume if any one fails.
+- Polite-rate (1 req/sec per host), retry with backoff, cache every fetch under
+  `data/source/cache/<source>/<key>.json`.
+- Outputs always include `sources[]` with `{title,url,licence,retrievedAt}` — non-negotiable.
+- Never overwrites a human-edited field: respects `_locked: true` per record.
+
+### 9G · Out of scope (decided in 25Q review)
+- `examples/properties.json` for Rightmove/Zoopla shortlist — **no**.
+- School-catchment data — **no**.
+- Commute-time matrix — **no**.
+- Newsreader display-font trial — **no** (stay on Fraunces).
+- MapLibre engine swap (Bucket A2) — **deferred** beyond Phase 9.
+- Accent hue change — **no** (keep emerald).
+
+### Acceptance gate for Phase 9
+- 390 px viewport screenshot review on each shipped page (manual where Playwright is unavailable).
+- No fabricated content, no unattributed imagery — CLAUDE.md §7 strictly held.
+- `tests/tests.html` all green at every push.
+- Every commit names its anchor (Stripe-docs / Linear-dense) in the message.
