@@ -1,0 +1,72 @@
+{
+  "id": "hambledon-po7",
+  "name": "Hambledon",
+  "village": "Hambledon",
+  "town": "Waterlooville",
+  "county": "Hampshire",
+  "postcode": "PO7",
+  "hubCity": "Portsmouth",
+  "regionDir": "North",
+  "settlementType": "Non-City",
+  "subRegion": "Waterlooville",
+  "coords": {
+    "lat": 50.86996,
+    "lng": -1.03648
+  },
+  "coordsSource": "postcode-outward-approx",
+  "houseTypeIds": [],
+  "status": "partial",
+  "overview": "A village of ~1,000 residents in the Winchester district, set on chalk downland inside the South Downs National Park at the southern end of the Meon Valley. Famed as the \"cradle of cricket\" — the Hambledon Club at nearby Broadhalfpenny Down was central to the sport's 18th-century development.",
+  "character": "Linear downland village, 69 listed buildings, Saxon-origin Grade I church; quietly affluent, history-conscious, families and downsizers.",
+  "amenities": [
+    "Two village shops",
+    "Pub (the Bat and Ball Inn at Broadhalfpenny Down acts as a cricket museum)",
+    "Parish church",
+    "Hambledon Primary (Ofsted Outstanding)",
+    "Active cricket club at Ridge Meadow"
+  ],
+  "schools": [],
+  "transport": {
+    "commutes": []
+  },
+  "prices": {},
+  "thingsToDo": [
+    "South Downs Way walking",
+    "Broadhalfpenny Down cricket heritage trail",
+    "Meon Valley cycling/walking"
+  ],
+  "placesToEat": [
+    "The Bat and Ball Inn",
+    "The Vine at Hambledon"
+  ],
+  "pros": [
+    "Outstanding primary school",
+    "Inside the National Park (planning protections)",
+    "Strong community + sporting fabric",
+    "Denmead nearby for full supermarket shop"
+  ],
+  "cons": [
+    "No station — Petersfield or Rowlands Castle for trains",
+    "Tight planning regime limits extensions/alterations",
+    "Premium for SDNP postcodes"
+  ],
+  "whoItSuits": [
+    "Families chasing the primary school and the National Park setting",
+    "Cricket-loving second-homers and retirees"
+  ],
+  "images": [],
+  "sources": [
+    {
+      "label": "Wikipedia — Hambledon, Hampshire",
+      "url": "https://en.wikipedia.org/wiki/Hambledon,_Hampshire"
+    },
+    {
+      "label": "Hambledon Parish Council — Cricket Club",
+      "url": "https://www.hambledon-pc.gov.uk/Cricket/Cricket_Club.aspx"
+    },
+    {
+      "label": "Visit South East England — Hambledon",
+      "url": "https://www.visitsoutheastengland.com/places-to-visit/hambledon-p1272711"
+    }
+  ]
+}

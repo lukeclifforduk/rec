@@ -1,5 +1,5 @@
 // page-area-detail.js — renders a single area by ?id=, using the 9-category framework.
-import { getAreas, getShortlist, saveShortlist } from './storage.js';
+import { getAreas, getAreaDetail, getShortlist, saveShortlist } from './storage.js';
 import { url } from './config.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
@@ -218,8 +218,15 @@ async function init() {
   if (!id) { renderNotFound('(no id)'); return; }
 
   try {
-    const areas = await getAreas();
-    const a = areas.find((x) => x.id === id);
+    // Fetch the per-area detail file directly — fall back to scanning the
+    // index if the detail file is missing (shouldn't happen post-migration,
+    // but keeps the page resilient to broken links).
+    let a = null;
+    try { a = await getAreaDetail(id); } catch (_) { /* fall through */ }
+    if (!a) {
+      const areas = await getAreas();
+      a = areas.find((x) => x.id === id) || null;
+    }
     if (!a) { renderNotFound(id); return; }
     renderArea(a);
   } catch (e) {

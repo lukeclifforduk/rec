@@ -37,6 +37,23 @@
     await test('profile.json loads & valid', async () => { const e = schema.validateProfile(await loadJSON('profile')); assert(e.length === 0, e.join('; ')); });
     await test('criteria.json loads & valid', async () => { const e = schema.validateCriteria(await loadJSON('criteria')); assert(e.length === 0, e.join('; ')); });
     await test('areas.json loads & valid', async () => { const e = schema.validateAreas(await loadJSON('areas')); assert(e.length === 0, e.join('; ')); });
+    await test('per-area detail files load & valid (sampled + all "researched")', async () => {
+      const index = await loadJSON('areas');
+      const ids = new Set();
+      // Sample first 3 + last 3 directory stubs to keep the harness fast.
+      [...index.slice(0, 3), ...index.slice(-3)].forEach((a) => ids.add(a.id));
+      // Plus every area flagged "researched" — these are the ones the user trusts.
+      index.filter((a) => a.status === 'researched').forEach((a) => ids.add(a.id));
+      const errs = [];
+      for (const id of ids) {
+        try {
+          const detail = await loadJSON(`data/areas/${id}.json`);
+          if (detail.id !== id) errs.push(`${id}: detail.id mismatch (${detail.id})`);
+          errs.push(...schema.validateAreaDetail(detail).map((m) => `${id}: ${m}`));
+        } catch (e) { errs.push(`${id}: ${e.message}`); }
+      }
+      assert(errs.length === 0, errs.join('; '));
+    });
     await test('house-types.json loads & valid', async () => { const e = schema.validateHouseTypes(await loadJSON('house-types')); assert(e.length === 0, e.join('; ')); });
     await test('finances.json loads & valid', async () => { const e = schema.validateFinances(await loadJSON('finances')); assert(e.length === 0, e.join('; ')); });
     await test('checklists.json loads & valid', async () => { const e = schema.validateChecklists(await loadJSON('checklists')); assert(e.length === 0, e.join('; ')); });
