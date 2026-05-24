@@ -1,0 +1,34 @@
+{
+  "id": "chilbolton-down-so20",
+  "name": "Chilbolton Down",
+  "village": "Chilbolton Down",
+  "town": "Winchester",
+  "county": "Hampshire",
+  "postcode": "SO20",
+  "hubCity": "Southampton",
+  "regionDir": "North",
+  "settlementType": "Non-City",
+  "subRegion": "Winchester",
+  "coords": {
+    "lat": 51.12632,
+    "lng": -1.47692
+  },
+  "coordsSource": "postcode-outward-approx",
+  "houseTypeIds": [],
+  "status": "directory",
+  "overview": "",
+  "character": "",
+  "amenities": [],
+  "schools": [],
+  "transport": {
+    "commutes": []
+  },
+  "prices": {},
+  "thingsToDo": [],
+  "placesToEat": [],
+  "pros": [],
+  "cons": [],
+  "whoItSuits": [],
+  "images": [],
+  "sources": []
+}

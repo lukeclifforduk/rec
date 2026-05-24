@@ -1,0 +1,38 @@
+{
+  "id": "farley-mount-rg25",
+  "name": "Farley Mount",
+  "village": "Farley Mount",
+  "town": "Basingstoke",
+  "county": "Hampshire",
+  "postcode": "RG25",
+  "hubCity": "Reading",
+  "regionDir": "South",
+  "settlementType": "Outlier",
+  "subRegion": "Basingstoke",
+  "coords": {
+    "lat": 51.24068,
+    "lng": -1.26248
+  },
+  "coordsSource": "postcode-outward-approx",
+  "houseTypeIds": [],
+  "status": "partial",
+  "overview": "REJECTED — this record corresponds to no real village. Farley Mount is a chalk hill four miles west of Winchester (OS grid SU403290, postcode SO21 2JG) topped by an 18th-century pyramid folly built in 1734 as a monument and burial marker to a horse named 'Beware Chalk Pit'; the surrounding area is Farley Mount Country Park, an 1,500-acre area of chalk grassland and ancient woodland (Crab Wood SSSI) managed by Hampshire County Council. It is not a village, has no resident population, and is not in postcode district RG25. The seed CSV entry 'Hampshire,Basingstoke,Farley Mount,RG25' appears to be a transcription error. The most likely intended village is Farleigh Wallop, a small estate village four miles south of Basingstoke (RG25 2HT) owned by the Earl of Portsmouth's family — please confirm before re-issuing. This record should be deleted from areas.json or re-assigned to farleigh-wallop-rg25.",
+  "character": "",
+  "amenities": [],
+  "schools": [],
+  "transport": {
+    "commutes": []
+  },
+  "prices": {},
+  "thingsToDo": [],
+  "placesToEat": [],
+  "pros": [],
+  "cons": [],
+  "whoItSuits": "",
+  "images": [],
+  "sources": [
+    "https://en.wikipedia.org/wiki/Farley_Mount",
+    "https://www.hants.gov.uk/thingstodo/countryside/finder/farleymount",
+    "https://www.visit-hampshire.co.uk/things-to-do/farley-mount-monument-p1414861"
+  ]
+}

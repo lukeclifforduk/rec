@@ -1,0 +1,34 @@
+{
+  "id": "king-s-somborne-so20",
+  "name": "King's Somborne",
+  "village": "King's Somborne",
+  "town": "Winchester",
+  "county": "Hampshire",
+  "postcode": "SO20",
+  "hubCity": "Southampton",
+  "regionDir": "North",
+  "settlementType": "Non-City",
+  "subRegion": "Winchester",
+  "coords": {
+    "lat": 51.12984,
+    "lng": -1.48044
+  },
+  "coordsSource": "postcode-outward-approx",
+  "houseTypeIds": [],
+  "status": "directory",
+  "overview": "",
+  "character": "",
+  "amenities": [],
+  "schools": [],
+  "transport": {
+    "commutes": []
+  },
+  "prices": {},
+  "thingsToDo": [],
+  "placesToEat": [],
+  "pros": [],
+  "cons": [],
+  "whoItSuits": [],
+  "images": [],
+  "sources": []
+}
