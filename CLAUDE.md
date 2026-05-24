@@ -9,13 +9,26 @@ session**. These rules exist to keep work safe, resumable, and high quality.
   chat can resume from a known-good state.
 - Use clear, descriptive commit messages.
 
-## 2. Large content writes (IMPORTANT)
-- When adding a **large block of content to an already-large file**, do **not** paste it inline.
-- Instead: **write the block to a separate temp file first**, then run the splice helper:
+## 2. Area content — per-area JSON files (IMPORTANT)
+- Area data is split: `data/areas.json` is the **lightweight directory index**;
+  the full per-area record (overview, character, schools, prices, sources…) lives
+  at **`data/areas/<id>.json`**, one file per area.
+- When researching or revising an area, **edit `data/areas/<id>.json` directly** with
+  the `Write` tool (one file at a time keeps diffs reviewable). Do **not** paste
+  content into `data/areas.json`, and do **not** resurrect `docs/Areadetails.md`
+  (now archived under `docs/archive/`).
+- The canonical shape lives at `data/schema/area.schema.json` and is enforced by
+  `validateAreaDetail()` in `tests/schemas.js`. Set `status` on every save:
+  `directory` → `stub` → `drafted` → `partial` → `researched`.
+- After editing detail files, optionally run `node tools/build-areas.mjs` — it
+  reads per-area files as the source of truth and rebuilds the index from them.
+
+### Other large content writes
+- For any other large block being added to an already-large file, do **not** paste
+  inline. Write the block to a temp file and use the splice helper:
   ```bash
   node tools/insert-content.mjs --target <file> --content <tempfile> --marker "<!-- SLOT:x -->" --mode before
   ```
-- For JSON list files, append before the closing marker (see `tools/insert-content.mjs --help`).
 - Delete temp files after a successful splice.
 
 ## 3. Reading large files
@@ -41,11 +54,16 @@ session**. These rules exist to keep work safe, resumable, and high quality.
 - Never hotlink unattributed copyrighted search-engine images.
 
 ## 8. Resume protocol (start here in a fresh chat)
-1. Read `docs/CHECKLIST.md` (what's done / next).
-2. Read `docs/PLAN.md` (the master plan) and `docs/CONTEXT.md` (research facts).
+1. **Run `node tools/area-status.mjs`** — prints which areas are `researched` /
+   `partial` / `stub` and exactly which fields are missing per area. Use
+   `--missing` to filter to incomplete areas and `--id <area-id>` to inspect one.
+   This is the canonical view of research progress and the next-to-do queue.
+2. Read `docs/CHECKLIST.md` (what's done / next) and `docs/PLAN.md` (master plan)
+   + `docs/CONTEXT.md` (research facts).
 3. Run a Haiku scan of any files you'll touch.
 4. Run the test harness.
-5. Continue at the **first unchecked** checklist item.
+5. Continue at the **first unchecked** checklist item — or, for area research,
+   the next `partial` or `directory` area surfaced by `area-status.mjs`.
 
 ## Project shape (quick reference)
 - Zero-build static site: plain HTML + CSS + vanilla JS, all libraries via CDN.

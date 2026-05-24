@@ -27,8 +27,14 @@ export async function getFinances() { return readLocal('finances') ?? await load
 export function       saveFinances(d){ return writeLocal('finances', d); }
 
 // --- Repo-owned content (read-only from the app) ---
-export async function getAreas()      { return await loadJSON('areas'); }
-export async function getHouseTypes() { return await loadJSON('house-types'); }
+// `areas` is the lightweight directory index (id, name, town, county, postcode,
+// coords, status, houseTypeIds, …) — used by the directory, map, home and
+// house-types pages. The full per-area record (overview, schools, prices,
+// sources, …) lives at data/areas/<id>.json and is fetched on demand via
+// getAreaDetail(id), which is what the detail page calls.
+export async function getAreas()         { return await loadJSON('areas'); }
+export async function getAreaDetail(id)  { return await loadJSON(`data/areas/${id}.json`); }
+export async function getHouseTypes()    { return await loadJSON('house-types'); }
 
 // --- Purely client-side state ---
 export function getShortlist()    { return readLocal('shortlist') ?? []; }

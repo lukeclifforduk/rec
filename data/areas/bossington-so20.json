@@ -1,0 +1,34 @@
+{
+  "id": "bossington-so20",
+  "name": "Bossington",
+  "village": "Bossington",
+  "town": "Stockbridge",
+  "county": "Hampshire",
+  "postcode": "SO20",
+  "hubCity": "Southampton",
+  "regionDir": "North",
+  "settlementType": "Non-City",
+  "subRegion": "Stockbridge",
+  "coords": {
+    "lat": 51.10256,
+    "lng": -1.4854
+  },
+  "coordsSource": "postcode-outward-approx",
+  "houseTypeIds": [],
+  "status": "directory",
+  "overview": "",
+  "character": "",
+  "amenities": [],
+  "schools": [],
+  "transport": {
+    "commutes": []
+  },
+  "prices": {},
+  "thingsToDo": [],
+  "placesToEat": [],
+  "pros": [],
+  "cons": [],
+  "whoItSuits": [],
+  "images": [],
+  "sources": []
+}

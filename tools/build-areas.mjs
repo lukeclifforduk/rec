@@ -1,44 +1,54 @@
 #!/usr/bin/env node
-// build-areas.mjs — generate data/areas.json from the source CSVs.
+// build-areas.mjs — generate data/areas.json (directory index) AND
+// data/areas/<id>.json (per-area detail) from the source CSVs.
+//
 // Source of truth: data/source/villages.csv + data/source/postcode-regions.csv
 // Re-run whenever the source lists change:  node tools/build-areas.mjs
 //
-// Enriched fields (coords, overview, character, amenities, sources, images, …)
-// are PRESERVED across rebuilds — we only fill defaults for new ids.
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+// Enriched content fields (overview, character, amenities, schools, …) are
+// PRESERVED across rebuilds by reading the existing per-area detail file.
+// New areas get empty defaults and status="directory".
 
-const ROOT = fileURLToPath(new URL('..', import.meta.url)); // repo root, ends with /
+import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { INDEX_FIELDS, DETAIL_FIELDS } from './area-fields.mjs';
+
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const read = (p) => readFileSync(ROOT + p, 'utf8');
 const parseCSV = (txt) => txt.trim().split(/\r?\n/).map((l) => l.split(','));
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const pick = (obj, keys) => { const o = {}; for (const k of keys) if (k in obj) o[k] = obj[k]; return o; };
+const writeJSON = (path, value) => {
+  const next = JSON.stringify(value, null, 2) + '\n';
+  if (existsSync(path) && readFileSync(path, 'utf8') === next) return false;
+  writeFileSync(path, next);
+  return true;
+};
 
-// postcode -> region info (incl. an approximate outward-code centroid used as
-// a placeholder coord so map markers render before per-village geocoding lands).
 const pcRows = parseCSV(read('data/source/postcode-regions.csv')).slice(1);
 const pc = new Map();
 for (const [, postcode, city, region, type, lat, lng] of pcRows) {
   pc.set(postcode, {
-    city: city || '',
-    region: region || '',
-    type: type || '',
-    lat: lat ? Number(lat) : null,
-    lng: lng ? Number(lng) : null,
+    city: city || '', region: region || '', type: type || '',
+    lat: lat ? Number(lat) : null, lng: lng ? Number(lng) : null,
   });
 }
 
-// Deterministic ±~3 km offset keyed off the id, so villages sharing one
-// outward code don't all stack on the same pin pre-geocoding.
 const jitter = (id, salt) => {
   let h = 0;
   for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i) + salt) | 0;
-  return ((Math.abs(h) % 1000) / 1000 - 0.5) * 0.04; // ±~1 km
+  return ((Math.abs(h) % 1000) / 1000 - 0.5) * 0.04;
 };
 
-// Preserve enriched content from any prior run.
-const prior = existsSync(`${ROOT}data/areas.json`)
-  ? Object.fromEntries(JSON.parse(readFileSync(`${ROOT}data/areas.json`, 'utf8')).map((a) => [a.id, a]))
-  : {};
+// Load prior per-area detail files (the source of truth for enriched content).
+const AREAS_DIR = `${ROOT}data/areas`;
+mkdirSync(AREAS_DIR, { recursive: true });
+const prior = {};
+for (const f of readdirSync(AREAS_DIR).filter((n) => n.endsWith('.json'))) {
+  const id = f.replace(/\.json$/, '');
+  try { prior[id] = JSON.parse(readFileSync(`${AREAS_DIR}/${f}`, 'utf8')); }
+  catch (e) { console.warn(`! Could not parse data/areas/${f}: ${e.message}`); }
+}
 
 const vRows = parseCSV(read('data/source/villages.csv')).slice(1);
 const seen = new Set();
@@ -64,10 +74,6 @@ const areas = vRows
       regionDir: r.region,
       settlementType: r.type,
       subRegion: town,
-      // Keep precise coords from earlier geocoding; otherwise seed with the
-      // postcode-outward centroid (+ jitter) so markers render immediately.
-      // Recompute the postcode-outward fallback every run (cheap, deterministic);
-      // only PRESERVE precise coords from a proper geocoder.
       coords: p.coords && p.coordsSource && p.coordsSource !== 'postcode-outward-approx'
         ? p.coords : fallbackCoords,
       coordsSource: p.coords && p.coordsSource && p.coordsSource !== 'postcode-outward-approx'
@@ -83,6 +89,10 @@ const areas = vRows
       pros: p.pros ?? [],
       cons: p.cons ?? [],
       whoItSuits: p.whoItSuits ?? [],
+      councilTaxBand: p.councilTaxBand ?? null,
+      broadbandMedianMbps: p.broadbandMedianMbps ?? null,
+      nearestStation: p.nearestStation ?? null,
+      primarySupermarket: p.primarySupermarket ?? null,
       houseTypeIds: p.houseTypeIds ?? [],
       images: p.images ?? [],
       sources: p.sources ?? [],
@@ -90,9 +100,16 @@ const areas = vRows
     };
   });
 
-writeFileSync(`${ROOT}data/areas.json`, `${JSON.stringify(areas, null, 2)}\n`);
+// Write the lightweight directory index.
+writeJSON(`${ROOT}data/areas.json`, areas.map((a) => pick(a, INDEX_FIELDS)));
 
-// Also (re)generate the human-readable docs/AREAS.md, grouped by county -> town.
+// Write per-area detail files (only when content actually changed).
+let detailWrites = 0;
+for (const a of areas) {
+  if (writeJSON(`${AREAS_DIR}/${a.id}.json`, pick(a, DETAIL_FIELDS))) detailWrites += 1;
+}
+
+// (Re)generate the human-readable docs/AREAS.md, grouped by county -> town.
 const groups = {};
 for (const a of areas) {
   (groups[a.county] ||= {});
@@ -101,8 +118,8 @@ for (const a of areas) {
 let md = '# AREAS — master location list\n\n';
 md += 'Generated by `tools/build-areas.mjs` from `data/source/villages.csv` — **do not edit by hand**; '
    + 'edit the CSV (and `postcode-regions.csv`) then re-run `node tools/build-areas.mjs`. '
-   + `Mirrors \`data/areas.json\`. **${areas.length}** locations. `
-   + 'Status: `directory` (listed) → `drafted` → `complete`.\n';
+   + `Mirrors \`data/areas.json\` + \`data/areas/<id>.json\`. **${areas.length}** locations. `
+   + 'Status: `directory` → `stub` → `drafted` → `partial` → `researched`.\n';
 for (const county of Object.keys(groups).sort()) {
   const total = Object.values(groups[county]).reduce((n, l) => n + l.length, 0);
   md += `\n## ${county} (${total})\n`;
@@ -116,5 +133,5 @@ writeFileSync(`${ROOT}docs/AREAS.md`, md);
 
 const byCounty = areas.reduce((m, a) => ((m[a.county] = (m[a.county] || 0) + 1), m), {});
 const withCoords = areas.filter((a) => a.coords).length;
-console.log(`Wrote ${areas.length} areas to data/areas.json and docs/AREAS.md`, byCounty);
+console.log(`Wrote index: data/areas.json (${areas.length} entries) + ${detailWrites} per-area files`, byCounty);
 console.log(`  coords: ${withCoords}/${areas.length} (${areas.length - withCoords} still null)`);

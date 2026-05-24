@@ -53,6 +53,9 @@ export function validateCriteria(o) {
   return e;
 }
 
+// data/areas.json is the lightweight directory index. Detail-rich fields
+// (overview, schools, prices, sources …) live in data/areas/<id>.json and
+// are validated by validateAreaDetail() below.
 export function validateAreas(arr) {
   const e = [];
   check(e, typeOf(arr) === 'array', 'areas must be an array');
@@ -66,18 +69,32 @@ export function validateAreas(arr) {
     const c = a.coords;
     check(e, c === null || (typeOf(c) === 'object' && typeof c.lat === 'number' && typeof c.lng === 'number'),
       `areas[${i}].coords must be null or have numeric lat/lng`);
-    check(e, typeOf(a.images) === 'array', `areas[${i}].images must be an array`);
     check(e, typeOf(a.houseTypeIds) === 'array', `areas[${i}].houseTypeIds must be an array`);
-    // Phase 9C optional fields — type-checked only when present.
-    if ('councilTaxBand' in a && a.councilTaxBand != null)
-      check(e, typeOf(a.councilTaxBand) === 'string', `areas[${i}].councilTaxBand must be a string`);
-    if ('broadbandMedianMbps' in a && a.broadbandMedianMbps != null)
-      check(e, typeOf(a.broadbandMedianMbps) === 'number', `areas[${i}].broadbandMedianMbps must be a number`);
-    if ('nearestStation' in a && a.nearestStation != null)
-      check(e, typeOf(a.nearestStation) === 'string', `areas[${i}].nearestStation must be a string`);
-    if ('primarySupermarket' in a && a.primarySupermarket != null)
-      check(e, typeOf(a.primarySupermarket) === 'string', `areas[${i}].primarySupermarket must be a string`);
+    check(e, typeOf(a.status) === 'string', `areas[${i}].status must be a string`);
   });
+  return e;
+}
+
+export function validateAreaDetail(a) {
+  const e = [];
+  check(e, typeOf(a) === 'object', 'area detail must be an object');
+  if (typeOf(a) !== 'object') return e;
+  check(e, typeOf(a.id) === 'string', 'area.id must be a string');
+  check(e, typeOf(a.name) === 'string', 'area.name must be a string');
+  check(e, typeOf(a.status) === 'string', 'area.status must be a string');
+  // Content fields type-checked only when present (most areas are stubs).
+  if ('overview' in a)    check(e, typeOf(a.overview) === 'string', 'area.overview must be a string');
+  if ('character' in a)   check(e, typeOf(a.character) === 'string', 'area.character must be a string');
+  if ('amenities' in a)   check(e, typeOf(a.amenities) === 'array', 'area.amenities must be an array');
+  if ('schools' in a)     check(e, typeOf(a.schools) === 'array', 'area.schools must be an array');
+  if ('thingsToDo' in a)  check(e, typeOf(a.thingsToDo) === 'array', 'area.thingsToDo must be an array');
+  if ('placesToEat' in a) check(e, typeOf(a.placesToEat) === 'array', 'area.placesToEat must be an array');
+  if ('pros' in a)        check(e, typeOf(a.pros) === 'array', 'area.pros must be an array');
+  if ('cons' in a)        check(e, typeOf(a.cons) === 'array', 'area.cons must be an array');
+  if ('sources' in a)     check(e, typeOf(a.sources) === 'array', 'area.sources must be an array');
+  if ('images' in a)      check(e, typeOf(a.images) === 'array', 'area.images must be an array');
+  if ('transport' in a)   check(e, typeOf(a.transport) === 'object', 'area.transport must be an object');
+  if ('prices' in a)      check(e, typeOf(a.prices) === 'object', 'area.prices must be an object');
   return e;
 }
 

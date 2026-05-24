@@ -1,0 +1,34 @@
+{
+  "id": "chillworth-so16",
+  "name": "Chillworth",
+  "village": "Chillworth",
+  "town": "Southampton",
+  "county": "Hampshire",
+  "postcode": "SO16",
+  "hubCity": "Southampton",
+  "regionDir": "North",
+  "settlementType": "Non-City",
+  "subRegion": "Southampton",
+  "coords": {
+    "lat": 50.94804,
+    "lng": -1.46788
+  },
+  "coordsSource": "postcode-outward-approx",
+  "houseTypeIds": [],
+  "status": "directory",
+  "overview": "",
+  "character": "",
+  "amenities": [],
+  "schools": [],
+  "transport": {
+    "commutes": []
+  },
+  "prices": {},
+  "thingsToDo": [],
+  "placesToEat": [],
+  "pros": [],
+  "cons": [],
+  "whoItSuits": [],
+  "images": [],
+  "sources": []
+}
