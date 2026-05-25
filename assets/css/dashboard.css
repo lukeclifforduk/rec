@@ -934,7 +934,7 @@ main > .tile-journey { margin-bottom: var(--space-6); }
 .what-if-chart {
   height: 280px; margin-top: var(--space-3);
 }
-.what-if-chart canvas { max-height: 280px; }
+.what-if-chart canvas { max-height: 280px; max-width: 100%; }
 
 /* Finances hero: add LISA band marker */
 .finance-hero-lisa {
