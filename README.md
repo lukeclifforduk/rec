@@ -39,6 +39,21 @@ renderer + QoI leak guard). Browser-side smoke checks (no horizontal scroll, no 
 reachability) run via `tests/tests.html` against a local server when you want them; visual review is done
 by eye in the browser.
 
+## Supabase MCP sync contract
+
+The app uses Supabase for all stateful data and Claude is wired to Supabase via the MCP connector.
+The full bidirectional sync contract — what lives in the database vs the repo, how user-portal edits
+and Claude edits stay aligned, and the mandatory MCP-first session start — lives in
+**[`docs/SUPABASE_SYNC.md`](docs/SUPABASE_SYNC.md)** (operational detail) and **`CLAUDE.md` §18**
+(rules of engagement). TL;DR:
+
+- **User state** (profile, criteria, finances, shortlist, zones, journey, contacts, outreach) →
+  Supabase is canonical; the portal writes via `storage.js`, Claude writes via MCP `execute_sql`.
+- **Content** (areas, house-types, checklists, outreach-templates) → repo JSON is canonical, mirrored
+  to Supabase tables for query access.
+- **Every Claude session** opens by polling `MAX(updated_at)` across all tables to detect portal
+  edits that happened while Claude was away, and closes by verifying every write landed.
+
 ## ✨ View live site
 
 **Live:** https://seanparkerai.github.io/rec/
