@@ -1,6 +1,7 @@
 // components.js — shell bootstrap: inject shared partials, mark active nav, wire theme toggle.
 // Loaded on every page as <script type="module">.
 import { url, STORAGE_NS } from './config.js';
+import { signOut, getCurrentUser } from './storage.js';
 
 const THEME_KEY = `${STORAGE_NS}:theme`;
 
@@ -89,12 +90,13 @@ function initHeaderHeightVar() {
 /* Apply saved theme ASAP to reduce flash (before includes resolve). */
 applyTheme(localStorage.getItem(THEME_KEY));
 
-injectIncludes().then(() => {
+injectIncludes().then(async () => {
   setActiveNav();
   initTheme();
   initScrollShrink();
   initHeaderHeightVar();
   hideSetupNavIfComplete();
+  await initHeaderUser();
   document.dispatchEvent(new CustomEvent('shell:ready'));
 });
 
@@ -116,6 +118,28 @@ function hideSetupNavIfComplete() {
       if (li) li.hidden = true;
     }
   } catch { /* ignore */ }
+}
+
+async function initHeaderUser() {
+  try {
+    const user = await getCurrentUser();
+    if (!user) return;
+    const userEl = document.getElementById('header-user');
+    const signOutBtn = document.getElementById('btn-sign-out');
+    if (userEl) {
+      userEl.textContent = user.email;
+      userEl.hidden = false;
+    }
+    if (signOutBtn) {
+      signOutBtn.hidden = false;
+      signOutBtn.addEventListener('click', async () => {
+        await signOut();
+        // Resolve login page path relative to config.js location
+        const loginUrl = url('pages/login.html');
+        location.replace(loginUrl);
+      });
+    }
+  } catch { /* ignore — pre-setup mode */ }
 }
 
 export { injectIncludes, setActiveNav, initTheme, effectiveTheme };
