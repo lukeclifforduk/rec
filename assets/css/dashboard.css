@@ -94,7 +94,12 @@
 .dash-grid > .span-6 { grid-column: span 6; }
 .dash-grid > .span-4 { grid-column: span 4; }
 .dash-grid > .span-12 { grid-column: span 12; }
-@media (max-width: 800px) { .dash-grid > [class^="span-"] { grid-column: 1 / -1; } }
+@media (max-width: 800px) {
+  .dash-grid > .span-4,
+  .dash-grid > .span-6,
+  .dash-grid > .span-8,
+  .dash-grid > .span-12 { grid-column: 1 / -1; }
+}
 
 /* Chart canvas placeholder sizing (shared) */
 .chart-wrap { position: relative; height: 240px; }
