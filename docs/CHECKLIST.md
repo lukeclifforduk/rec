@@ -336,3 +336,48 @@ Adopted 2026-05-25. Tick each v2 phase as it lands; commits go directly to `main
 - [x] **Phase 5** — Contacts management: shipped in Phase 3 (agents / brokers / solicitors / surveyors CRUD with add/delete, persists via `storage.js`).
 - [x] **Phase 6** — Cross-linking: area-detail verdict strip → A1, finances affordability widget → A5, journey checklist rows → 7 templates (A5, C3, B1, C5, C2, D1, D5, D6, D7). Deep-link parser in `page-outreach.js` reads `?templateId=`.
 - [x] **Phase 7** — Docs: `docs/ROADMAP.md` Outreach moved to "Shipped in v3.0"; `docs/CHECKLIST.md` updated; `README.md` storage-keys table updated.
+
+---
+
+## Phase 10 — Supabase MCP sync hardening (May 2026 →)
+
+Adopted 2026-05-25. Codifies the bidirectional sync contract in `CLAUDE.md §18` + `docs/SUPABASE_SYNC.md`.
+Goal: every write (Claude or portal) lands in Supabase; every session starts by checking what changed
+since last time. No silent drift.
+
+### 10A · Schema additions (one MCP migration each)
+- [ ] `areas` mirror table — one row per area, `id` PK, `data` jsonb, `updated_at` timestamptz.
+      No RLS (read-only content). Apply via `mcp__supabase__apply_migration`.
+- [ ] `house_types` mirror table — same shape, keyed by house-type id.
+- [ ] `checklists` mirror table — single-row JSON snapshot of `data/checklists.json`.
+- [ ] `outreach_templates` mirror table — one row per template id.
+- [ ] `sync_log` table — append-only audit (`table_name`, `actor` ('claude' | 'portal'), `row_id`,
+      `action`, `at`) for the test harness to reason about.
+
+### 10B · Tooling
+- [ ] `tools/check-supabase-freshness.mjs` — calls `execute_sql` for `MAX(updated_at)` per table,
+      diffs against `data/snapshots/sync-state.json`, prints a one-line summary + exit code.
+      Used in §8 Step 0 of CLAUDE.md.
+- [ ] `tools/sync-content-to-supabase.mjs` — walks `data/areas/*.json` (and the catalogue files),
+      UPSERTs into the mirror tables, updates the snapshot file. Idempotent + resumable.
+- [ ] `data/snapshots/sync-state.json` — committed snapshot of the last-known `updated_at` per table.
+      Used to detect portal edits between sessions.
+
+### 10C · Test enforcement
+- [ ] `tests/supabase-sync.test.js` — three assertions:
+      (a) every `data/areas/<id>.json` has a row in `areas` with `updated_at` ≥ file mtime;
+      (b) every user-state table has a row for the active household OR is empty by design;
+      (c) `sync-state.json` matches live `MAX(updated_at)` within tolerance.
+      Wire into `tools/run-intelligence-tests.mjs` so `npm test` covers it.
+
+### 10D · Storage.js touch-up (approved §16 exception — extend only)
+- [ ] After `_save()`, log to `sync_log` with `actor='portal'`. Lets the test harness distinguish
+      portal writes from Claude writes.
+
+### 10E · CLAUDE.md / docs
+- [x] §18 + §6 + §8 updated for MCP-first sync contract.
+- [x] `docs/SUPABASE_SYNC.md` created.
+- [ ] `README.md` — add a "Supabase sync" section linking to the new doc.
+
+**Out of scope for Phase 10**: realtime subscriptions, storage buckets, edge functions, auth flow
+changes. Those get their own phase if and when needed.
