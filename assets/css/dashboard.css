@@ -1210,12 +1210,12 @@ details.collapsible-card > .collapsible-body { padding: var(--space-4) var(--spa
   text-transform: uppercase;
 }
 .verdict-badge--comfortable,
-.verdict-badge--low_risk  { background: color-mix(in oklch, #4caf50 15%, var(--paper)); color: #2e7d32; }
+.verdict-badge--low_risk  { background: var(--positive-soft); color: var(--accent-ink); }
 .verdict-badge--stretch,
-.verdict-badge--moderate_risk { background: color-mix(in oklch, #ff9800 15%, var(--paper)); color: #e65100; }
+.verdict-badge--moderate_risk { background: color-mix(in oklch, oklch(68% 0.15 62) 15%, var(--paper)); color: oklch(46% 0.16 55); }
 .verdict-badge--tight,
-.verdict-badge--high_risk { background: color-mix(in oklch, #f44336 18%, var(--paper)); color: #b71c1c; }
-.verdict-badge--out_of_reach { background: color-mix(in oklch, #9c27b0 15%, var(--paper)); color: #6a1b9a; }
+.verdict-badge--high_risk { background: var(--danger-soft); color: var(--danger); }
+.verdict-badge--out_of_reach { background: color-mix(in oklch, oklch(48% 0.18 305) 15%, var(--paper)); color: oklch(36% 0.17 305); }
 .verdict-badge--loading { background: var(--hairline); color: var(--ink-muted); }
 
 /* Readiness tile */
@@ -1284,9 +1284,9 @@ details.collapsible-card > .collapsible-body { padding: var(--space-4) var(--spa
 }
 .isa-attribution__seg { min-width: 2px; }
 .isa-attribution__seg--contributed { background: var(--accent); }
-.isa-attribution__seg--dividends   { background: color-mix(in oklch, var(--accent) 60%, #4caf50); }
-.isa-attribution__seg--interest    { background: color-mix(in oklch, var(--accent) 30%, #4caf50); }
-.isa-attribution__seg--growth      { background: #4caf50; }
+.isa-attribution__seg--dividends   { background: color-mix(in oklch, var(--accent) 60%, oklch(65% 0.18 145)); }
+.isa-attribution__seg--interest    { background: color-mix(in oklch, var(--accent) 30%, oklch(65% 0.18 145)); }
+.isa-attribution__seg--growth      { background: oklch(65% 0.18 145); }
 
 /* Profile detail page */
 .profile-section.card {
