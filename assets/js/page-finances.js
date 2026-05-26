@@ -10,6 +10,7 @@ import { getMoneyFlow, getMoneyFlowPostMove } from './money-flow.js';
 import { getSavingsVelocity } from './savings-velocity.js';
 import { analysePerformance } from './investment-performance.js';
 import { assessDepositRisk } from './deposit-risk.js';
+import { deriveFinances } from './finance-derive.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
@@ -402,18 +403,32 @@ async function renderDepositRiskTile() {
     <p class="deposit-risk__action muted">${esc(risk.recommendation.action)}</p>`;
 }
 
+// Cache the raw investments alongside finances so we can re-derive on background updates.
+let rawInvestments = null;
+
+function renderEverything() {
+  renderTiles();
+  renderNowFlow();
+  renderBreakdowns();
+  renderLaterFlow();
+  attachAffordabilityWidget();
+  renderWhatIfChart();
+  renderISAAttribution();
+  renderDepositRiskTile();
+}
+
 async function init() {
   try {
-    finData = await getFinances();
+    try { rawInvestments = await loadJSON('investments'); } catch { rawInvestments = null; }
+    const rawFinances = await getFinances({
+      onUpdate: (fresh) => {
+        finData = deriveFinances(fresh, { investments: rawInvestments });
+        renderEverything();
+      },
+    });
+    finData = deriveFinances(rawFinances, { investments: rawInvestments });
     try { criData = await getCriteria(); } catch (e) { console.error('criteria fetch failed', e); criData = null; }
-    renderTiles();
-    renderNowFlow();
-    renderBreakdowns();
-    renderLaterFlow();
-    attachAffordabilityWidget();
-    renderWhatIfChart();
-    renderISAAttribution();
-    renderDepositRiskTile();
+    renderEverything();
   } catch (e) {
     console.error('finances init error', e);
   }

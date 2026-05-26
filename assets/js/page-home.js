@@ -10,6 +10,7 @@ import { getMoneyFlow, getMoneyFlowPostMove } from './money-flow.js';
 import { analysePerformance } from './investment-performance.js';
 import { assessDepositRisk } from './deposit-risk.js';
 import { assessAffordabilityScenarios } from './affordability.js';
+import { deriveFinances } from './finance-derive.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
@@ -577,29 +578,40 @@ function renderCriteriaProse(criteria, profile, financesData) {
 
 async function init() {
   markLoading();
-  let financesData = null, profile = null, criteria = null;
-  try { financesData = await getFinances(); } catch (e) { console.error('finances error', e); }
+  let rawFinances = null, rawInvestments = null, profile = null, criteria = null;
+
+  // Load investments once for cross-resource savings totals (ISA earmark).
+  try { rawInvestments = await loadJSON('investments'); } catch { rawInvestments = null; }
+
+  const renderAll = (financesData) => {
+    renderLede(profile, criteria, financesData);
+    if (financesData) {
+      renderDeposit(financesData);
+      if (criteria) {
+        renderAffordability(financesData, criteria);
+        renderMoneyFlow(financesData, criteria);
+      }
+    }
+    renderShortlist(financesData, criteria);
+    renderJourneyTrack();
+    renderCriteriaProse(criteria, profile, financesData);
+    renderISAYTD();
+    renderReadinessTile(financesData);
+    renderDepositRiskTile();
+    renderAffordabilityScenariosTile(financesData, criteria);
+    clearStuckLoading();
+  };
+
+  try {
+    rawFinances = await getFinances({
+      onUpdate: (fresh) => renderAll(deriveFinances(fresh, { investments: rawInvestments })),
+    });
+  } catch (e) { console.error('finances error', e); }
   try { profile = await getProfile(); } catch (e) { console.error('profile error', e); }
   try { criteria = await getCriteria(); } catch (e) { console.error('criteria error', e); }
 
-  renderLede(profile, criteria, financesData);
-
-  if (financesData) {
-    renderDeposit(financesData);
-    if (criteria) {
-      renderAffordability(financesData, criteria);
-      renderMoneyFlow(financesData, criteria);
-    }
-  }
-
-  await renderShortlist(financesData, criteria);
-  await renderJourneyTrack();
-  renderCriteriaProse(criteria, profile, financesData);
-  renderISAYTD();
-  renderReadinessTile(financesData);
-  renderDepositRiskTile();
-  renderAffordabilityScenariosTile(financesData, criteria);
-  clearStuckLoading();
+  const financesData = deriveFinances(rawFinances, { investments: rawInvestments });
+  renderAll(financesData);
 }
 
 // --- New Phase 4 tiles ---------------------------------------------------------

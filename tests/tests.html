@@ -32,6 +32,8 @@
     import { register as registerDepositRisk } from './deposit-risk.test.js';
     import { register as registerAffordabilityScenarios } from './affordability-scenarios.test.js';
     import { register as registerInvestmentPerformance } from './investment-performance.test.js';
+    import { register as registerFinanceDerive } from './finance-derive.test.js';
+    import { deriveFinances } from '../assets/js/finance-derive.js';
 
     const fetchOk = async (path) => (await fetch(url(path))).ok;
 
@@ -172,10 +174,23 @@
     });
 
     // --- Phase 2 intelligence modules (affordability, money-flow, savings-velocity) ---
+    // Fixtures are derived from raw repo JSON. Consumer-side code always derives before
+    // rendering, so the test fixtures mirror that contract — no derived fields are read
+    // off the raw record.
+    //
+    // The default `finances` fixture is derived WITHOUT investments so totals reflect cash
+    // + gift cards only (deterministic, matches the hand-computed values in tests). Tests
+    // that exercise cross-resource ISA behaviour can re-derive with `fixtures.investments`.
+    const rawFinances = await loadJSON('finances');
+    let rawInvestments = null;
+    try { rawInvestments = await loadJSON('investments'); } catch { /* optional */ }
     const fixtures = {
-      finances: await loadJSON('finances'),
+      finances: deriveFinances(rawFinances),
+      rawFinances,
+      investments: rawInvestments,
       criteria: await loadJSON('criteria'),
     };
+    await registerFinanceDerive({ test, assert, assertEqual, fixtures });
     await registerAffordability({ test, assert, assertEqual, fixtures });
     await registerMoneyFlow({ test, assert, assertEqual, fixtures });
     await registerSavingsVelocity({ test, assert, assertEqual, fixtures });

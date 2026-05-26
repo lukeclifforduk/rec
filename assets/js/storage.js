@@ -129,25 +129,46 @@ async function _sbUpsert(table, value) {
   }
 }
 
-// ── Write-through pattern ─────────────────────────────────────────────
-// Returns cached value immediately; revalidates from Supabase in background.
-// If the cloud value differs, calls onUpdate(freshValue) for the caller to re-render.
+// ── Read pattern ──────────────────────────────────────────────────────
+// Resolution order (per CLAUDE.md §18: Supabase is source of truth for user state):
+//   1. localStorage cache — returned immediately, revalidated against Supabase in background.
+//   2. Supabase row       — awaited synchronously on first visit (no cache yet).
+//   3. JSON seed file     — used only when both cache and Supabase are empty (true first install).
+//                           Written to cache so the JSON file is never re-read after first use.
+//
+// onUpdate(fresh) fires when background revalidation finds a divergent Supabase row,
+// so consumers can re-render with fresh data without a page reload.
 async function _get(lsKey, table, fallbackJson, onUpdate) {
   const cached = readLocal(lsKey);
-  const result = cached ?? (fallbackJson ? await loadJSON(fallbackJson) : null);
 
-  // Background revalidation
-  _sbGet(table).then((fresh) => {
-    if (fresh === null) return; // nothing in Supabase yet
-    const localStr = JSON.stringify(cached);
-    const freshStr = JSON.stringify(fresh);
-    if (freshStr !== localStr) {
-      writeLocal(lsKey, fresh); // update cache
-      if (onUpdate) onUpdate(fresh);
-    }
-  }).catch(() => { /* ignore */ });
+  if (cached !== null) {
+    // Fast path. Kick off revalidation; return cache immediately.
+    _sbGet(table).then((fresh) => {
+      if (fresh === null) return;
+      if (JSON.stringify(fresh) !== JSON.stringify(cached)) {
+        writeLocal(lsKey, fresh);
+        if (onUpdate) onUpdate(fresh);
+      }
+    }).catch(() => { /* ignore */ });
+    return cached;
+  }
 
-  return result;
+  // No cache. Try Supabase synchronously.
+  const fresh = await _sbGet(table);
+  if (fresh !== null) {
+    writeLocal(lsKey, fresh);
+    return fresh;
+  }
+
+  // Neither cache nor Supabase has data. Seed from the JSON file (one-time only —
+  // we write it into the cache so this branch only runs on the true first install).
+  if (fallbackJson) {
+    const seed = await loadJSON(fallbackJson);
+    if (seed) writeLocal(lsKey, seed);
+    return seed;
+  }
+
+  return null;
 }
 
 async function _save(lsKey, table, value) {
@@ -156,16 +177,18 @@ async function _save(lsKey, table, value) {
   return true;
 }
 
-// ── Exported API — identical signatures to the original storage.js ─────
+// ── Exported API ──────────────────────────────────────────────────────
+// Each getter accepts { onUpdate } so pages can re-render when background
+// revalidation pulls a divergent row from Supabase.
 
-export async function getProfile()   { return _get('profile',   'profile',   'profile',  null); }
-export async function saveProfile(d) { return _save('profile',  'profile',   d); }
+export async function getProfile(opts = {})   { return _get('profile',   'profile',   'profile',  opts.onUpdate || null); }
+export async function saveProfile(d)          { return _save('profile',  'profile',   d); }
 
-export async function getCriteria()  { return _get('criteria',  'criteria',  'criteria', null); }
-export async function saveCriteria(d){ return _save('criteria', 'criteria',  d); }
+export async function getCriteria(opts = {})  { return _get('criteria',  'criteria',  'criteria', opts.onUpdate || null); }
+export async function saveCriteria(d)         { return _save('criteria', 'criteria',  d); }
 
-export async function getFinances()  { return _get('finances',  'finances',  'finances', null); }
-export async function saveFinances(d){ return _save('finances', 'finances',  d); }
+export async function getFinances(opts = {})  { return _get('finances',  'finances',  'finances', opts.onUpdate || null); }
+export async function saveFinances(d)         { return _save('finances', 'finances',  d); }
 
 // Read-only, repo-owned content (no Supabase — served from data/ in the repo).
 export async function getAreas()        { return await loadJSON('areas'); }
