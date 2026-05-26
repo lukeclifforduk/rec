@@ -90,7 +90,7 @@
       const required = [
         'savings-over-time-card', 'monthly-deposits-card', 'isa-stacked-area-card',
         'div-int-cumulative-card', 'epoch-comparison-card', 'ticker-treemap-card',
-        'realised-unrealised-card',
+        'realised-unrealised-card', 'dr-waterfall-svg',
       ];
       const missing = required.filter((id) => !html.includes(`id="${id}"`));
       assert(missing.length === 0, `missing finances v3 ids: ${missing.join(', ')}`);

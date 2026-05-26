@@ -150,26 +150,7 @@
         <p class="stage-lead">Side-by-side outgoings before and after the move, the unified affordability widget, and the "what if" projections.</p>
       </header>
 
-      <section class="tile-card tile-flow" id="later-flow-tile" aria-labelledby="later-flow-h">
-        <header class="tile-head">
-          <h2 id="later-flow-h">Money-flow today vs after move</h2>
-          <span class="num" id="later-flow-headline">&mdash;</span>
-        </header>
-        <div class="flow">
-          <div class="flow__panel">
-            <h3>Today</h3>
-            <svg class="flow__bar" id="later-flow-today" viewBox="0 0 300 40" aria-label="Today&rsquo;s flow"></svg>
-            <ul class="flow__legend" id="later-legend-today"></ul>
-          </div>
-          <div class="flow__panel">
-            <h3>After move</h3>
-            <svg class="flow__bar" id="later-flow-after" viewBox="0 0 300 40" aria-label="After-move flow"></svg>
-            <ul class="flow__legend" id="later-legend-after"></ul>
-          </div>
-        </div>
-        <p class="flow__caption" id="later-flow-caption">&mdash;</p>
-      </section>
-
+      <!-- v3 Later Rank 1 — Affordability widget (promoted) -->
       <section class="afford-widget" id="afford-widget" aria-labelledby="afford-h">
         <header class="afford-widget__head">
           <h3 id="afford-h">Affordability at price</h3>
@@ -195,10 +176,47 @@
         <a href="outreach.html?templateId=A5" data-nav="pages/outreach.html?templateId=A5" class="afford-outreach-link">Email these figures to a mortgage broker &rarr;</a>
       </section>
 
+      <!-- v3 Later Rank 2 — What-if projection -->
       <section class="card">
         <h3>What if&hellip;</h3>
         <p class="muted is-card-intro">Baseline savings projection plus ghosted scenarios. Hover a series for amounts.</p>
         <div class="what-if-chart"><canvas id="what-if-canvas"></canvas></div>
+      </section>
+
+      <!-- v3 Later Rank 3 — Money-flow today vs after move (demoted) -->
+      <section class="tile-card tile-flow" id="later-flow-tile" aria-labelledby="later-flow-h">
+        <header class="tile-head">
+          <h2 id="later-flow-h">Money-flow today vs after move</h2>
+          <span class="num" id="later-flow-headline">&mdash;</span>
+        </header>
+        <div class="flow">
+          <div class="flow__panel">
+            <h3>Today</h3>
+            <svg class="flow__bar" id="later-flow-today" viewBox="0 0 300 40" aria-label="Today&rsquo;s flow"></svg>
+            <ul class="flow__legend" id="later-legend-today"></ul>
+          </div>
+          <div class="flow__panel">
+            <h3>After move</h3>
+            <svg class="flow__bar" id="later-flow-after" viewBox="0 0 300 40" aria-label="After-move flow"></svg>
+            <ul class="flow__legend" id="later-legend-after"></ul>
+          </div>
+        </div>
+        <p class="flow__caption" id="later-flow-caption">&mdash;</p>
+      </section>
+
+      <!-- v3 Later Rank 4 — Deposit at risk waterfall (promoted + upgraded) -->
+      <section class="tile-card tile-deposit-risk" id="deposit-risk-tile" aria-labelledby="deposit-risk-h" aria-live="polite">
+        <header class="tile-head">
+          <h3 id="deposit-risk-h">Deposit at risk</h3>
+          <span class="verdict-badge verdict-badge--loading" id="tdr-badge">—</span>
+        </header>
+        <p class="muted is-card-intro">What a market correction would do to your deposit before you buy.</p>
+        <svg id="dr-waterfall-svg" class="deposit-risk-waterfall" viewBox="0 0 500 200" preserveAspectRatio="xMidYMid meet" aria-label="Deposit at risk waterfall"></svg>
+        <p class="chart-caption" id="dr-waterfall-caption">&mdash;</p>
+        <details class="dr-waterfall-details">
+          <summary>See scenario details</summary>
+          <div id="dr-waterfall-rows" class="dr-waterfall-rows"></div>
+        </details>
       </section>
 
       <details class="collapsible-card" id="card-onetime">
@@ -213,14 +231,6 @@
         <summary><h3>Gift cards</h3><span class="num" id="giftcards-total">&mdash;</span></summary>
         <div class="collapsible-body"><div id="tbl-giftcards"></div></div>
       </details>
-
-      <section class="tile-card tile-deposit-risk" id="deposit-risk-tile" aria-labelledby="deposit-risk-h" aria-live="polite">
-        <header class="tile-head">
-          <h3 id="deposit-risk-h">Deposit at risk</h3>
-          <span class="verdict-badge verdict-badge--loading" id="tdr-badge">—</span>
-        </header>
-        <p class="muted is-card-intro">What a market correction would do to your deposit before you buy.</p>
-      </section>
     </section>
   </main>
 
