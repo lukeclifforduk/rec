@@ -84,6 +84,18 @@
       assert(missing.length === 0, `missing tile ids: ${missing.join(', ')}`);
     });
 
+    // --- v3 finances Now-stage visuals present ---
+    await test('pages/finances.html contains v3 Now-stage section ids', async () => {
+      const html = await (await fetch(url('pages/finances.html'))).text();
+      const required = [
+        'savings-over-time-card', 'monthly-deposits-card', 'isa-stacked-area-card',
+        'div-int-cumulative-card', 'epoch-comparison-card', 'ticker-treemap-card',
+        'realised-unrealised-card',
+      ];
+      const missing = required.filter((id) => !html.includes(`id="${id}"`));
+      assert(missing.length === 0, `missing finances v3 ids: ${missing.join(', ')}`);
+    });
+
     // --- §9: no inline style="" attributes shipped in any page ---
     await test('no inline style="" attributes in any page', async () => {
       const offenders = [];

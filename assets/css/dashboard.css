@@ -1483,3 +1483,30 @@ details.collapsible-card > .collapsible-body { padding: var(--space-4) var(--spa
   color: var(--ink-muted);
   margin: 0;
 }
+
+/* --- v3 finances/Now ISA suite (visuals 1–7) --- */
+.chart-wrap--tall { height: 320px; }
+.chart-wrap--tall canvas { max-height: 320px; }
+.chart-caption {
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+  margin: var(--space-3) 0 0;
+}
+
+.epoch-comparison { display: block; width: 100%; height: auto; max-height: 240px; }
+.epoch-comparison__label  { font-family: var(--font-data); font-size: 12px; fill: var(--ink); font-weight: 500; }
+.epoch-comparison__bar    { fill: var(--accent); }
+.epoch-comparison__value  { font-family: var(--font-data); font-variant-numeric: tabular-nums; font-size: 12px; fill: var(--ink-muted); }
+
+.ticker-treemap { display: block; width: 100%; height: auto; max-height: 420px; }
+.ticker-treemap__rect  { fill: var(--accent-soft); stroke: var(--paper); stroke-width: 2; }
+.ticker-treemap__rect:nth-of-type(odd)  { fill: color-mix(in oklch, var(--accent) 25%, var(--paper)); }
+.ticker-treemap__rect:nth-of-type(even) { fill: color-mix(in oklch, var(--accent) 18%, var(--paper)); }
+.ticker-treemap__ticker { font-family: var(--font-data); font-size: 13px; font-weight: 600; fill: var(--ink); }
+.ticker-treemap__value  { font-family: var(--font-data); font-variant-numeric: tabular-nums; font-size: 11px; fill: var(--ink-muted); }
+
+.realised-unrealised { display: block; width: 100%; height: auto; max-height: 160px; }
+.realised-unrealised__label  { font-family: var(--font-data); font-size: 12px; fill: var(--ink); font-weight: 500; }
+.realised-unrealised__value  { font-family: var(--font-data); font-variant-numeric: tabular-nums; font-size: 12px; fill: var(--ink); }
+.realised-unrealised__bar--realised   { fill: var(--accent); }
+.realised-unrealised__bar--unrealised { fill: color-mix(in oklch, var(--accent) 45%, var(--paper)); }
