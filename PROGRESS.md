@@ -37,4 +37,15 @@ _Status: COMPLETE_
 - `assets/js/investment-performance.js`: new pure module — stub-safe, epoch attribution, total return %
 - Tests: 3 new test files (deposit-risk, affordability-scenarios, investment-performance) + tests.html wired
 
+---
+
+## Phase 3 — Historical import
+_Status: COMPLETE_
+
+- `scripts/import-trading212.mjs`: new Node.js importer; reads 1+ T212 CSVs, deduplicates by ID (fallback composite key), aggregates monthly deposits/dividends/interest/realisedPnL, tags epochs, writes data/imports/trading212-history.json
+- Importer tested on synthetic CSV; all columns validated, epoch tagging confirmed
+- `data/imports/trading212-history.json` restored to stub (user will run importer with their real CSV)
+- `page-finances.js` updated: imports analysePerformance + assessDepositRisk; renderISAAttribution() + renderDepositRiskTile() added (both gracefully stub-safe)
+- `page-home.js` updated: imports analysePerformance; renderISAYTD() added (stub-safe, shows YTD contributions)
+
 

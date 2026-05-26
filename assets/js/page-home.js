@@ -7,6 +7,7 @@ import * as fin from './finances.js';
 import { gbp, monthsAsDuration } from './format.js';
 import { assessAffordability } from './affordability.js';
 import { getMoneyFlow, getMoneyFlowPostMove } from './money-flow.js';
+import { analysePerformance } from './investment-performance.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
@@ -592,7 +593,24 @@ async function init() {
   await renderShortlist(financesData, criteria);
   await renderJourneyTrack();
   renderCriteriaProse(criteria, profile, financesData);
+  renderISAYTD();
   clearStuckLoading();
+}
+
+async function renderISAYTD() {
+  const el = document.getElementById('isa-ytd-stat');
+  if (!el) return;
+  try {
+    const history = await loadJSON('imports/trading212-history');
+    const perf = analysePerformance(history);
+    if (perf.isStub) { el.textContent = '—'; return; }
+    // YTD = current calendar year contributions.
+    const year = new Date().getFullYear().toString();
+    const ytd = (history.monthlySummary ?? [])
+      .filter((m) => m.month.startsWith(year))
+      .reduce((s, m) => s + (Number(m.net) || 0), 0);
+    el.textContent = gbp(ytd);
+  } catch { el.textContent = '—'; }
 }
 
 function ready(fn) {

@@ -2,11 +2,14 @@
 // NOW: deposit hero (with LISA band) + full-width money-flow + bills/expenses tables (sparkbars).
 // LATER: side-by-side flow today vs after-move + unified affordability widget + "What if" chart + collapsible cards.
 import { getFinances, getCriteria } from './storage.js';
+import { loadJSON } from './data-loader.js';
 import * as fin from './finances.js';
 import { gbp, gbpPence, monthsAsDuration } from './format.js';
 import { assessAffordability, BANDS } from './affordability.js';
 import { getMoneyFlow, getMoneyFlowPostMove } from './money-flow.js';
 import { getSavingsVelocity } from './savings-velocity.js';
+import { analysePerformance } from './investment-performance.js';
+import { assessDepositRisk } from './deposit-risk.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
@@ -340,6 +343,65 @@ function extendProjection(projection, maxMonths) {
 // Init
 // ============================================================
 
+async function renderISAAttribution() {
+  const el = document.getElementById('isa-attribution');
+  if (!el) return;
+  let history;
+  try { history = await loadJSON('imports/trading212-history'); } catch { return; }
+  const perf = analysePerformance(history);
+  if (perf.isStub) {
+    el.innerHTML = '<p class="muted">ISA history not yet imported — run <code>node scripts/import-trading212.mjs</code> with your T212 export to see the breakdown.</p>';
+    return;
+  }
+  const total = perf.netContributed + perf.dividendsReceived + perf.interestEarned + Math.max(0, perf.unrealisedGain);
+  const pct = (n) => total > 0 ? Math.round((n / total) * 100) : 0;
+  el.innerHTML = `
+    <dl class="isa-attribution__grid">
+      <dt>Contributed</dt><dd>${gbp(perf.netContributed)} <span class="muted">(${pct(perf.netContributed)}%)</span></dd>
+      <dt>Dividends received</dt><dd>${gbp(perf.dividendsReceived)}</dd>
+      <dt>Interest</dt><dd>${gbp(perf.interestEarned)}</dd>
+      <dt>Market growth (unrealised)</dt><dd>${gbp(Math.max(0, perf.unrealisedGain))}</dd>
+      <dt>Total return</dt><dd>${perf.totalReturnPct != null ? perf.totalReturnPct.toFixed(2) + '%' : '—'}</dd>
+    </dl>
+    <div class="isa-attribution__bar" role="img" aria-label="ISA growth breakdown">
+      <div class="isa-attribution__seg isa-attribution__seg--contributed" style="flex:${pct(perf.netContributed)}" title="Contributed ${pct(perf.netContributed)}%"></div>
+      <div class="isa-attribution__seg isa-attribution__seg--dividends" style="flex:${pct(perf.dividendsReceived)}" title="Dividends ${pct(perf.dividendsReceived)}%"></div>
+      <div class="isa-attribution__seg isa-attribution__seg--interest" style="flex:${pct(perf.interestEarned)}" title="Interest ${pct(perf.interestEarned)}%"></div>
+      <div class="isa-attribution__seg isa-attribution__seg--growth" style="flex:${pct(Math.max(0, perf.unrealisedGain))}" title="Growth ${pct(Math.max(0, perf.unrealisedGain))}%"></div>
+    </div>`;
+}
+
+async function renderDepositRiskTile() {
+  const el = document.getElementById('deposit-risk-tile');
+  if (!el) return;
+  let investments, goals;
+  try {
+    investments = await loadJSON('investments');
+    goals = await loadJSON('goals');
+  } catch { return; }
+  const risk = assessDepositRisk(investments, goals);
+  const verdictClass = risk.verdict.replace('-', '_');
+  const scenariosHtml = risk.scenarios
+    .filter((s) => [10, 20].includes(s.pctDrop))
+    .map((s) => `<tr>
+      <td>Markets drop ${s.pctDrop}%</td>
+      <td class="num">${gbp(s.newValue)}</td>
+      <td class="num negative">${gbp(s.gapImpact)}</td>
+    </tr>`)
+    .join('');
+  el.innerHTML = `
+    <div class="tile__head">
+      <h3 class="tile__title">Deposit at risk</h3>
+      <span class="verdict-badge verdict-badge--${esc(verdictClass)}">${esc(risk.verdict.toUpperCase().replace('-', ' '))}</span>
+    </div>
+    <p class="tile__kpi">${gbp(risk.currentValue)} in Trading 212 ISA</p>
+    <table class="deposit-risk__table">
+      <thead><tr><th>Scenario</th><th>New value</th><th>Deposit impact</th></tr></thead>
+      <tbody>${scenariosHtml}</tbody>
+    </table>
+    <p class="deposit-risk__action muted">${esc(risk.recommendation.action)}</p>`;
+}
+
 async function init() {
   try {
     finData = await getFinances();
@@ -350,6 +412,8 @@ async function init() {
     renderLaterFlow();
     attachAffordabilityWidget();
     renderWhatIfChart();
+    renderISAAttribution();
+    renderDepositRiskTile();
   } catch (e) {
     console.error('finances init error', e);
   }
