@@ -4,7 +4,6 @@
     "max": 400000,
     "offerTarget": 380000,
     "offerStrategy": "Offer 5–10% under asking",
-    "targetDeposit": 40000,
     "depositPct": 10
   },
   "size": {

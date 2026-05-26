@@ -26,19 +26,35 @@ function assertEqual(actual, expected, msg) {
   }
 }
 
+const { deriveFinances } = await import('../assets/js/finance-derive.js');
+
+const rawFinances = readJson('data/finances.json');
+let rawInvestments = null;
+try { rawInvestments = readJson('data/investments.json'); } catch { /* optional */ }
+
 const fixtures = {
-  finances: readJson('data/finances.json'),
+  finances: deriveFinances(rawFinances),
+  rawFinances,
+  investments: rawInvestments,
   criteria: readJson('data/criteria.json'),
 };
 
+const { register: registerFinanceDerive } = await import('../tests/finance-derive.test.js');
 const { register: registerAffordability } = await import('../tests/affordability.test.js');
 const { register: registerMoneyFlow }     = await import('../tests/money-flow.test.js');
 const { register: registerSavingsVelocity } = await import('../tests/savings-velocity.test.js');
+const { register: registerDepositRisk } = await import('../tests/deposit-risk.test.js');
+const { register: registerAffordabilityScenarios } = await import('../tests/affordability-scenarios.test.js');
+const { register: registerInvestmentPerformance } = await import('../tests/investment-performance.test.js');
 const { register: registerOutreachTemplates } = await import('../tests/outreach-templates.test.js');
 
+await registerFinanceDerive({ test, assert, assertEqual, fixtures });
 await registerAffordability({ test, assert, assertEqual, fixtures });
 await registerMoneyFlow({ test, assert, assertEqual, fixtures });
 await registerSavingsVelocity({ test, assert, assertEqual, fixtures });
+await registerDepositRisk({ test, assert, assertEqual, fixtures });
+await registerAffordabilityScenarios({ test, assert, assertEqual, fixtures });
+await registerInvestmentPerformance({ test, assert, assertEqual, fixtures });
 await registerOutreachTemplates({ test, assert, assertEqual, fixtures });
 
 // Run Supabase sync tests

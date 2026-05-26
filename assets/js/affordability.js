@@ -122,9 +122,9 @@ export function assessAffordability({ price, finances, criteria, councilTaxBand:
   const takeHome = Number(finances?.income?.takeHomeMonthly || 0);
   const totalMonthly = Number(finances?.income?.totalMonthly || takeHome);
 
-  const targetDeposit = Number(
-    criteria?.budget?.targetDeposit ?? finances?.goal?.targetDeposit ?? 0,
-  );
+  // Single source: finances.goal.targetDeposit. criteria.budget.targetDeposit
+  // was a stale duplicate and has been removed from data/criteria.json.
+  const targetDeposit = Number(finances?.goal?.targetDeposit ?? 0);
   const currentDeposit = Number(finances?.savings?.totalSavings || 0);
 
   const rate = Number(finances?.mortgage?.ratePctAssumed || 0);
@@ -305,17 +305,15 @@ export function assessAffordabilityScenarios({ finances, criteria, goals, counci
   };
 }
 
-/** Call assessAffordability with a scenario-specific deposit overriding the criteria value. */
+/** Call assessAffordability with a scenario-specific deposit overriding the
+ *  canonical finances.goal.targetDeposit and totalSavings (used as currentDeposit). */
 function scenarioAffordability({ price, finances, criteria, deposit, councilTaxBand }) {
-  const overrideCriteria = {
-    ...criteria,
-    budget: { ...(criteria?.budget ?? {}), targetDeposit: deposit },
-  };
   const overrideFinances = {
     ...finances,
+    goal: { ...(finances?.goal ?? {}), targetDeposit: deposit },
     savings: { ...(finances?.savings ?? {}), totalSavings: deposit },
   };
-  return assessAffordability({ price, finances: overrideFinances, criteria: overrideCriteria, councilTaxBand });
+  return assessAffordability({ price, finances: overrideFinances, criteria, councilTaxBand });
 }
 
 // Re-export band constants for tests + consumers that want to render thresholds.
