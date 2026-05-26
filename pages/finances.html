@@ -74,6 +74,12 @@
         <h3>Living expenses</h3>
         <div id="tbl-expenses"></div>
       </section>
+
+      <section class="card" aria-labelledby="isa-attribution-h">
+        <h3 id="isa-attribution-h">ISA growth attribution</h3>
+        <p class="muted is-card-intro">How the Trading 212 ISA balance breaks down: what you put in vs what the market added.</p>
+        <div id="isa-attribution" aria-live="polite"><p class="muted">Loading&hellip;</p></div>
+      </section>
     </section>
 
     <!-- ============================== LATER ============================= -->
@@ -149,6 +155,14 @@
         <summary><h3>Gift cards</h3><span class="num" id="giftcards-total">&mdash;</span></summary>
         <div class="collapsible-body"><div id="tbl-giftcards"></div></div>
       </details>
+
+      <section class="tile-card tile-deposit-risk" id="deposit-risk-tile" aria-labelledby="deposit-risk-h" aria-live="polite">
+        <header class="tile-head">
+          <h3 id="deposit-risk-h">Deposit at risk</h3>
+          <span class="verdict-badge verdict-badge--loading" id="tdr-badge">—</span>
+        </header>
+        <p class="muted is-card-intro">What a market correction would do to your deposit before you buy.</p>
+      </section>
     </section>
   </main>
 
