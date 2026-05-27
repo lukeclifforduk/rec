@@ -35,21 +35,17 @@ session**. These rules exist to keep work safe, resumable, and high quality.
 - Read large files in **chunks of ≤200 lines** (use `offset`/`limit`), not all at once.
 
 ## 4. Start-of-cycle scan
-- At the **start of any work session**, dispatch **Haiku-model scans** (fast/cheap) to summarise current
-  repo + relevant file state before editing. Then read `docs/CHECKLIST.md` to find the next task.
+- At the **start of any work session**, summarise current repo + relevant file state before editing
+  (use a cheap/fast model or subagent scan). Then read `docs/CHECKLIST.md` to find the next task.
 
 ## 5. Checklist discipline
 - Keep `docs/CHECKLIST.md` in lockstep with `docs/PLAN.md`.
 - Tick items as you complete them and **commit** so progress is never lost.
 
 ## 6. Testing & regression
-- Keep the `tests/` harness current. **Run it after changes and before committing.**
+- Keep the `tests/` harness current. **Run `node tools/run-intelligence-tests.mjs` after changes and before committing.** This single command runs all intelligence tests + the Supabase sync tests.
 - Add/extend benchmark tests (calculators, JSON schemas) as features grow so regressions surface early.
-- **Supabase sync tests are non-negotiable.** `tests/supabase-sync.test.js` must pass before every commit
-  that touches data, schema, or `assets/js/storage.js`. The harness asserts: (a) every content file in
-  `data/areas/*.json` has a row in the `areas` mirror table with a fresher-or-equal `updated_at`; (b)
-  every user-state table has a non-null row for the active household (or is intentionally empty per
-  schema defaults); (c) no localStorage-only data type exists outside the documented set in §18.
+- **Supabase sync tests are non-negotiable** for commits touching data, schema, or `assets/js/storage.js`. They are included in the unified harness above. The harness asserts: (a) every content file in `data/areas/*.json` has a row in the `areas` mirror table with a fresher-or-equal `updated_at`; (b) every user-state table has a non-null row for the active household (or is intentionally empty per schema defaults); (c) no localStorage-only data type exists outside the documented set in §18.
 
 ## 7. Content accuracy & imagery
 - Write area/house content **only after detailed, place-specific and type-specific web searches**
@@ -62,8 +58,7 @@ session**. These rules exist to keep work safe, resumable, and high quality.
 
 **Step 0 is mandatory and comes before everything else.** See §18 for the full Supabase sync contract.
 
-0. **MCP-first Supabase freshness check.** Before reading any local file, call the Supabase MCP
-   connector:
+0. **MCP-first Supabase freshness check.** Before any session that edits data, schema, or user-state, call the Supabase MCP connector (skip for pure code refactors that touch no data):
    - `mcp__supabase__list_tables` — confirm all 10 tables exist with RLS enabled.
    - `mcp__supabase__execute_sql` against the freshness view (or run
      `node tools/check-supabase-freshness.mjs`) to fetch `MAX(updated_at)` per table.
@@ -85,7 +80,7 @@ session**. These rules exist to keep work safe, resumable, and high quality.
 ## Project shape (quick reference)
 - Zero-build static site: plain HTML + CSS + vanilla JS, all libraries via CDN.
 - Shared shell via fetch-injected partials (`components/`), styled with Pico CSS + tokens.
-- Data as JSON in `data/`, user edits persisted via `assets/js/storage.js` (localStorage now → backend later).
+- Data as JSON in `data/`, user edits persisted via `assets/js/storage.js` (localStorage write-through cache backed by Supabase).
 - Hosted on **GitHub Pages** (deploy on push to `main`). Preview locally with `python3 -m http.server`.
 
 ---
