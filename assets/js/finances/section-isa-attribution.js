@@ -1,4 +1,4 @@
-import { loadJSON } from '../data-loader.js';
+import { getInvestmentsHistory } from '../storage.js';
 import { analysePerformance } from '../investment-performance.js';
 import { gbp } from '../format.js';
 
@@ -6,7 +6,8 @@ export async function renderISAAttribution(finData) {
   const el = document.getElementById('isa-attribution');
   if (!el) return;
   let history;
-  try { history = await loadJSON('imports/trading212-history'); } catch { return; }
+  try { history = await getInvestmentsHistory(); } catch { return; }
+  if (!history) return;
   const perf = analysePerformance(history);
   if (perf.isStub) {
     el.innerHTML = '<p class="muted">ISA history not yet imported — run <code>node scripts/import-trading212.mjs</code> with your T212 export to see the breakdown.</p>';

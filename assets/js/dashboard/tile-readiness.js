@@ -1,4 +1,4 @@
-import { loadJSON } from '../data-loader.js';
+import { getGoals } from '../storage.js';
 import { gbp } from '../format.js';
 
 const READINESS_PRIORITY = [
@@ -18,7 +18,8 @@ export async function renderReadinessTile(financesData) {
   if (!elHeadline) return;
 
   let goals;
-  try { goals = await loadJSON('goals'); } catch { return; }
+  try { goals = await getGoals(); } catch { return; }
+  if (!goals) return;
 
   const current = Number(goals?.deposit?.currentSavings ?? financesData?.savings?.totalSavings ?? 0);
   const hoped = Number(goals?.deposit?.hopedFor ?? 50_000);

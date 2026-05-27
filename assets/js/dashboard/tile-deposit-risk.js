@@ -1,4 +1,4 @@
-import { loadJSON } from '../data-loader.js';
+import { getInvestments, getGoals } from '../storage.js';
 import { assessDepositRisk } from '../deposit-risk.js';
 import { gbp } from '../format.js';
 import { esc } from '../dom.js';
@@ -10,9 +10,10 @@ export async function renderDepositRiskTile() {
 
   let investments, goals;
   try {
-    investments = await loadJSON('investments');
-    goals = await loadJSON('goals');
+    investments = await getInvestments();
+    goals = await getGoals();
   } catch { return; }
+  if (!investments || !goals) return;
 
   const risk = assessDepositRisk(investments, goals);
   const verdictSlug = risk.verdict.replace('-', '_');
