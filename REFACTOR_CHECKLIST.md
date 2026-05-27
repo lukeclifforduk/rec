@@ -61,42 +61,42 @@
 - [x] 2.5 Replace `FLOW_PALETTE` in `page-finances.js`; commit + push
 
 ## Phase 3 — Split `page-home.js` (one commit per tile)
-- [ ] 3.1 Create `assets/js/dashboard/`; extract `tile-lede.js`
-- [ ] 3.2 Extract `tile-deposit.js`
-- [ ] 3.3 Extract `tile-affordability.js`
-- [ ] 3.4 Extract `tile-money-flow.js`
-- [ ] 3.5 Extract `tile-shortlist.js`
-- [ ] 3.6 Extract `tile-journey.js`
-- [ ] 3.7 Extract `tile-criteria.js`
-- [ ] 3.8 Slim `page-home.js` to co-ordinator (< 200 lines)
+- [x] 3.1 Create `assets/js/dashboard/`; extract `tile-lede.js`
+- [x] 3.2 Extract `tile-deposit.js`
+- [x] 3.3 Extract `tile-affordability.js`
+- [x] 3.4 Extract `tile-money-flow.js`
+- [x] 3.5 Extract `tile-shortlist.js`
+- [x] 3.6 Extract `tile-journey.js`
+- [x] 3.7 Extract `tile-criteria.js`
+- [x] 3.8 Slim `page-home.js` to co-ordinator (< 200 lines)
 
 ## Phase 4 — Split `page-finances.js` (one commit per chart/tile)
-- [ ] 4.1 Create `assets/js/finances/`; extract `chart-helpers.js`
-- [ ] 4.2 Extract 8 chart modules — one per commit
-- [ ] 4.3 Extract 7 tile modules — one per commit
-- [ ] 4.4 Slim `page-finances.js` to co-ordinator (< 200 lines)
+- [x] 4.1 Create `assets/js/finances/`; extract `chart-helpers.js`
+- [x] 4.2 Extract 8 chart modules — one per commit
+- [x] 4.3 Extract 7 tile modules — one per commit
+- [x] 4.4 Slim `page-finances.js` to co-ordinator (< 200 lines)
 
 ## Phase 5 — Split `page-outreach.js` (one commit per feature)
-- [ ] 5.1 Create `assets/js/outreach/`; extract `context.js`
-- [ ] 5.2 Extract `grid.js`
-- [ ] 5.3 Extract `filters.js`
-- [ ] 5.4 Extract `dialog.js`
-- [ ] 5.5 Extract `contacts.js`
-- [ ] 5.6 Extract `log.js`
-- [ ] 5.7 Extract `toast.js`
-- [ ] 5.8 Slim `page-outreach.js` to co-ordinator (< 200 lines)
+- [x] 5.1 Create `assets/js/outreach/`; extract `context.js`
+- [x] 5.2 Extract `grid.js`
+- [x] 5.3 Extract `filters.js`
+- [x] 5.4 Extract `dialog.js`
+- [x] 5.5 Extract `contacts.js`
+- [x] 5.6 Extract `log.js`
+- [x] 5.7 Extract `toast.js`
+- [x] 5.8 Slim `page-outreach.js` to co-ordinator (< 200 lines)
 
 ## Phase 6 — Split `dashboard.css` (one commit per extracted section)
-- [ ] 6.1 Create `assets/css/dashboard/` and `assets/css/pages/`
-- [ ] 6.2 Extract 7 tile CSS files — one per commit
-- [ ] 6.3 Extract 7 page CSS files — one per commit
-- [ ] 6.4 Slim `dashboard.css` to `@import` entry shell
+- [x] 6.1 Create `assets/css/dashboard/` and `assets/css/pages/`
+- [x] 6.2 Extract 7 tile CSS files — one per commit
+- [x] 6.3 Extract 7 page CSS files — one per commit
+- [x] 6.4 Slim `dashboard.css` to `@import` entry shell
 - [ ] 6.5 Developer visual eyeball on every page; record pass in checklist
 
 ## Phase 7 — `data-sync.html` extraction
-- [ ] 7.1 Extract `<style>` to `assets/css/pages/data-sync.css`; commit + push
-- [ ] 7.2 Extract `<script>` to `assets/js/page-data-sync.js`; commit + push
-- [ ] 7.3 (Optional) refactor new JS to use `dom.js` helpers
+- [x] 7.1 Extract `<style>` to `assets/css/pages/data-sync.css`; commit + push
+- [x] 7.2 Extract `<script>` to `assets/js/page-data-sync.js`; commit + push
+- [x] 7.3 (Optional) refactor new JS to use `dom.js` helpers
 - [ ] 7.4 Developer smoke-checks page
 
 ## Phase 8 — `about-search.html` inline-handler removal
@@ -125,3 +125,8 @@
 - 2026-05-27 — Phase 0.5 complete: doc audit, 4 CLAUDE.md fixes, PLAN.md v2-complete note, PROGRESS.md archived, README updated
 - 2026-05-27 — Phase 1 complete: dom.js/motion.js/svg.js/css-vars.js created; 11 page modules updated; 10 esc/$/SVG_NS duplicates eliminated; 184/184 tests
 - 2026-05-27 — Phase 2 complete: intelligence-constants.js + flow-constants.js; FLOW_PALETTE/LADDER_RANGE/LTI_BANDS/etc extracted; 184/184 tests
+- 2026-05-27 — Phase 3 complete: 12 dashboard tile modules; page-home.js → coordinator
+- 2026-05-27 — Phase 4 complete: 8 finance section modules; page-finances.js → coordinator
+- 2026-05-27 — Phase 5 complete: 8 outreach modules; page-outreach.js → coordinator
+- 2026-05-27 — Phase 6 complete: dashboard.css split into @import shell + per-tile/page partials
+- 2026-05-27 — Phase 7 complete: data-sync.html style+script extracted; dom.js helpers applied; 184/184 tests
