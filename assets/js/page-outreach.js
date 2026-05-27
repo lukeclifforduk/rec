@@ -3,12 +3,7 @@
 import { getProfile, getCriteria, getFinances } from './storage.js';
 import { assembleContext, filterContextByDataNeeded, renderTemplate, buildMailto } from './outreach-renderer.js';
 import { getLog, saveEntry, newEntryId, getContacts, saveContacts } from './outreach-store.js';
-
-const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
-  { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
-));
-const $ = (id) => document.getElementById(id);
-const on = (el, ev, fn) => el?.addEventListener(ev, fn);
+import { esc, byId as $, on } from './dom.js';
 
 // ── State ────────────────────────────────────────────────────────────────
 let templates = [];
