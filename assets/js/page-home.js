@@ -15,6 +15,7 @@ import { buildSavingsSeries } from './savings-series.js';
 import { getSavingsVelocity } from './savings-velocity.js';
 import { esc, byId as $, setText, setHTML } from './dom.js';
 import { prefersReducedMotion } from './motion.js';
+import { SVG_NS } from './svg.js';
 
 // Placeholders that show an animated loading indicator until their render lands.
 const LOADING_IDS = ['td-headline', 'tf-headline', 'ta-verdict', 'tj-next-text', 'tc-prose'];
@@ -745,7 +746,6 @@ async function renderISAYTD() {
 
 // --- v3 visual tiles ----------------------------------------------------------
 
-const SVG_NS = 'http://www.w3.org/2000/svg';
 
 function fmtMonth(label) {
   if (!label || typeof label !== 'string' || label.length < 7) return label ?? '';

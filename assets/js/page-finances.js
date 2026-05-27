@@ -15,6 +15,7 @@ import { deriveFinances } from './finance-derive.js';
 import { esc, byId as $, setText, setHTML } from './dom.js';
 import { prefersReducedMotion } from './motion.js';
 import { cssVar } from './css-vars.js';
+import { SVG_NS as SVG_NS_F } from './svg.js';
 
 let finData = null;
 let criData = null;
@@ -482,7 +483,6 @@ function renderEverything() {
 // v3 visuals — savings-over-time + ISA performance suite (stub-safe)
 // ============================================================
 
-const SVG_NS_F = 'http://www.w3.org/2000/svg';
 const _v3Charts = {};
 const STUB_MSG = (id) => `<p class="muted">ISA history not yet imported — run <code>node scripts/import-trading212.mjs</code> to populate this chart.</p>`;
 

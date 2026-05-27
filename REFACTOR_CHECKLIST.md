@@ -1,10 +1,10 @@
 # REFACTOR_CHECKLIST.md — live progress tracker
 
 > **Resume here ↓**
-> Next action: Phase 1.1 — create `assets/js/dom.js` (esc, byId, setText, setHTML, on)
-> Last commit on branch: phase 0.5 doc audit (see git log)
-> Tests last run: 2026-05-27 — 174/174 passed
-> Active phase: Phase 1 — foundation utilities
+> Next action: Phase 2.1 — create `assets/js/intelligence-constants.js` (LISA_CAP, LTV_TIERS, INCOME_MULTIPLE, LADDER, etc.)
+> Last commit on branch: phase 1 complete (see git log)
+> Tests last run: 2026-05-27 — 184/184 passed
+> Active phase: Phase 2 — constants extraction
 
 ---
 
@@ -34,24 +34,24 @@
 - [x] 0.5.7 Commit + push: `docs: phase 0.5 — currency audit, slim redundant rules`
 
 ## Phase 1 — Foundation utilities
-- [ ] 1.1 Create `assets/js/dom.js` (esc, byId, setText, setHTML, on)
-- [ ] 1.2 Create `assets/js/motion.js` (prefersReducedMotion)
-- [ ] 1.3 Create `assets/js/svg.js` (SVG_NS, createSVGElement)
-- [ ] 1.4 Create `assets/js/css-vars.js` (cssVar)
-- [ ] 1.5 Create `tests/dom-utils.test.js`; tests green
-- [ ] 1.6 Replace inline copies in `page-home.js`; commit + push
-- [ ] 1.7 Replace inline copies in `page-finances.js`; commit + push
-- [ ] 1.8 Replace inline copies in `page-outreach.js`; commit + push
-- [ ] 1.9 Replace inline copies in `page-area-detail.js`; commit + push
-- [ ] 1.10 Replace inline copies in `page-areas.js`; commit + push
-- [ ] 1.11 Replace inline copies in `page-criteria.js`; commit + push
-- [ ] 1.12 Replace inline copies in `page-house-types.js`; commit + push
-- [ ] 1.13 Replace inline copies in `page-journey.js`; commit + push
-- [ ] 1.14 Replace inline copies in `page-map.js`; commit + push
-- [ ] 1.15 Replace inline copies in `page-profile.js`; commit + push
-- [ ] 1.16 Replace inline copies in `page-profile-detail.js`; commit + push
-- [ ] 1.17 Grep verification: zero duplicate `esc`/`$`/etc. outside the new files
-- [ ] 1.18 Final commit + push: phase 1 complete marker
+- [x] 1.1 Create `assets/js/dom.js` (esc, byId, setText, setHTML, on)
+- [x] 1.2 Create `assets/js/motion.js` (prefersReducedMotion)
+- [x] 1.3 Create `assets/js/svg.js` (SVG_NS, createSVGElement)
+- [x] 1.4 Create `assets/js/css-vars.js` (cssVar)
+- [x] 1.5 Create `tests/dom-utils.test.js`; tests green
+- [x] 1.6 Replace inline copies in `page-home.js` + SVG_NS import
+- [x] 1.7 Replace inline copies in `page-finances.js` + SVG_NS_F alias import
+- [x] 1.8 Replace inline copies in `page-outreach.js`
+- [x] 1.9 Replace inline copies in `page-area-detail.js`
+- [x] 1.10 Replace inline copies in `page-areas.js`
+- [x] 1.11 Replace inline copies in `page-criteria.js`
+- [x] 1.12 Replace inline copies in `page-house-types.js`
+- [x] 1.13 Replace inline copies in `page-journey.js`
+- [x] 1.14 Replace inline copies in `page-map.js`
+- [x] 1.15 Replace inline copies in `page-profile.js`
+- [x] 1.16 Replace inline copies in `page-profile-detail.js` (setText wrapper with '—' fallback)
+- [x] 1.17 Grep verification: zero duplicate declarations outside new files ✅
+- [x] 1.18 Final commit + push: phase 1 complete
 
 ## Phase 2 — Constants extraction
 - [ ] 2.1 Create `assets/js/intelligence-constants.js`
@@ -123,3 +123,4 @@
 ## Session log
 - 2026-05-27 — Phase 0 complete: characterization tests (174/174), REFACTOR_PLAN.md + REFACTOR_CHECKLIST.md created
 - 2026-05-27 — Phase 0.5 complete: doc audit, 4 CLAUDE.md fixes, PLAN.md v2-complete note, PROGRESS.md archived, README updated
+- 2026-05-27 — Phase 1 complete: dom.js/motion.js/svg.js/css-vars.js created; 11 page modules updated; 10 esc/$/SVG_NS duplicates eliminated; 184/184 tests
