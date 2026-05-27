@@ -25,8 +25,8 @@ function assertEqual(actual, expected, msg) {
 }
 
 const fixtures = {
-  finances: readJson('data/finances.json'),
-  criteria: readJson('data/criteria.json'),
+  finances: readJson('data/fixtures/finances.sample.json'),
+  criteria: readJson('data/fixtures/criteria.sample.json'),
 };
 
 const { register: registerAffordability } = await import('../tests/affordability.test.js');

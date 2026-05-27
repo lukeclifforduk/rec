@@ -1,0 +1,23 @@
+{
+  "person": {
+    "fullName": "Jane Smith",
+    "dateOfBirth": "1990-01-01",
+    "mobile": "07000000000",
+    "email": "example@example.com",
+    "address": { "line1": "1 Example Road", "town": "Winchester", "county": "Hampshire", "postcode": "SO21 1AA" },
+    "previousAddresses": [],
+    "nationality": "UK resident",
+    "household": { "livingArrangement": "with family", "dependents": 0, "monthlyHouseholdContribution": 480 }
+  },
+  "employment": {
+    "employer": "Example Employer Ltd",
+    "industry": "fintech",
+    "role": "Product Manager",
+    "startDate": "2024-11-01",
+    "type": "permanent",
+    "workPattern": "full-time, remote",
+    "occasionalOfficeLocation": "London"
+  },
+  "creditProfile": { "scoresChecked": false, "adverseHistory": null, "onElectoralRoll": null },
+  "debts": { "creditCards": [], "studentLoan": { "plan": "Plan 1", "monthlyDeduction": 278 }, "personalLoans": [] }
+}

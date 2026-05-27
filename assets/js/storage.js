@@ -158,13 +158,13 @@ async function _save(lsKey, table, value) {
 
 // ── Exported API — identical signatures to the original storage.js ─────
 
-export async function getProfile()   { return _get('profile',   'profile',   'profile',  null); }
+export async function getProfile()   { return _get('profile',   'profile',   'fixtures/profile.sample',  null); }
 export async function saveProfile(d) { return _save('profile',  'profile',   d); }
 
-export async function getCriteria()  { return _get('criteria',  'criteria',  'criteria', null); }
+export async function getCriteria()  { return _get('criteria',  'criteria',  'fixtures/criteria.sample', null); }
 export async function saveCriteria(d){ return _save('criteria', 'criteria',  d); }
 
-export async function getFinances()  { return _get('finances',  'finances',  'finances', null); }
+export async function getFinances()  { return _get('finances',  'finances',  'fixtures/finances.sample', null); }
 export async function saveFinances(d){ return _save('finances', 'finances',  d); }
 
 // Read-only, repo-owned content (no Supabase — served from data/ in the repo).
