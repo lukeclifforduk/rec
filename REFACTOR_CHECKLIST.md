@@ -1,10 +1,10 @@
 # REFACTOR_CHECKLIST.md — live progress tracker
 
 > **Resume here ↓**
-> Next action: Phase 0.5 — documentation audit (read CLAUDE.md, DESIGN.md, docs/*.md end-to-end; write docs/audit-notes.md; slim redundant/stale rules)
-> Last commit on main: (see git log)
+> Next action: Phase 1.1 — create `assets/js/dom.js` (esc, byId, setText, setHTML, on)
+> Last commit on branch: phase 0.5 doc audit (see git log)
 > Tests last run: 2026-05-27 — 174/174 passed
-> Active phase: Phase 0 complete; starting Phase 0.5
+> Active phase: Phase 1 — foundation utilities
 
 ---
 
@@ -25,13 +25,13 @@
 - [x] 0.7 Commit + push: `test(refactor): phase 0 — characterization snapshots for home, finances, outreach`
 
 ## Phase 0.5 — Documentation audit
-- [ ] 0.5.1 Read `CLAUDE.md` end-to-end; list outdated/duplicated/over-restrictive rules in `docs/audit-notes.md`
-- [ ] 0.5.2 Read `DESIGN.md`
-- [ ] 0.5.3 Read `README.md`
-- [ ] 0.5.4 Audit `docs/*.md` and `PROGRESS.md` for redundancy and staleness
-- [ ] 0.5.5 Review `CLAUDE.md §16` guard-rail list — justify each entry or remove it
-- [ ] 0.5.6 Apply slim-only edits (delete redundant, fix stale, do not add)
-- [ ] 0.5.7 Commit + push: `docs: phase 0.5 — currency audit, slim redundant rules`
+- [x] 0.5.1 Read `CLAUDE.md` end-to-end; list outdated/duplicated/over-restrictive rules in `docs/audit-notes.md`
+- [x] 0.5.2 Read `DESIGN.md`
+- [x] 0.5.3 Read `README.md`
+- [x] 0.5.4 Audit `docs/*.md` and `PROGRESS.md` for redundancy and staleness
+- [x] 0.5.5 Review `CLAUDE.md §16` guard-rail list — all 7 entries justified; all kept
+- [x] 0.5.6 Apply slim-only edits: fixed 4 stale spots in CLAUDE.md (326←331 lines); added v2 COMPLETE to PLAN.md; archived PROGRESS.md; updated README.md test count + backend note
+- [x] 0.5.7 Commit + push: `docs: phase 0.5 — currency audit, slim redundant rules`
 
 ## Phase 1 — Foundation utilities
 - [ ] 1.1 Create `assets/js/dom.js` (esc, byId, setText, setHTML, on)
@@ -122,3 +122,4 @@
 
 ## Session log
 - 2026-05-27 — Phase 0 complete: characterization tests (174/174), REFACTOR_PLAN.md + REFACTOR_CHECKLIST.md created
+- 2026-05-27 — Phase 0.5 complete: doc audit, 4 CLAUDE.md fixes, PLAN.md v2-complete note, PROGRESS.md archived, README updated

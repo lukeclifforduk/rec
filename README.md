@@ -6,7 +6,7 @@ research-backed town/village profiles, characteristic house-types, a savings/fin
 interactive map of search areas.
 
 It is a **zero-build static web app** (plain HTML/CSS/JS, libraries via CDN) that stores content as
-editable JSON in the repo. Designed so a future login + web-server backend is a swap, not a rewrite.
+editable JSON in the repo, with user state persisted to Supabase via the MCP-backed storage layer.
 
 ## v3 — visuals + page re-prioritisation
 
@@ -35,7 +35,7 @@ finances page, each paired with a caption-as-answer (DESIGN.md §5 rule 4):
   tables (`goals`, `readiness_checklist`, `investments_accounts`,
   `investments_history`) are backfilled via the Supabase MCP connector.
 
-See `PROGRESS.md` for the phase-by-phase delivery.
+See `docs/archive/PROGRESS-2026-05-26.md` for the phase-by-phase delivery log.
 
 ## v2 — visual-first overhaul + intelligence engine
 
@@ -62,9 +62,10 @@ engine** that powers every affordability surface from one source of truth:
   from area-detail, finances, and journey checklist rows.
 - **v3 placeholders** remain at `pages/listings.html` and `pages/ask.html`. See `docs/ROADMAP.md`.
 
-Run `node tools/run-intelligence-tests.mjs` for the pure-module test harness (65 assertions covering
-affordability bands, money-flow sums, savings-velocity scenarios, outreach template schema, and the
-renderer + QoI leak guard). Browser-side smoke checks (no horizontal scroll, no inline styles, page
+Run `node tools/run-intelligence-tests.mjs` for the unified test harness (174+ assertions covering
+affordability bands, money-flow sums, savings-velocity, savings series, deposit risk, investment
+performance, outreach template schema, renderer + QoI leak guard, Supabase sync state, and
+computation-pipeline characterization baselines). Browser-side smoke checks (no horizontal scroll, no inline styles, page
 reachability) run via `tests/tests.html` against a local server when you want them; visual review is done
 by eye in the browser.
 
