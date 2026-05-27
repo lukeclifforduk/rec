@@ -1,7 +1,6 @@
 // page-home.js — dashboard coordinator.
 // All tile rendering is delegated to assets/js/dashboard/tile-*.js modules.
-import { getFinances, getProfile, getCriteria } from './storage.js';
-import { loadJSON } from './data-loader.js';
+import { getFinances, getProfile, getCriteria, getInvestments } from './storage.js';
 import { deriveFinances } from './finance-derive.js';
 import { byId } from './dom.js';
 
@@ -43,7 +42,7 @@ async function init() {
   markLoading();
   let rawFinances = null, rawInvestments = null, profile = null, criteria = null;
 
-  try { rawInvestments = await loadJSON('investments'); } catch { rawInvestments = null; }
+  try { rawInvestments = await getInvestments(); } catch { rawInvestments = null; }
 
   const renderAll = (financesData) => {
     renderLede(profile, criteria, financesData);

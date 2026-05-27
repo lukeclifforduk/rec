@@ -1,4 +1,4 @@
-import { loadJSON } from '../data-loader.js';
+import { getInvestments, getInvestmentsHistory, getGoals } from '../storage.js';
 import { buildSavingsSeries } from '../savings-series.js';
 import { getSavingsVelocity } from '../savings-velocity.js';
 import { gbp } from '../format.js';
@@ -18,7 +18,7 @@ export async function renderSavingsSpark(financesData) {
   if (!svg || !financesData) return;
 
   let history;
-  try { history = await loadJSON('imports/trading212-history'); } catch { history = null; }
+  try { history = await getInvestmentsHistory(); } catch { history = null; }
 
   const goal = Number(financesData?.goal?.targetDeposit ?? 0);
   const series = buildSavingsSeries({ history, finances: financesData, goal });
@@ -223,8 +223,8 @@ export async function renderWithdrawalReadiness() {
   if (!bar) return;
 
   let goals, investments;
-  try { goals = await loadJSON('goals'); } catch { goals = null; }
-  try { investments = await loadJSON('investments'); } catch { investments = null; }
+  try { goals = await getGoals(); } catch { goals = null; }
+  try { investments = await getInvestments(); } catch { investments = null; }
 
   const SEASONING_MONTHS = 3;
   const today = new Date();

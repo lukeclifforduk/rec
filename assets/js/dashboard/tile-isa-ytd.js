@@ -1,4 +1,4 @@
-import { loadJSON } from '../data-loader.js';
+import { getInvestmentsHistory } from '../storage.js';
 import { analysePerformance } from '../investment-performance.js';
 import { gbp } from '../format.js';
 
@@ -6,7 +6,8 @@ export async function renderISAYTD() {
   const el = document.getElementById('isa-ytd-stat');
   if (!el) return;
   try {
-    const history = await loadJSON('imports/trading212-history');
+    const history = await getInvestmentsHistory();
+    if (!history) { el.textContent = '—'; return; }
     const perf = analysePerformance(history);
     if (perf.isStub) { el.textContent = '—'; return; }
     const year = new Date().getFullYear().toString();

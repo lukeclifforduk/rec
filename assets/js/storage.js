@@ -258,6 +258,54 @@ async function _sbGetReadinessRows() {
   }
 }
 
+// v3 — investments account (row in investments_accounts; data jsonb holds the
+// legacy data/investments.json shape, exposed as { trading212ISA }).
+// Cached in localStorage; revalidated in background like _get.
+export async function getInvestments(opts = {}) {
+  const lsKey = 'investments';
+  const cached = readLocal(lsKey);
+  const fetchFresh = async () => {
+    const [sb, hid] = await Promise.all([_initSb(), _getHid()]);
+    if (!sb || !hid) return null;
+    try {
+      const { data, error } = await sb
+        .from('investments_accounts')
+        .select('data, provider, current_value, earmark_pct, account_opened, account_type')
+        .eq('household_id', hid)
+        .limit(1);
+      if (error) throw error;
+      const row = data?.[0];
+      if (!row) return null;
+      // The jsonb `data` column mirrors the legacy investments.json blob; expose
+      // it under trading212ISA so existing consumers (finance-derive, deposit-risk,
+      // tile-*) work unchanged.
+      return { trading212ISA: row.data ?? {
+        provider: row.provider,
+        accountType: row.account_type,
+        accountOpened: row.account_opened,
+        earmarkPct: Number(row.earmark_pct) || 0,
+        currentPortfolioValue: Number(row.current_value) || 0,
+      } };
+    } catch (e) {
+      console.error('storage: read investments_accounts', e.message);
+      return null;
+    }
+  };
+  if (cached !== null) {
+    fetchFresh().then((fresh) => {
+      if (fresh === null) return;
+      if (JSON.stringify(fresh) !== JSON.stringify(cached)) {
+        writeLocal(lsKey, fresh);
+        if (opts.onUpdate) opts.onUpdate(fresh);
+      }
+    }).catch(() => {});
+    return cached;
+  }
+  const fresh = await fetchFresh();
+  if (fresh !== null) writeLocal(lsKey, fresh);
+  return fresh;
+}
+
 // v3 — investments history (row-per-month; falls back to repo JSON).
 // Returns the same shape as data/imports/trading212-history.json so the
 // existing analysePerformance() / buildSavingsSeries() consumers don't have

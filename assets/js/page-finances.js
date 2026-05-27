@@ -1,7 +1,6 @@
 // page-finances.js — finances page coordinator.
 // All rendering is delegated to assets/js/finances/section-*.js modules.
-import { getFinances, getCriteria } from './storage.js';
-import { loadJSON } from './data-loader.js';
+import { getFinances, getCriteria, getInvestments } from './storage.js';
 import { deriveFinances } from './finance-derive.js';
 
 import { renderTiles }               from './finances/section-deposit.js';
@@ -44,7 +43,7 @@ function renderEverything() {
 
 async function init() {
   try {
-    try { rawInvestments = await loadJSON('investments'); } catch { rawInvestments = null; }
+    try { rawInvestments = await getInvestments(); } catch { rawInvestments = null; }
     const rawFinances = await getFinances({
       onUpdate: (fresh) => {
         finData = deriveFinances(fresh, { investments: rawInvestments });

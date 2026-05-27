@@ -1,4 +1,4 @@
-import { loadJSON } from '../data-loader.js';
+import { getInvestmentsHistory } from '../storage.js';
 import { analysePerformance, getMonthlyCumulativeDeposits, getEpochAttribution } from '../investment-performance.js';
 import { buildSavingsSeries } from '../savings-series.js';
 import { gbp } from '../format.js';
@@ -11,7 +11,7 @@ const _v3Charts = {};
 export async function renderSavingsOverTime(finData) {
   const canvas = document.getElementById('savings-over-time-canvas');
   if (!canvas || !finData) return;
-  let history; try { history = await loadJSON('imports/trading212-history'); } catch { history = null; }
+  let history; try { history = await getInvestmentsHistory(); } catch { history = null; }
   const goal = Number(finData?.goal?.targetDeposit ?? 0);
   const series = buildSavingsSeries({ history, finances: finData, goal });
   const cap = document.getElementById('sot-caption');
@@ -49,7 +49,7 @@ export async function renderSavingsOverTime(finData) {
 export async function renderMonthlyDeposits(finData) {
   const canvas = document.getElementById('monthly-deposits-canvas');
   if (!canvas || !finData) return;
-  let history; try { history = await loadJSON('imports/trading212-history'); } catch { history = null; }
+  let history; try { history = await getInvestmentsHistory(); } catch { history = null; }
   const series = getMonthlyCumulativeDeposits(history);
   const cap = document.getElementById('md-caption');
 
@@ -77,7 +77,7 @@ export async function renderMonthlyDeposits(finData) {
 export async function renderISAStackedArea(finData) {
   const canvas = document.getElementById('isa-stacked-canvas');
   if (!canvas || !finData) return;
-  let history; try { history = await loadJSON('imports/trading212-history'); } catch { history = null; }
+  let history; try { history = await getInvestmentsHistory(); } catch { history = null; }
   if (!Array.isArray(history?.monthlySummary) || history.monthlySummary.length === 0) {
     setStub('isa-stacked-area-card', 'isasa-caption'); return;
   }
@@ -119,7 +119,7 @@ export async function renderISAStackedArea(finData) {
 export async function renderDividendsInterest() {
   const canvas = document.getElementById('div-int-canvas');
   if (!canvas) return;
-  let history; try { history = await loadJSON('imports/trading212-history'); } catch { history = null; }
+  let history; try { history = await getInvestmentsHistory(); } catch { history = null; }
   if (!Array.isArray(history?.monthlySummary) || history.monthlySummary.length === 0) {
     setStub('div-int-cumulative-card', 'di-caption'); return;
   }
@@ -154,7 +154,7 @@ export async function renderDividendsInterest() {
 export async function renderEpochComparison() {
   const svg = document.getElementById('epoch-svg');
   if (!svg) return;
-  let history; try { history = await loadJSON('imports/trading212-history'); } catch { history = null; }
+  let history; try { history = await getInvestmentsHistory(); } catch { history = null; }
   const epochs = getEpochAttribution(history);
   const cap = document.getElementById('ec-caption');
 
@@ -206,7 +206,7 @@ export async function renderEpochComparison() {
 export async function renderTickerTreemap() {
   const svg = document.getElementById('ticker-treemap-svg');
   if (!svg) return;
-  let history; try { history = await loadJSON('imports/trading212-history'); } catch { history = null; }
+  let history; try { history = await getInvestmentsHistory(); } catch { history = null; }
   const exposure = history?.tickerExposure;
   const cap = document.getElementById('tt-caption');
   if (!exposure || typeof exposure !== 'object' || Object.keys(exposure).length === 0) {
@@ -282,7 +282,7 @@ export async function renderTickerTreemap() {
 export async function renderRealisedUnrealised() {
   const svg = document.getElementById('ru-svg');
   if (!svg) return;
-  let history; try { history = await loadJSON('imports/trading212-history'); } catch { history = null; }
+  let history; try { history = await getInvestmentsHistory(); } catch { history = null; }
   const perf = analysePerformance(history);
   const cap = document.getElementById('ru-caption');
 

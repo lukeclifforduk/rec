@@ -1,4 +1,4 @@
-import { loadJSON } from '../data-loader.js';
+import { getGoals } from '../storage.js';
 import { assessAffordabilityScenarios } from '../affordability.js';
 import { gbp } from '../format.js';
 import { esc } from '../dom.js';
@@ -8,7 +8,7 @@ export async function renderAffordabilityScenariosTile(financesData, criteria) {
   if (!el || !financesData) return;
 
   let goals;
-  try { goals = await loadJSON('goals'); } catch { goals = null; }
+  try { goals = await getGoals(); } catch { goals = null; }
 
   const sc = assessAffordabilityScenarios({ finances: financesData, criteria, goals });
 
