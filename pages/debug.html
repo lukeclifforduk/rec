@@ -288,8 +288,10 @@
         row(outDerive, 'affordability.lti', 'info', String(result.lti ?? 'n/a'));
         row(outDerive, 'affordability.paymentToIncomePct', 'info',
           result.paymentToIncomePct != null ? `${result.paymentToIncomePct.toFixed(1)}%` : 'n/a');
-        row(outDerive, 'affordability.whyVerdict', result.whyVerdict?.length ? 'warn' : 'ok',
-          result.whyVerdict?.join('; ') || 'none');
+        const verdictStatus = { comfortable: 'ok', stretch: 'warn', tight: 'warn', 'out-of-reach': 'err' };
+        row(outDerive, 'affordability.whyVerdict',
+          result.whyVerdict?.length ? (verdictStatus[result.verdict] ?? 'warn') : 'ok',
+          result.whyVerdict?.join('\n') || 'none — all factors comfortable');
       }
     } catch (e) {
       row(outDerive, 'assessAffordability()', 'err', e.message);

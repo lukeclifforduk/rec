@@ -154,18 +154,23 @@ export function assessAffordability({ price, finances, criteria, councilTaxBand:
   // SDLT (FTB relief lost above £500k).
   const sdlt = calcSDLT(p, { firstTimeBuyer: ftb });
 
-  // whyVerdict — sentence-ish drivers (kept terse; consumers may render as a list).
+  // whyVerdict — only surfaces non-comfortable factors so consumers get an
+  // actionable list rather than noise on an otherwise-fine assessment.
   const whyVerdict = [];
-  whyVerdict.push(`Loan-to-income ${incomeMultiple.toFixed(2)}× sits in the ${bandIncomeMultiple} band.`);
-  whyVerdict.push(`Payment is ${paymentToIncomePct.toFixed(1)}% of take-home (${bandPayment} band).`);
+  if (bandIncomeMultiple !== 'comfortable') {
+    whyVerdict.push(`Loan-to-income ${incomeMultiple.toFixed(2)}× (${bandIncomeMultiple} — lenders typically cap at 4.5×).`);
+  }
+  if (bandPayment !== 'comfortable') {
+    whyVerdict.push(`Mortgage payment is ${paymentToIncomePct.toFixed(1)}% of take-home (${bandPayment} — comfortable is below 40%).`);
+  }
   if (monthlySpareAfter < 0) {
     whyVerdict.push(`Spare cash is negative (£${Math.round(monthlySpareAfter)}/mo) — outgoings exceed income.`);
-  } else {
-    whyVerdict.push(`£${Math.round(monthlySpareAfter)}/mo spare after the mortgage (${bandSpareAfter} band).`);
+  } else if (bandSpareAfter !== 'comfortable') {
+    whyVerdict.push(`Only £${Math.round(monthlySpareAfter)}/mo left after bills and mortgage (${bandSpareAfter} — comfortable is above £400/mo).`);
   }
   if (stressedPaymentToIncomePct > STRESS_WARNING_PCT) {
     whyVerdict.push(
-      `Stressed at +${STRESS_UPLIFT_PP}pp (${stressedRate.toFixed(2)}%) the payment would be ${stressedPaymentToIncomePct.toFixed(1)}% of take-home — fails the resilience floor.`,
+      `Stress test: at +${STRESS_UPLIFT_PP}pp (${stressedRate.toFixed(2)}%) payment rises to ${stressedPaymentToIncomePct.toFixed(1)}% of take-home — exceeds the lender resilience floor.`,
     );
   }
   if (!lisaOk && p > LISA_CAP_GBP) {
