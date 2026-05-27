@@ -28,15 +28,15 @@ function assertEqual(actual, expected, msg) {
 
 const { deriveFinances } = await import('../assets/js/finance-derive.js');
 
-const rawFinances = readJson('data/finances.json');
+const rawFinances = readJson('data/fixtures/finances.sample.json');
 let rawInvestments = null;
-try { rawInvestments = readJson('data/investments.json'); } catch { /* optional */ }
+try { rawInvestments = readJson('data/fixtures/investments.sample.json'); } catch { /* optional */ }
 
 const fixtures = {
   finances: deriveFinances(rawFinances, { investments: rawInvestments }),
   rawFinances,
   investments: rawInvestments,
-  criteria: readJson('data/criteria.json'),
+  criteria: readJson('data/fixtures/criteria.sample.json'),
 };
 
 const { register: registerFinanceDerive } = await import('../tests/finance-derive.test.js');

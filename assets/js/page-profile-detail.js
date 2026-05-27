@@ -1,4 +1,4 @@
-// page-profile-detail.js — read-only view of the expanded data/profile.json.
+// page-profile-detail.js — read-only view of the profile (from Supabase via storage.js).
 // Renders person, employment, credit, debts, pension + followup checklist.
 // Anchor: Stripe-docs editorial article (restrained, field-list layout).
 

@@ -166,16 +166,12 @@ async function refreshStatus() {
 on(byId('btn-refresh-status'), 'click', refreshStatus);
 
 // ── Alignment validator ───────────────────────────────────────────
-const SYNC_TABLES = [
-  { key: 'profile',  table: 'profile',  file: 'data/profile.json'  },
-  { key: 'criteria', table: 'criteria', file: 'data/criteria.json' },
-  { key: 'finances', table: 'finances', file: 'data/finances.json' },
-  { key: 'contacts', table: 'contacts', file: 'data/contacts.json' },
-];
-
-// localStorage-backed tables — compared against Supabase to detect cache/cloud drift.
+// All user-state tables compared via localStorage cache vs Supabase (no repo JSON files).
 const VALIDATE_LOCAL = [
-  { key: 'shortlist',      table: 'shortlist',     lsKey: 'shortlist'      },
+  { key: 'profile',        table: 'profile',        lsKey: 'profile'        },
+  { key: 'criteria',       table: 'criteria',       lsKey: 'criteria'       },
+  { key: 'finances',       table: 'finances',       lsKey: 'finances'       },
+  { key: 'shortlist',      table: 'shortlist',      lsKey: 'shortlist'      },
   { key: 'zones',          table: 'zones',          lsKey: 'zones'          },
   { key: 'journey_checks', table: 'journey_checks', lsKey: 'journey-checks' },
   { key: 'contacts',       table: 'contacts',       lsKey: 'contacts'       },
@@ -183,7 +179,6 @@ const VALIDATE_LOCAL = [
 ];
 
 const VALIDATE_ALL = [
-  ...SYNC_TABLES.map(t => ({ ...t, src: 'file' })),
   ...VALIDATE_LOCAL.map(t => ({ ...t, src: 'local' })),
 ];
 
@@ -350,88 +345,48 @@ on(byId('btn-validate'), 'click', async () => {
 });
 
 
-// ── Push: repo JSON → Supabase ────────────────────────────────────
+// ── Push: deprecated — user state lives in Supabase only ─────────
 on(byId('btn-push'), 'click', async () => {
-  if (!await requireAuth()) return;
   const log = byId('push-log');
   clearLog(log);
-  const statusEls = Object.fromEntries(SYNC_TABLES.map(({ key }) =>
-    [key, byId(`push-status-${key}`)]));
-  Object.values(statusEls).forEach(el => { if (el) { el.textContent = ''; el.className = 'sync-file-status'; } });
-  logLine(log, 'Reading repo JSON files…', 'info');
-  let allOk = true;
-  for (const { key, table } of SYNC_TABLES) {
-    let data;
-    try {
-      const res = await fetch(url(`data/${key}.json`) + '?_=' + Date.now());
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      data = await res.json();
-      logLine(log, `  Read data/${key}.json`, 'info');
-    } catch (e) {
-      logLine(log, `✗ data/${key}.json: ${e.message}`, 'err');
-      if (statusEls[key]) { statusEls[key].textContent = 'read error'; statusEls[key].className = 'sync-file-status err'; }
-      allOk = false;
-      continue;
-    }
-    const { error } = await supabase
-      .from(table)
-      .upsert(
-        { household_id: householdId, data, updated_at: new Date().toISOString() },
-        { onConflict: 'household_id' }
-      );
-    if (error) {
-      logLine(log, `✗ ${table}: ${error.message}`, 'err');
-      if (statusEls[key]) { statusEls[key].textContent = 'write error'; statusEls[key].className = 'sync-file-status err'; }
-      allOk = false;
-    } else {
-      logLine(log, `✓ ${table} updated`, 'ok');
-      if (statusEls[key]) { statusEls[key].textContent = 'pushed'; statusEls[key].className = 'sync-file-status ok'; }
-    }
-  }
-  logLine(log, allOk ? 'Done — all tables updated.' : 'Finished with errors.', allOk ? 'ok' : 'warn');
-  refreshStatus();
+  logLine(log, 'Push is no longer applicable. User-state data (profile, finances, criteria, goals, contacts) lives exclusively in Supabase — there are no repo JSON files to push from. Data is written to Supabase automatically when you save in the portal.', 'info');
 });
 
-// ── Pull: Supabase → Claude Code prompt ──────────────────────────
+// ── Pull: Supabase → Claude Code MCP prompt ──────────────────────
+const PULL_TABLES = ['profile', 'criteria', 'finances', 'goals', 'contacts'];
+
 on(byId('btn-pull'), 'click', async () => {
   if (!await requireAuth()) return;
   const log = byId('pull-log');
   clearLog(log);
-  const statusEls = Object.fromEntries(SYNC_TABLES.map(({ key }) =>
-    [key, byId(`pull-status-${key}`)]));
-  Object.values(statusEls).forEach(el => { if (el) { el.textContent = ''; el.className = 'sync-file-status'; } });
+  const hid = await getHouseholdId();
   logLine(log, 'Reading from Supabase…', 'info');
   const results = {};
   let allOk = true;
-  for (const { key, table } of SYNC_TABLES) {
+  for (const key of PULL_TABLES) {
     const { data, error } = await supabase
-      .from(table)
+      .from(key)
       .select('data, updated_at')
-      .eq('household_id', householdId)
+      .eq('household_id', hid)
       .limit(1);
     if (error || !data?.length) {
-      const msg = error?.message ?? 'no row found';
-      logLine(log, `✗ ${table}: ${msg}`, 'err');
-      if (statusEls[key]) { statusEls[key].textContent = 'not found'; statusEls[key].className = 'sync-file-status err'; }
+      logLine(log, `✗ ${key}: ${error?.message ?? 'no row found'}`, 'err');
       allOk = false;
     } else {
-      results[key] = data[0].data;
+      results[key] = { data: data[0].data, updated_at: data[0].updated_at };
       const when = new Date(data[0].updated_at).toLocaleString('en-GB');
-      logLine(log, `✓ ${table} read (updated ${when})`, 'ok');
-      if (statusEls[key]) { statusEls[key].textContent = 'read'; statusEls[key].className = 'sync-file-status ok'; }
+      logLine(log, `✓ ${key} read (updated ${when})`, 'ok');
     }
   }
   if (!allOk && Object.keys(results).length === 0) { logLine(log, 'Nothing to generate.', 'warn'); return; }
   logLine(log, 'Generating Claude Code prompt…', 'info');
-  const today = new Date().toISOString().slice(0, 10);
-  const parts = Object.entries(results).map(([key, data]) =>
-    `**data/${key}.json** — replace entire file contents with:\n\`\`\`json\n${JSON.stringify(data, null, 2)}\n\`\`\``);
-  const prompt = `Update the following repo JSON files to match the current Supabase data.
-For each file listed below, replace the entire file contents with the JSON provided, then run the test harness (\`npm test\`) and commit.
+  const parts = Object.entries(results).map(([key, { data, updated_at }]) =>
+    `**${key}** (Supabase row, updated_at: ${updated_at}):\n\`\`\`json\n${JSON.stringify(data, null, 2)}\n\`\`\``);
+  const prompt = `Read the following Supabase user-state data (fetched from the portal).
+User-state data lives exclusively in Supabase — do NOT write to repo JSON files.
+To update any value, use mcp__supabase__execute_sql to UPSERT the row directly.
 
-${parts.join('\n\n')}
-
-Commit message: \`data: sync JSON files from Supabase (${today})\``;
+${parts.join('\n\n')}`;
   byId('pull-prompt-content').textContent = prompt;
   byId('pull-prompt-wrap').classList.add('visible');
 });

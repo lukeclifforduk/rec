@@ -1,19 +1,21 @@
 # DATA_MODEL.md — rec data layer reference
 
-Generated: 2026-05-26. Describes the JSON files that power the `rec` app.
+Generated: 2026-05-26. Updated: 2026-05-27 (data security refactor — user-state JSON files removed).
+
+> **Note (2026-05-27):** User-state data (profile, finances, criteria, goals, contacts, investments) was removed from the repo in the data security refactor. References to `data/profile.json`, `data/finances.json`, etc. in this document are historical — those files no longer exist. The canonical store is Supabase (access via `mcp__supabase__execute_sql`). Redacted sample data for tests lives in `data/fixtures/*.sample.json`.
 
 ---
 
 ## File map
 
-| File | Purpose | Read by | Update cadence |
+| File / Store | Purpose | Read by | Update cadence |
 |------|---------|---------|---------------|
-| `data/profile.json` | Full buyer profile: person, employment, credit, debts, pension | `page-profile-detail.js`, Supabase `profiles` table | When user data changes |
-| `data/finances.json` | Income, deductions, bills, expenses, savings, shopping, gift cards | `page-finances.js`, `page-home.js`, `affordability.js`, `money-flow.js`, `savings-velocity.js` | After each payslip; keep arrays intact on merge |
-| `data/criteria.json` | Search criteria: budget, property types, features, area preferences | `page-criteria.js`, `affordability.js`, `page-home.js` | When search preferences change |
-| `data/goals.json` | Deposit target, timeline, readiness checklist | `page-home.js` (readiness tile), `deposit-risk.js`, `affordability.js` | As user progresses toward application |
-| `data/investments.json` | Trading 212 ISA structure, strategy epochs, LISA assessment | `deposit-risk.js`, `page-home.js`, `page-finances.js` | Monthly or when portfolio changes |
-| `data/imports/trading212-history.json` | Monthly aggregated T212 transaction history (from CSV import) | `investment-performance.js`, `savings-velocity.js`, `page-home.js`, `page-finances.js` | After each T212 CSV export |
+| **Supabase `profile`** | Full buyer profile: person, employment, credit, debts, pension | `storage.js` → `page-profile-detail.js` | Via MCP or portal save |
+| **Supabase `finances`** | Income, deductions, bills, expenses, savings, shopping, gift cards | `storage.js` → `page-finances.js`, `page-home.js`, `affordability.js`, `money-flow.js` | Via MCP or portal save |
+| **Supabase `criteria`** | Search criteria: budget, property types, features, area preferences | `storage.js` → `page-criteria.js`, `affordability.js`, `page-home.js` | Via MCP or portal save |
+| **Supabase `goals`** | Deposit target, timeline, readiness checklist | `storage.js` → `page-home.js`, `deposit-risk.js` | Via MCP or portal save |
+| **Supabase `investments_accounts` / `investments_history`** | Trading 212 ISA structure, T212 transaction history | `storage.js` → `deposit-risk.js`, `page-home.js`, `page-finances.js` | After T212 CSV import via `scripts/import-trading212.mjs` |
+| `data/fixtures/*.sample.json` | Redacted sample data for tests and fresh-install fallback | `tools/run-intelligence-tests.mjs`, `storage.js` (fallback) | Updated by Claude during refactors |
 | `data/areas/*.json` | Per-area research (character, prices, schools, sources) | `page-areas.js`, `page-area-detail.js` | After area research |
 | `data/areas.json` | Lightweight area directory index | `page-areas.js`, `page-home.js` | Rebuilt by `tools/build-areas.mjs` |
 

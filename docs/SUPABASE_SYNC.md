@@ -13,7 +13,8 @@ the table in §1 as authoritative — every data type in the app belongs to exac
 
 | Class | Tables / files | Canonical store | Writer | Reader |
 |-------|----------------|-----------------|--------|--------|
-| **User state** | `profile`, `criteria`, `finances`, `shortlist`, `zones`, `journey_checks`, `contacts`, `outreach` | Supabase row (one per household_id) | Portal via `storage.js`, OR Claude via MCP `execute_sql` | `storage.js` reads with localStorage write-through cache |
+| **User state** | `profile`, `criteria`, `finances`, `shortlist`, `zones`, `journey_checks`, `contacts`, `outreach` — **no repo JSON file** | Supabase row (one per household_id) | Portal via `storage.js`, OR Claude via MCP `execute_sql` | `storage.js` reads with localStorage write-through cache |
+| **Test fixtures** | `data/fixtures/*.sample.json` | Repo file (git-versioned, redacted) | Claude only | Test harness (`tools/run-intelligence-tests.mjs`) and fresh-install fallback in `storage.js` |
 | **Content (per-area)** | `data/areas/<id>.json` | Repo file (git-versioned) | Claude only | App fetches the JSON; Supabase `areas` mirror table answers ad-hoc queries |
 | **Content (catalogues)** | `data/house-types.json`, `data/checklists.json`, `data/outreach-templates.json` | Repo file | Claude only | App fetches the JSON; Supabase `house_types` / `checklists` / `outreach_templates` mirror tables for queries |
 | **Index** | `data/areas.json` | Derived from per-area files via `tools/build-areas.mjs` | Build tool | App fetches the JSON; Supabase `areas` mirror table |

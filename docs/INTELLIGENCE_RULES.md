@@ -60,7 +60,7 @@ Monthly cash left after **monthly total income (take-home + recurring monthly bo
 
 *Source:* household-resilience guidance from StepChange and MoneyHelper. £400/mo is a single-month buffer threshold; below £100 the household has effectively zero margin for an unexpected bill.
 
-**Denominator choice:** `finances.income.totalMonthly` (i.e. take-home **plus** the regular monthly bonus broken out in this dataset), not bare take-home. The bonus in `data/finances.json` is a recurring monthly figure, not a quarterly lump, so treating it as income for the spare calc is fair. If a future profile breaks out an irregular bonus, switch the denominator to bare take-home for that profile.
+**Denominator choice:** `finances.income.totalMonthly` (i.e. take-home **plus** the regular monthly bonus broken out in this dataset), not bare take-home. The bonus in the finances data (from Supabase) is a recurring monthly figure, not a quarterly lump, so treating it as income for the spare calc is fair. If a future profile breaks out an irregular bonus, switch the denominator to bare take-home for that profile.
 
 ---
 
@@ -86,7 +86,7 @@ A "deposit gap to next tier" is surfaced in the affordability widget — saving 
 
 ## Calibration note
 
-These bands are **calibrated to the household whose profile lives at `data/finances.json`** (single mid-£60k income, first-time buyer, southern-England target prices). The narrow / conservative reading of mainstream lender caps and FCA norms would mark almost any current-rate FTB purchase as "tight" or "out-of-reach", which is true at the system level but not actionable at the household level — every viable purchase would be flagged red and the verdict surface would lose all signal.
+These bands are **calibrated to this household** (single mid-£60k income, first-time buyer, southern-England target prices — finances data lives in Supabase, accessed via `mcp__supabase__execute_sql`). The narrow / conservative reading of mainstream lender caps and FCA norms would mark almost any current-rate FTB purchase as "tight" or "out-of-reach", which is true at the system level but not actionable at the household level — every viable purchase would be flagged red and the verdict surface would lose all signal.
 
 Two consequences:
 
@@ -128,7 +128,7 @@ Verdict thresholds for `assessDepositRisk(investments, goals)`:
 
 **Withdrawal readiness note:** Lenders need a 3-month paper trail showing the deposit source. Sell ETFs and transfer to Barclays at least 3 months before applying.
 
-*Source:* standard lender source-of-funds requirements; volatility risk is user-specific based on 3-6 month timeline stated in `data/goals.json`.
+*Source:* standard lender source-of-funds requirements; volatility risk is user-specific based on 3-6 month timeline stated in the goals data (Supabase `goals` table).
 
 ---
 

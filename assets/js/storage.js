@@ -181,17 +181,17 @@ async function _save(lsKey, table, value) {
 // Each getter accepts { onUpdate } so pages can re-render when background
 // revalidation pulls a divergent row from Supabase.
 
-export async function getProfile(opts = {})   { return _get('profile',   'profile',   'profile',  opts.onUpdate || null); }
+export async function getProfile(opts = {})   { return _get('profile',   'profile',   'fixtures/profile.sample',  opts.onUpdate || null); }
 export async function saveProfile(d)          { return _save('profile',  'profile',   d); }
 
-export async function getCriteria(opts = {})  { return _get('criteria',  'criteria',  'criteria', opts.onUpdate || null); }
+export async function getCriteria(opts = {})  { return _get('criteria',  'criteria',  'fixtures/criteria.sample', opts.onUpdate || null); }
 export async function saveCriteria(d)         { return _save('criteria', 'criteria',  d); }
 
-export async function getFinances(opts = {})  { return _get('finances',  'finances',  'finances', opts.onUpdate || null); }
+export async function getFinances(opts = {})  { return _get('finances',  'finances',  'fixtures/finances.sample', opts.onUpdate || null); }
 export async function saveFinances(d)         { return _save('finances', 'finances',  d); }
 
 // v3 — goals (blob pattern)
-export async function getGoals(opts = {})     { return _get('goals',     'goals',     'goals',    opts.onUpdate || null); }
+export async function getGoals(opts = {})     { return _get('goals',     'goals',     'fixtures/goals.sample',    opts.onUpdate || null); }
 export async function saveGoals(d)            { return _save('goals',    'goals',     d); }
 
 // v3 — readiness checklist (row-per-item; no blob).
@@ -209,9 +209,9 @@ export async function getReadinessChecklist(opts = {}) {
   }
   const fresh = await _sbGetReadinessRows();
   if (fresh && fresh.length > 0) { writeLocal('readiness', fresh); return fresh; }
-  // Fallback: derive from goals.json so the dashboard works on a fresh install.
+  // Fallback: derive from sample fixture so the dashboard works on a fresh install.
   try {
-    const goals = await loadJSON('goals');
+    const goals = await loadJSON('fixtures/goals.sample');
     const items = Object.entries(goals?.readiness?.checklist ?? {}).map(([key, val]) => ({
       item_key: key, item_label: key, completed: val === true, updated_at: null,
     }));
@@ -284,9 +284,8 @@ export async function getInvestmentsHistory() {
       }
     } catch (e) { console.error('storage: read investments_history', e.message); }
   }
-  // Fallback: repo JSON (stub when the importer hasn't run yet).
-  try { return await loadJSON('imports/trading212-history'); }
-  catch { return { _status: 'awaiting Phase 3 import', monthlySummary: [], tickerExposure: {}, realisedPnL: null }; }
+  // Fallback: stub (importer hasn't run yet; real history lives in Supabase).
+  return { _status: 'awaiting Phase 3 import', monthlySummary: [], tickerExposure: {}, realisedPnL: null };
 }
 
 // Read-only, repo-owned content (no Supabase — served from data/ in the repo).

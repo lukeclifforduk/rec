@@ -270,12 +270,19 @@ async function main() {
 
   const netContributed = round2(totalDeposited - totalWithdrawn);
 
-  // Read current declared value from investments.json for impliedGainUnrealised.
+  // Read current declared value for impliedGainUnrealised.
+  // Pass --current-value=XXXXX for the real portfolio value; falls back to sample fixture for dry runs.
   let currentValueDeclared = 0;
-  try {
-    const inv = JSON.parse(readFileSync(resolve(REPO_ROOT, 'data/investments.json'), 'utf8'));
-    currentValueDeclared = Number(inv?.trading212ISA?.currentPortfolioValue) || 0;
-  } catch { /* ignore */ }
+  const currentValueArg = process.argv.find(a => a.startsWith('--current-value='));
+  if (currentValueArg) {
+    currentValueDeclared = parseFloat(currentValueArg.split('=')[1]) || 0;
+  } else {
+    try {
+      const inv = JSON.parse(readFileSync(resolve(REPO_ROOT, 'data/fixtures/investments.sample.json'), 'utf8'));
+      currentValueDeclared = Number(inv?.trading212ISA?.currentPortfolioValue) || 0;
+      if (currentValueDeclared) console.warn('⚠ Using sample fixture value. Pass --current-value=XXXXX for real portfolio value.');
+    } catch { /* ignore */ }
+  }
 
   const impliedGainUnrealised = round2(currentValueDeclared - netContributed - totalDividends - totalInterest - totalRealisedPnL);
 
