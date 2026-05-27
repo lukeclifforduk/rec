@@ -321,8 +321,25 @@ export async function getInvestmentsHistory() {
         .order('month', { ascending: true });
       if (error) throw error;
       if (data && data.length > 0) {
+        // Also pull the strategyEpochs array off the investments_accounts row so
+        // consumers (getEpochAttribution) can resolve epoch metadata by id.
+        let epochs = {};
+        try {
+          const { data: acct } = await sb
+            .from('investments_accounts')
+            .select('data')
+            .eq('household_id', hid)
+            .limit(1);
+          const arr = acct?.[0]?.data?.strategyEpochs;
+          if (Array.isArray(arr)) {
+            for (const ep of arr) {
+              if (ep?.id) epochs[ep.id] = { label: ep.label ?? ep.id, start: ep.start ?? null, end: ep.end ?? null };
+            }
+          }
+        } catch { /* non-fatal */ }
         return {
           _status: 'from-supabase',
+          epochs,
           monthlySummary: data.map((r) => ({
             month: r.month, deposits: r.deposits, withdrawals: r.withdrawals,
             net: r.net, dividends: r.dividends, interest: r.interest,

@@ -34,6 +34,8 @@
 
   <div id="counters"></div>
   <button id="refresh">Re-run all checks</button>
+  <button id="copy-report" style="margin-left: 0.5rem">Copy full report</button>
+  <span id="copy-status" style="margin-left: 0.5rem; font-size: 0.85rem; color: #0a6b3a"></span>
 
   <h2>Runtime errors (window.onerror + unhandledrejection)</h2>
   <div id="error-log"></div>
@@ -420,10 +422,15 @@
     row(outLs, 'rec:* keys', recKeys.length > 0 ? 'ok' : 'info',
       recKeys.length > 0 ? recKeys.join('\n') : '(empty — data not yet cached)');
 
-    // Spot-check each key's JSON validity
+    // Spot-check each key's JSON validity. rec:theme stores a bare string ('light'/'dark').
+    const BARE_STRING_KEYS = new Set(['rec:theme']);
     for (const key of recKeys) {
+      const raw = localStorage.getItem(key);
+      if (BARE_STRING_KEYS.has(key)) {
+        row(outLs, `  ${key}`, 'ok', `bare string: "${raw}" · ${raw.length} chars`);
+        continue;
+      }
       try {
-        const raw = localStorage.getItem(key);
         const parsed = JSON.parse(raw);
         const age = parsed?.ts ? `age=${Math.round((Date.now() - parsed.ts) / 1000)}s` : 'no timestamp';
         row(outLs, `  ${key}`, 'ok', `valid JSON · ${age} · ${raw.length} chars`);
@@ -467,6 +474,62 @@
     /* ── Final counters ── */
     updateCounters();
     document.getElementById('refresh').addEventListener('click', () => location.reload());
+
+    /* ── Copy full report ── */
+    function buildReport() {
+      const lines = [];
+      lines.push('# rec — debug report');
+      lines.push(`Generated: ${new Date().toISOString()}`);
+      lines.push(`URL: ${location.href}`);
+      lines.push(`UA: ${navigator.userAgent}`);
+      lines.push(`Counters: ${passCount} passed · ${failCount} failed · ${warnCount} warnings`);
+      lines.push('');
+      if (runtimeErrors.length) {
+        lines.push('## Runtime errors');
+        lines.push(runtimeErrors.join('\n\n'));
+        lines.push('');
+      }
+      document.querySelectorAll('h2').forEach((h) => {
+        lines.push(`## ${h.textContent.trim()}`);
+        let next = h.nextElementSibling;
+        while (next && next.tagName !== 'H2') {
+          if (next.id === 'error-log') {
+            if (next.textContent.trim()) lines.push(next.textContent.trim());
+          } else {
+            next.querySelectorAll('.row').forEach((r) => {
+              const label = r.querySelector('.label')?.textContent?.trim() ?? '';
+              const val   = r.querySelector('.val')?.textContent?.trim() ?? '';
+              if (label) lines.push(`- ${label}`);
+              if (val)   lines.push(`    ${val.replace(/\n/g, '\n    ')}`);
+            });
+          }
+          next = next.nextElementSibling;
+        }
+        lines.push('');
+      });
+      return lines.join('\n');
+    }
+
+    document.getElementById('copy-report').addEventListener('click', async () => {
+      const status = document.getElementById('copy-status');
+      const report = buildReport();
+      try {
+        await navigator.clipboard.writeText(report);
+        status.textContent = `Copied (${report.length.toLocaleString()} chars) ✓`;
+      } catch (e) {
+        // Fallback: select a temporary textarea
+        const ta = document.createElement('textarea');
+        ta.value = report;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); status.textContent = `Copied via fallback (${report.length.toLocaleString()} chars) ✓`; }
+        catch (e2) { status.style.color = '#b30b0b'; status.textContent = `Copy failed: ${e2.message}`; }
+        document.body.removeChild(ta);
+      }
+      setTimeout(() => { status.textContent = ''; status.style.color = '#0a6b3a'; }, 4000);
+    });
   </script>
 </body>
 </html>

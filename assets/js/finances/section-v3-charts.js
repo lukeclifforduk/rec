@@ -211,7 +211,7 @@ export async function renderTickerTreemap() {
   const cap = document.getElementById('tt-caption');
   if (!exposure || typeof exposure !== 'object' || Object.keys(exposure).length === 0) {
     svg.replaceChildren();
-    if (cap) cap.textContent = 'Run the Trading 212 importer to see your ticker exposure.';
+    if (cap) cap.textContent = 'Ticker-level positions are not yet synced — the importer captures monthly cashflows but not per-holding balances.';
     return;
   }
 
