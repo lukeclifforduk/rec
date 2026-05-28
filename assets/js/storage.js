@@ -321,25 +321,46 @@ export async function getInvestmentsHistory() {
         .order('month', { ascending: true });
       if (error) throw error;
       if (data && data.length > 0) {
-        // Also pull the strategyEpochs array off the investments_accounts row so
-        // consumers (getEpochAttribution) can resolve epoch metadata by id.
+        // Also pull strategyEpochs + holdings off the investments_accounts row so
+        // consumers (getEpochAttribution, renderTickerTreemap) can resolve epoch
+        // metadata and current per-ticker exposure.
         let epochs = {};
+        let tickerExposure = {};
         try {
           const { data: acct } = await sb
             .from('investments_accounts')
             .select('data')
             .eq('household_id', hid)
             .limit(1);
-          const arr = acct?.[0]?.data?.strategyEpochs;
+          const acctData = acct?.[0]?.data;
+          const arr = acctData?.strategyEpochs;
           if (Array.isArray(arr)) {
             for (const ep of arr) {
               if (ep?.id) epochs[ep.id] = { label: ep.label ?? ep.id, start: ep.start ?? null, end: ep.end ?? null };
+            }
+          }
+          const holdings = acctData?.holdings;
+          if (Array.isArray(holdings)) {
+            for (const h of holdings) {
+              if (!h?.symbol) continue;
+              const value = Number(h.value) || 0;
+              if (value <= 0) continue;
+              tickerExposure[h.symbol] = {
+                value,
+                netDeployed: value,
+                name: h.name ?? h.symbol,
+                allocationPct: Number(h.allocationPct) || null,
+                unrealisedPnl: Number(h.unrealisedPnl) || 0,
+                unrealisedPnlPct: Number(h.unrealisedPnlPct) || 0,
+                assetClass: h.assetClass ?? null,
+              };
             }
           }
         } catch { /* non-fatal */ }
         return {
           _status: 'from-supabase',
           epochs,
+          tickerExposure,
           monthlySummary: data.map((r) => ({
             month: r.month, deposits: r.deposits, withdrawals: r.withdrawals,
             net: r.net, dividends: r.dividends, interest: r.interest,
