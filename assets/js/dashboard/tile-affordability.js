@@ -68,7 +68,7 @@ function buildLadderSVG(bands, loPrice, hiPrice) {
 }
 
 export function renderAffordability(financesData, criteria) {
-  const offerTarget = Number(criteria?.budget?.offerTarget || financesData?.goal?.offerTarget || 380000);
+  const offerTarget = Number(financesData?.goal?.offerTarget || 0);
   const bands = findBands(financesData, criteria);
   const inputA = $('ta-price-a');
   const inputB = $('ta-price-b');

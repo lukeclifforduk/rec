@@ -1,5 +1,5 @@
 // affordability-scenarios.test.js — assessAffordabilityScenarios() for Luke's actual numbers.
-// £31,193 saved, £2,000/mo contribution, £64k salary, take-home £3,543.54.
+// £32,994.45 saved (T212 ISA), £2,000/mo contribution goal, £65,971 salary, take-home £3,623.52.
 
 import { assessAffordabilityScenarios } from '../assets/js/affordability.js';
 
@@ -9,7 +9,7 @@ export async function register({ test, assert, assertEqual, fixtures }) {
   const goals = {
     timeline: { horizon: '3-6 months' },
     target: { currentSystemCentre: 375000 },
-    deposit: { hopedFor: 50000, currentSavings: 31193 },
+    deposit: { hopedFor: 40000, currentSavings: 32994.45 },
   };
 
   const scenarios = assessAffordabilityScenarios({ finances, criteria, goals });
@@ -22,14 +22,14 @@ export async function register({ test, assert, assertEqual, fixtures }) {
     assert('buyAtHigherTarget' in scenarios, 'missing buyAtHigherTarget');
   });
 
-  // --- buyNowLowerTarget (£340k, deposit = current savings £31,193) ----------
+  // --- buyNowLowerTarget (£340k, deposit = current savings £32,994.45) ----------
 
   await test('affordability-scenarios: buyNowLowerTarget price is £340k', () => {
     assertEqual(scenarios.buyNowLowerTarget.price, 340_000);
   });
 
   await test('affordability-scenarios: buyNowLowerTarget deposit is current savings', () => {
-    // currentSavings now derived from finances.savings.totalSavings (£32,994.45 post May 2026 deposit)
+    // currentSavings derived from finances.savings.totalSavings (£32,994.45)
     assertEqual(scenarios.buyNowLowerTarget.deposit, 32994.45);
   });
 
@@ -42,19 +42,19 @@ export async function register({ test, assert, assertEqual, fixtures }) {
     assert(valid.includes(scenarios.buyNowLowerTarget.verdict), `unexpected verdict: ${scenarios.buyNowLowerTarget.verdict}`);
   });
 
-  // --- buyOnTargetDeposit (£375k, deposit = hoped £50k) ---------------------
+  // --- buyOnTargetDeposit (£375k, deposit = canonical target £40k) ---------------------
 
   await test('affordability-scenarios: buyOnTargetDeposit price is £375k', () => {
     assertEqual(scenarios.buyOnTargetDeposit.price, 375_000);
   });
 
-  await test('affordability-scenarios: buyOnTargetDeposit deposit is £50k', () => {
-    assertEqual(scenarios.buyOnTargetDeposit.deposit, 50_000);
+  await test('affordability-scenarios: buyOnTargetDeposit deposit is £40k (canonical target)', () => {
+    assertEqual(scenarios.buyOnTargetDeposit.deposit, 40_000);
   });
 
-  await test('affordability-scenarios: buyOnTargetDeposit monthsToReady is ~9 (£17,005.55 gap at £2k/mo)', () => {
-    // gap = 50000 - 32994.45 = 17005.55; ceil(17005.55/2000) = 9
-    assertEqual(scenarios.buyOnTargetDeposit.monthsToReady, 9);
+  await test('affordability-scenarios: buyOnTargetDeposit monthsToReady is ~4 (£7,005.55 gap at £2k/mo)', () => {
+    // gap = 40000 - 32994.45 = 7005.55; ceil(7005.55/2000) = 4
+    assertEqual(scenarios.buyOnTargetDeposit.monthsToReady, 4);
   });
 
   // --- buyAtHigherTarget (£400k, deposit = 12.5% = £50k) -------------------
@@ -64,7 +64,7 @@ export async function register({ test, assert, assertEqual, fixtures }) {
   });
 
   await test('affordability-scenarios: buyAtHigherTarget deposit is £50k (87.5% LTV)', () => {
-    // ceil(400000 * 0.125) = 50000
+    // ceil(400000 * 0.125) = 50000 — computed from price, independent of hopedFor
     assertEqual(scenarios.buyAtHigherTarget.deposit, 50_000);
   });
 

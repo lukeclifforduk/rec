@@ -72,7 +72,6 @@
     "targetPropertyPrice": 400000,
     "offerTarget": 380000,
     "depositPct": 10,
-    "targetSavingsRange": { "min": 50000, "max": 65000 },
     "movingWindow": "March – September 2026"
   },
   "savings": {

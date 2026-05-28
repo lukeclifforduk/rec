@@ -3,11 +3,12 @@
     "last_synced_at": "2026-05-25T21:44:00Z"
   },
   "criteria": {
-    "last_synced_at": "2026-05-26T21:01:52Z"
+    "last_synced_at": "2026-05-28T21:51:28Z",
+    "_note": "2026-05-28 overhaul A1: removed budget.offerTarget (D2 — canonical lives in finances.goal.offerTarget)"
   },
   "finances": {
-    "last_synced_at": "2026-05-28T19:47:06Z",
-    "_note": "2026-05-28: post-rise payslip applied — monthlyNetTakeHome £3,623.52, deductions (PAYE £1,156.57, NI £277.46, pension £147.27, SL £292.78), mostRecentPayslipDate 2026-05-29, totalInitialOutlay removed (now computed), oneTimeCosts categorised"
+    "last_synced_at": "2026-05-28T21:51:22Z",
+    "_note": "2026-05-28 overhaul A1: removed goal.targetSavingsRange (D1 — single canonical deposit target = £40k)"
   },
   "shortlist": {
     "last_synced_at": "2026-05-25T21:44:00Z"
@@ -33,8 +34,8 @@
     "last_synced_at": "2026-05-26T10:51:53.837Z"
   },
   "goals": {
-    "last_synced_at": "2026-05-28T19:46:04Z",
-    "_note": "2026-05-28: currentSavings updated to £32,994.45 (post £1,800 May deposit); gapToHoped corrected to £17,005.55"
+    "last_synced_at": "2026-05-28T21:51:27Z",
+    "_note": "2026-05-28 overhaul A1+A3: deposit.hopedFor updated to £40,000 (D1 canonical); gapToHoped corrected to £7,005.55; readiness.checklist blob retired (D4 — source is now readiness_checklist table)"
   },
   "readiness_checklist": {
     "count": 13,

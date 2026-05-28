@@ -1,4 +1,4 @@
-import { getGoals } from '../storage.js';
+import { getGoals, getReadinessChecklist } from '../storage.js';
 import { gbp } from '../format.js';
 
 const READINESS_PRIORITY = [
@@ -17,19 +17,20 @@ export async function renderReadinessTile(financesData) {
   const elNext = document.getElementById('readiness-next-text');
   if (!elHeadline) return;
 
-  let goals;
+  let goals, checklist;
   try { goals = await getGoals(); } catch { return; }
+  try { checklist = await getReadinessChecklist(); } catch { checklist = []; }
   if (!goals) return;
 
   const current = Number(financesData?.savings?.totalSavings ?? 0);
-  const hoped = Number(goals?.deposit?.hopedFor ?? 50_000);
+  const hoped = Number(goals?.deposit?.hopedFor ?? 0);
   const pct = hoped > 0 ? Math.min(100, Math.round((current / hoped) * 100)) : 0;
-  if (elHeadline) {
-    elHeadline.textContent = `You're ${pct}% of the way to your hoped-for ${gbp(hoped)} deposit.`;
-  }
+  elHeadline.textContent = hoped > 0
+    ? `You're ${pct}% of the way to your ${gbp(hoped)} deposit target.`
+    : 'Deposit target not set.';
 
-  const monthly = Number(financesData?.savings?.monthlyContribution ?? 2000);
-  const gap = Math.max(0, hoped - current);
+  const monthly = Number(financesData?.savings?.monthlyContribution ?? 0);
+  const gap = hoped > 0 ? Math.max(0, hoped - current) : 0;
 
   function moLabel(mo) {
     if (!Number.isFinite(mo) || mo <= 0) return 'already there';
@@ -37,15 +38,19 @@ export async function renderReadinessTile(financesData) {
   }
 
   if (elStats) {
-    elStats.innerHTML = `
-      <div><dt>At current pace</dt><dd>${moLabel(monthly > 0 ? gap / monthly : Infinity)}</dd></div>
-      <div><dt>At +£500/mo</dt><dd>${moLabel((monthly + 500) > 0 ? gap / (monthly + 500) : Infinity)}</dd></div>
-      <div><dt>At +£1,000/mo</dt><dd>${moLabel((monthly + 1000) > 0 ? gap / (monthly + 1000) : Infinity)}</dd></div>`;
+    if (!monthly) {
+      elStats.innerHTML = `<div><dt>Monthly contribution</dt><dd>not set</dd></div>`;
+    } else {
+      elStats.innerHTML = `
+        <div><dt>At current pace</dt><dd>${moLabel(gap / monthly)}</dd></div>
+        <div><dt>At +£500/mo</dt><dd>${moLabel(gap / (monthly + 500))}</dd></div>
+        <div><dt>At +£1,000/mo</dt><dd>${moLabel(gap / (monthly + 1000))}</dd></div>`;
+    }
   }
 
   if (elNext) {
-    const checklist = goals?.readiness?.checklist ?? {};
-    const nextItem = READINESS_PRIORITY.find((item) => !checklist[item.key]);
+    const checkMap = Object.fromEntries((checklist ?? []).map((r) => [r.item_key, r.completed]));
+    const nextItem = READINESS_PRIORITY.find((item) => !checkMap[item.key]);
     elNext.textContent = nextItem ? nextItem.label : 'All priority actions done.';
   }
 }

@@ -250,11 +250,11 @@ function buildHeadline({ price, verdict, loanRequired, monthlyPI, paymentToIncom
  */
 export function assessAffordabilityScenarios({ finances, criteria, goals, councilTaxBand } = {}) {
   const currentSavings = Number(finances?.savings?.totalSavings ?? 0);
-  const hopedDeposit = Number(goals?.deposit?.hopedFor ?? 50_000);
-  const monthlyContrib = Number(finances?.savings?.monthlyContribution ?? 2000);
+  const hopedDeposit = Number(goals?.deposit?.hopedFor ?? finances?.goal?.targetDeposit ?? 0);
+  const monthlyContrib = Number(finances?.savings?.monthlyContribution ?? 0);
 
   const lowerTargetPrice = 340_000;
-  const midTargetPrice = Number(goals?.target?.currentSystemCentre ?? 375_000);
+  const midTargetPrice = Number(goals?.target?.currentSystemCentre ?? finances?.goal?.targetPropertyPrice ?? 0);
   const highTargetPrice = 400_000;
 
   // "Buy sooner, smaller" — use current savings as deposit right now.

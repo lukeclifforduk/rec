@@ -10,7 +10,7 @@ import { buildFlowBar, buildFlowLegend } from './section-flow.js';
 import { chartOpts } from './chart-helpers.js';
 
 export function renderLaterFlow(finData, criData, currentPrice) {
-  const offer = Number(currentPrice ?? criData?.budget?.offerTarget ?? finData?.goal?.offerTarget ?? 380000);
+  const offer = Number(currentPrice ?? finData?.goal?.offerTarget ?? 0);
   const targetDeposit = Number(criData?.budget?.targetDeposit || finData?.goal?.targetDeposit || 0);
   const loan = Math.max(0, offer - targetDeposit);
   const monthlyMortgage = fin.calcMonthlyMortgage(loan, finData.mortgage?.ratePctAssumed || 0, finData.mortgage?.termYears || 0);
@@ -61,7 +61,7 @@ export function attachAffordabilityWidget(finData, criData) {
   const display = $('afford-price-display');
   if (!slider || !number) return;
 
-  const initial = Number(criData?.budget?.offerTarget || finData?.goal?.offerTarget || 380000);
+  const initial = Number(finData?.goal?.offerTarget || 0);
   slider.value = String(initial);
   number.value = String(initial);
   if (display) display.textContent = gbp(initial);

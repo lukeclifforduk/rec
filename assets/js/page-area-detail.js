@@ -222,7 +222,7 @@ function attachFootAfford(a, finances, criteria) {
   const number = document.getElementById('area-afford-number');
   const display = document.getElementById('area-afford-display');
   const pill = document.getElementById('area-afford-pill');
-  const initial = matchedPrice(a, criteria).price ?? Number(criteria?.budget?.offerTarget || 380000);
+  const initial = matchedPrice(a, criteria).price ?? Number(criteria?.budget?.max || 0);
   slider.value = String(initial);
   number.value = String(initial);
   if (display) display.textContent = gbp(initial);

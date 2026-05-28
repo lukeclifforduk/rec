@@ -65,12 +65,16 @@ export async function renderMonthlyDeposits(finData) {
     options: chartOpts({ yLabel: '£ per month' }),
   });
 
-  const goalMo = Number(finData?.savings?.monthlyContribution ?? 2000);
+  const goalMo = Number(finData?.savings?.monthlyContribution ?? 0);
   const avg = data.reduce((s, v) => s + v, 0) / data.length;
-  const delta = avg - goalMo;
   if (cap) {
-    const dir = delta >= 0 ? 'above' : 'below';
-    cap.textContent = `Avg ${gbp(Math.round(avg))}/mo across ${data.length} months — ${gbp(Math.abs(Math.round(delta)))} ${dir} the ${gbp(goalMo)} goal.`;
+    if (goalMo > 0) {
+      const delta = avg - goalMo;
+      const dir = delta >= 0 ? 'above' : 'below';
+      cap.textContent = `Avg ${gbp(Math.round(avg))}/mo across ${data.length} months — ${gbp(Math.abs(Math.round(delta)))} ${dir} the ${gbp(goalMo)} goal.`;
+    } else {
+      cap.textContent = `Avg ${gbp(Math.round(avg))}/mo across ${data.length} months.`;
+    }
   }
 }
 

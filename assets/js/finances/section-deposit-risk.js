@@ -24,7 +24,7 @@ export async function renderDepositRiskTile(finData) {
   }
 
   const current = Number(risk.currentValue) || 0;
-  const monthly = Number(finData?.savings?.monthlyContribution ?? 2000);
+  const monthly = Number(finData?.savings?.monthlyContribution ?? 0);
   const steps = [
     { label: 'Current', value: current, kind: 'base' },
     { label: 'If −10%', value: current * 0.9, kind: 'drop' },
