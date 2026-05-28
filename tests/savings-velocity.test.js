@@ -21,11 +21,11 @@ export async function register({ test, assert, assertEqual, fixtures }) {
     const v = getSavingsVelocity(finances);
     const plus500 = v.scenarios.find((s) => s.label === '+£500/mo');
     assert(plus500, 'scenario "+£500/mo" missing');
-    // totalSavings = £31,193 (T212 ISA earmark, no cash). Gap = £40,000 − £31,193 = £8,807.
-    // At £2,000/mo → 4.4; at £2,500/mo → 3.5. Delta = 0.9.
+    // totalSavings = £32,994.45 (T212 ISA earmark, no cash). Gap = £40,000 − £32,994.45 = £7,005.55.
+    // At £2,000/mo → 3.5; at £2,500/mo → 2.8. Delta = 0.7.
     assert(
-      Math.abs(plus500.deltaMonths - 0.9) < 0.1,
-      `expected ≈0.9 months sooner, got ${plus500.deltaMonths}`,
+      Math.abs(plus500.deltaMonths - 0.7) < 0.1,
+      `expected ≈0.7 months sooner, got ${plus500.deltaMonths}`,
     );
   });
 

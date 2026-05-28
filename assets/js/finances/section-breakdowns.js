@@ -1,5 +1,6 @@
 import { gbp, gbpPence } from '../format.js';
 import { esc, byId as $, setText } from '../dom.js';
+import { computeOutlayBreakdown } from '../finances.js';
 
 function sumNumeric(arr, key) {
   return (arr || []).reduce((s, x) => s + (Number(x[key]) || 0), 0);
@@ -76,4 +77,16 @@ export function renderBreakdowns(finData) {
     { label: 'Expiry', get: (r) => r.expiry || '—', key: 'expiry' },
   ], { source: 'Total', amount: gbp(giftTotal), expiry: '' }, 'amount', giftMax);
   setText('giftcards-total', gbp(giftTotal));
+
+  const outlay = computeOutlayBreakdown({
+    targetDeposit:  finData.goal?.targetDeposit,
+    offerTarget:    finData.goal?.offerTarget,
+    firstTimeBuyer: finData.firstTimeBuyer !== false,
+    oneTimeCosts:   finData.oneTimeCosts,
+    shoppingList:   finData.shoppingList,
+  });
+  setText('outlay-core',    gbp(outlay.corePurchase));
+  setText('outlay-furnish', gbp(outlay.furnishing));
+  setText('outlay-major',   gbp(outlay.majorPurchases));
+  setText('outlay-total',   gbp(outlay.grandTotal));
 }

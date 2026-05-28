@@ -12,8 +12,8 @@
   },
   "deposit": {
     "hopedFor": 50000,
-    "currentSavings": 31193,
-    "gapToHoped": 18807,
+    "currentSavings": 32994.45,
+    "gapToHoped": 17005.55,
     "engineAutoCalibrate": true,
     "fundingSource": "Trading 212 ISA only (100%)",
     "giftedDepositPortion": 0

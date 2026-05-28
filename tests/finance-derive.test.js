@@ -119,17 +119,29 @@ export async function register({ test, assert, assertEqual }) {
     assertEqual(surplus.savings.monthsToSave, 0);
   });
 
-  await test('derive: avgMonthlyDepositEstimate = ISA value / months since opened', () => {
+  await test('derive: avgMonthlyDepositEstimate reads pre-computed net from raw.savings.monthlyAverage.net', () => {
+    const withHistory = { ...RAW, savings: {
+      ...RAW.savings,
+      monthlyAverage: { net: 2043.28, gross: 2587.82 },
+    }};
+    const inv = { trading212ISA: { currentPortfolioValue: 24000, earmarkPct: 100, accountOpened: '2025-05-26' } };
+    const d = deriveFinances(withHistory, { investments: inv });
+    assertEqual(d.savings.avgMonthlyDepositEstimate, 2043.28);
+    assertEqual(d.savings.avgMonthlyDepositGross, 2587.82);
+  });
+
+  await test('derive: avgMonthlyDepositEstimate falls back to portfolio÷months when monthlyAverage absent', () => {
     // Build an investments fixture opened exactly 12 months ago.
     const opened = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000);
     const inv = { trading212ISA: { currentPortfolioValue: 24000, earmarkPct: 100, accountOpened: opened.toISOString().slice(0, 10) } };
     const d = deriveFinances(RAW, { investments: inv });
-    // 24000 / 12 ≈ 2000 — allow ±50 for month-length drift.
+    // Should NOT use a pre-computed value (RAW has no monthlyAverage); fallback ≈ 24000/12 ≈ 2000.
+    assert(d.savings.avgMonthlyDepositEstimate !== 2043.28, 'should use fallback, not pre-computed');
     assert(Math.abs(d.savings.avgMonthlyDepositEstimate - 2000) < 50,
-      `expected ~2000, got ${d.savings.avgMonthlyDepositEstimate}`);
+      `expected ~2000 from fallback, got ${d.savings.avgMonthlyDepositEstimate}`);
   });
 
-  await test('derive: avgMonthlyDepositEstimate is null without investments', () => {
+  await test('derive: avgMonthlyDepositEstimate is null without investments and no monthlyAverage', () => {
     const d = deriveFinances(RAW);
     assertEqual(d.savings.avgMonthlyDepositEstimate, null);
   });

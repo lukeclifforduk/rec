@@ -21,7 +21,7 @@ export async function renderReadinessTile(financesData) {
   try { goals = await getGoals(); } catch { return; }
   if (!goals) return;
 
-  const current = Number(goals?.deposit?.currentSavings ?? financesData?.savings?.totalSavings ?? 0);
+  const current = Number(financesData?.savings?.totalSavings ?? 0);
   const hoped = Number(goals?.deposit?.hopedFor ?? 50_000);
   const pct = hoped > 0 ? Math.min(100, Math.round((current / hoped) * 100)) : 0;
   if (elHeadline) {

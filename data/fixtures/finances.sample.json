@@ -2,19 +2,19 @@
   "currency": "GBP",
   "firstTimeBuyer": true,
   "income": {
-    "annualGrossBase": 64000,
-    "monthlyNetTakeHome": 3543.54,
-    "taxCode": "1257L",
+    "annualGrossBase": 65971.2,
+    "monthlyNetTakeHome": 3623.52,
+    "taxCode": "1248L",
     "taxPeriodCurrent": 1,
-    "mostRecentPayslipDate": "2026-01-01",
-    "payslipReference": "0000",
+    "mostRecentPayslipDate": "2026-05-29",
+    "payslipReference": "1047",
     "niNumber": "AB123456C",
     "employerNI": 737.45,
     "deductions": {
-      "payeTax": 1090.86,
-      "nationalInsurance": 274.17,
-      "employeePension": 146.76,
-      "studentLoanPlan1": 278.00
+      "payeTax": 1156.57,
+      "nationalInsurance": 277.46,
+      "employeePension": 147.27,
+      "studentLoanPlan1": 292.78
     },
     "benefitsInKind": [
       { "name": "Perkbox", "monthlyValue": 5.94 }
@@ -36,11 +36,13 @@
       "note": "investment gains held in ISA — not income"
     },
     "payRise": {
-      "scenario": "possible",
-      "confidence": "low",
-      "expectedNewSalary": 66000,
-      "expectedDate": "2026-05",
-      "monthlyNetDeltaEstimate": 106
+      "scenario": "received",
+      "confidence": "actual",
+      "newSalary": 65971.2,
+      "previousSalary": 64000,
+      "receivedDate": "2026-05",
+      "risePct": 3.08,
+      "monthlyNetDeltaEstimate": 74
     }
   },
   "outgoings": {
@@ -71,7 +73,6 @@
     "offerTarget": 380000,
     "depositPct": 10,
     "targetSavingsRange": { "min": 50000, "max": 65000 },
-    "totalInitialOutlay": 55000,
     "movingWindow": "March – September 2026"
   },
   "savings": {
@@ -91,13 +92,13 @@
     "feesWillingness": { "min": 0, "max": 2000 }
   },
   "oneTimeCosts": [
-    { "item": "Stamp Duty", "cost": 4000, "notes": "First-time buyer (5% of the £80k above £300k on a £380k purchase)" },
-    { "item": "Solicitor / Conveyancing", "cost": 1150, "notes": "Including searches" },
-    { "item": "Survey / Valuation", "cost": 500, "notes": "HomeBuyer (Level 2)" },
-    { "item": "Removals", "cost": 0, "notes": "DIY or minimal" },
-    { "item": "Contingency Buffer", "cost": 0, "notes": "For unexpected" },
-    { "item": "Mortgage Arrangement Fees", "cost": 0, "notes": "Reduce where possible" },
-    { "item": "Car Purchase", "cost": 6000, "notes": "" }
+    { "item": "Stamp Duty", "cost": 4000, "notes": "First-time buyer (5% of the £80k above £300k on a £380k purchase)", "category": "sdlt" },
+    { "item": "Solicitor / Conveyancing", "cost": 1150, "notes": "Including searches", "category": "legal" },
+    { "item": "Survey / Valuation", "cost": 500, "notes": "HomeBuyer (Level 2)", "category": "legal" },
+    { "item": "Removals", "cost": 0, "notes": "DIY or minimal", "category": "removal" },
+    { "item": "Contingency Buffer", "cost": 0, "notes": "For unexpected", "category": "contingency" },
+    { "item": "Mortgage Arrangement Fees", "cost": 0, "notes": "Reduce where possible", "category": "legal" },
+    { "item": "Car Purchase", "cost": 6000, "notes": "", "category": "transport" }
   ],
   "ongoingBills": [
     { "item": "Phone Bill", "annual": 900, "monthly": 75 },

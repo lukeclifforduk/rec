@@ -6,8 +6,8 @@
     "last_synced_at": "2026-05-26T21:01:52Z"
   },
   "finances": {
-    "last_synced_at": "2026-05-27T23:04:22Z",
-    "_note": "2026-05-27: 3.08% pay rise applied (£64,000 → £65,971.20); deductions/monthlyNetTakeHome still reflect pre-rise payslip pending fresh payslip"
+    "last_synced_at": "2026-05-28T19:47:06Z",
+    "_note": "2026-05-28: post-rise payslip applied — monthlyNetTakeHome £3,623.52, deductions (PAYE £1,156.57, NI £277.46, pension £147.27, SL £292.78), mostRecentPayslipDate 2026-05-29, totalInitialOutlay removed (now computed), oneTimeCosts categorised"
   },
   "shortlist": {
     "last_synced_at": "2026-05-25T21:44:00Z"
@@ -33,7 +33,8 @@
     "last_synced_at": "2026-05-26T10:51:53.837Z"
   },
   "goals": {
-    "last_synced_at": "2026-05-26T21:56:34Z"
+    "last_synced_at": "2026-05-28T19:46:04Z",
+    "_note": "2026-05-28: currentSavings updated to £32,994.45 (post £1,800 May deposit); gapToHoped corrected to £17,005.55"
   },
   "readiness_checklist": {
     "count": 13,
@@ -41,12 +42,12 @@
   },
   "investments_accounts": {
     "count": 1,
-    "last_synced_at": "2026-05-27T23:04:32Z",
-    "_note": "2026-05-27: T212 portfolio snapshot — £31,194.45 across 6 holdings (VHYL 57.46%, VUSA 19.67%, VEVE 9.78%, SGLN 7.04%, VFEM 4.75%, TUN 1.30%); unrealised +£2,982.72 (10.57%); cost basis £28,211.73; holdings array added to account data jsonb"
+    "last_synced_at": "2026-05-28T18:00:45Z",
+    "_note": "2026-05-28: portfolio £32,994.45 (invested £31,194.45 + uninvested cash £1,800); cost basis £28,211.73; unrealised +£2,982.72 (10.57%)"
   },
   "investments_history": {
     "count": 12,
-    "last_synced_at": "2026-05-26T22:55:00Z",
-    "_note": "T212 CSV imported 2026-05-26; 12 months 2025-05 → 2026-05; net contributed £22,719.32"
+    "last_synced_at": "2026-05-28T18:00:37Z",
+    "_note": "2026-05-28: 2026-05 row net corrected 1801.02→1800.00 (interest £1.02 already tracked separately); 2026-03 absent — confirmed no activity that month"
   }
 }

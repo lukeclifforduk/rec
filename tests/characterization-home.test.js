@@ -29,8 +29,8 @@ export async function register({ test, assert, assertEqual, fixtures }) {
       `expected goal.targetDeposit to be a number, got ${typeof finances.goal?.targetDeposit}`);
   });
 
-  await test('characterization/home lede: take-home monthly is 3543.54', () => {
-    assertEqual(finances.income?.takeHomeMonthly, 3543.54);
+  await test('characterization/home lede: take-home monthly is 3623.52', () => {
+    assertEqual(finances.income?.takeHomeMonthly, 3623.52);
   });
 
   // ── Tile: Affordability ─────────────────────────────────────────────────────
@@ -86,14 +86,14 @@ export async function register({ test, assert, assertEqual, fixtures }) {
     assertEqual(sav.amount, 2000, `expected 2000, got ${sav.amount}`);
   });
 
-  await test('characterization/home money-flow: spare is -188.96', () => {
+  await test('characterization/home money-flow: spare is -108.98', () => {
     const flow = getMoneyFlow(finances, criteria);
-    assertEqual(flow.spare, -188.96, `expected -188.96, got ${flow.spare}`);
+    assertEqual(flow.spare, -108.98, `expected -108.98, got ${flow.spare}`);
   });
 
-  await test('characterization/home money-flow: income total is 3543.54', () => {
+  await test('characterization/home money-flow: income total is 3623.52', () => {
     const flow = getMoneyFlow(finances, criteria);
-    assertEqual(flow.income.total, 3543.54, `expected 3543.54, got ${flow.income.total}`);
+    assertEqual(flow.income.total, 3623.52, `expected 3623.52, got ${flow.income.total}`);
   });
 
   // ── Tile: Deposit risk ──────────────────────────────────────────────────────

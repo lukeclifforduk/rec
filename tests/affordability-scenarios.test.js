@@ -29,7 +29,8 @@ export async function register({ test, assert, assertEqual, fixtures }) {
   });
 
   await test('affordability-scenarios: buyNowLowerTarget deposit is current savings', () => {
-    assertEqual(scenarios.buyNowLowerTarget.deposit, 31193);
+    // currentSavings now derived from finances.savings.totalSavings (£32,994.45 post May 2026 deposit)
+    assertEqual(scenarios.buyNowLowerTarget.deposit, 32994.45);
   });
 
   await test('affordability-scenarios: buyNowLowerTarget monthsToReady is 0', () => {
@@ -51,9 +52,9 @@ export async function register({ test, assert, assertEqual, fixtures }) {
     assertEqual(scenarios.buyOnTargetDeposit.deposit, 50_000);
   });
 
-  await test('affordability-scenarios: buyOnTargetDeposit monthsToReady is ~10 (£18,807 gap at £2k/mo)', () => {
-    // gap = 50000 - 31193 = 18807; ceil(18807/2000) = 10
-    assertEqual(scenarios.buyOnTargetDeposit.monthsToReady, 10);
+  await test('affordability-scenarios: buyOnTargetDeposit monthsToReady is ~9 (£17,005.55 gap at £2k/mo)', () => {
+    // gap = 50000 - 32994.45 = 17005.55; ceil(17005.55/2000) = 9
+    assertEqual(scenarios.buyOnTargetDeposit.monthsToReady, 9);
   });
 
   // --- buyAtHigherTarget (£400k, deposit = 12.5% = £50k) -------------------

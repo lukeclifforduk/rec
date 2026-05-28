@@ -249,8 +249,8 @@ function buildHeadline({ price, verdict, loanRequired, monthlyPI, paymentToIncom
  * }}
  */
 export function assessAffordabilityScenarios({ finances, criteria, goals, councilTaxBand } = {}) {
-  const currentSavings = Number(goals?.deposit?.currentSavings ?? finances?.savings?.current ?? 0);
-  const hopedDeposit = Number(goals?.deposit?.hopedFor ?? 40_000);
+  const currentSavings = Number(finances?.savings?.totalSavings ?? 0);
+  const hopedDeposit = Number(goals?.deposit?.hopedFor ?? 50_000);
   const monthlyContrib = Number(finances?.savings?.monthlyContribution ?? 2000);
 
   const lowerTargetPrice = 340_000;

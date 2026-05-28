@@ -20,9 +20,9 @@ export async function register({ test, assert, assertEqual, fixtures }) {
     assert(kinds.includes('spare'),    'missing spare bucket');
   });
 
-  await test('characterization/finances money-flow-now: income.takeHome is 3543.54', () => {
+  await test('characterization/finances money-flow-now: income.takeHome is 3623.52', () => {
     const flow = getMoneyFlow(finances, criteria);
-    assertEqual(flow.income.takeHome, 3543.54);
+    assertEqual(flow.income.takeHome, 3623.52);
   });
 
   await test('characterization/finances money-flow-now: total equals income.total', () => {
@@ -46,7 +46,7 @@ export async function register({ test, assert, assertEqual, fixtures }) {
   // ── Finance derivation ──────────────────────────────────────────────────────
   await test('characterization/finances derive: income.takeHomeMonthly survives re-derive', () => {
     const rederived = deriveFinances(rawFinances, { investments });
-    assertEqual(rederived.income?.takeHomeMonthly, 3543.54);
+    assertEqual(rederived.income?.takeHomeMonthly, 3623.52);
   });
 
   await test('characterization/finances derive: goal.targetDeposit survives re-derive', () => {
