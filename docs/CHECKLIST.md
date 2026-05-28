@@ -391,3 +391,53 @@ MCP connector — this is just the one-time bootstrap.
 
 **Out of scope for Phase 10**: realtime subscriptions, storage buckets, edge functions, auth flow
 changes, Storage.js logging (10D deferred — needs separate phase per §16). Those get their own phases.
+
+---
+
+## Overhaul — Data integrity + information architecture (May 2026)
+
+Adopted 2026-05-28. Branch: `claude/peaceful-goldberg-gIEgT`. Two tracks:
+**A (data integrity)** lands first; **B (IA)** depends on every page already reading one canonical number.
+All tests 189/189 green before each push.
+
+### Track A — Single source of truth
+
+- [x] **A1 — Conflicting monetary targets resolved** (`db58be7`):
+  - `finances.goal.targetDeposit = £40,000` is the single canonical deposit target.
+  - `finances.goal.offerTarget = £380,000` is the single canonical offer price (removed from `criteria.budget`).
+  - `finances.goal.targetPropertyPrice = £400,000` retained as upper budget anchor.
+  - DB updated via MCP UPSERT (finances + goals + criteria rows); fixtures updated (`finances.sample.json`, `goals.sample.json`); `sync-state.json` high-water marks updated.
+- [x] **A2 — Hardcoded personal-value fallbacks removed** (`db58be7`):
+  - All `?? 50_000`, `?? 2000`, `?? 380000`, `?? 375_000` replaced with canonical DB reads or `?? 0` with "not set" UI guards.
+  - Files: `affordability.js`, `tile-affordability.js`, `section-later.js`, `section-v3-charts.js`, `section-deposit-risk.js`, `page-area-detail.js`, `pages/finances.html`, `pages/area-detail.html`.
+- [x] **A3 — tile-readiness.js reads `readiness_checklist` table** (`db58be7`):
+  - Full rewrite of `assets/js/dashboard/tile-readiness.js` to call `getReadinessChecklist()` (row-per-item) instead of `goals.readiness.checklist` blob. `goals.readiness` blob retired (marked `_deprecated: true` in DB and fixtures).
+- [x] **A4 — CLAUDE.md §18.1 documents all 20 live tables** (`db58be7`):
+  - Expanded from 8-table list to full 20-table inventory with correct class, source-of-truth, and sync-direction for every table.
+- [x] **Test guard** (`db58be7`): `tests/affordability-scenarios.test.js` updated for new canonical values (hopedFor=£40k, currentSavings=£32,994.45, monthsToReady=4). 189/189 green.
+
+### Track B — Information architecture
+
+- [x] **B0 — Nav reorganised into buyer-journey pillars** (`db58be7`):
+  - Order: Home | Finances | Investments | Areas | Map | House Types | About | Checklists | Outreach | Listings(soon) | Ask(soon) | Data sync | Debug
+- [x] **B1 — Dashboard tiles into 5 labelled bands** (`8e45344`):
+  - Four `<h2 class="band-label">` headings: Goal progress · Affordability · Search · Next steps.
+  - Every tile group has a "see full →" link to the relevant detail page.
+  - `.band-label` CSS rule added to `assets/css/dashboard/base.css`.
+- [x] **B2 — Investments split from Finances** (`8e45344`):
+  - New `pages/investments.html` with all 8 investment chart sections (savings-over-time, monthly-deposits, ISA attribution, ISA stacked-area, dividends+interest, epoch comparison, ticker treemap, realised/unrealised P&L).
+  - New `assets/js/page-investments.js` coordinator.
+  - `pages/finances.html` trimmed to deposit+affordability+costs; replaced investment block with "How are my investments doing? →" cross-link.
+  - `assets/js/page-finances.js` cleaned of investment imports.
+  - Nav: Investments activated (removed `nav-soon`).
+- [x] **B5 — Cross-link pass** (this commit):
+  - `pages/area-detail.html`: footer with "← Back to areas" + "Request a viewing →" (outreach A1).
+  - `pages/about-search.html`: "Browse matching areas →" before the save bar.
+  - `pages/journey.html`: "Email your affordability to a broker →" (outreach A5).
+  - `pages/house-types.html`: "Browse areas →" footer link.
+
+### Pending (separate phases)
+
+- [ ] **B3 — About you consolidation**: migrate debt data from profile blob into `debts_credit_cards`, `debts_student_loans`, `debts_other` tables via MCP UPSERT; extend `tests/supabase-sync.test.js` to assert debts live in `debts_*` tables.
+- [ ] **B4 — Shortlist single source**: `getShortlist()` path currently localStorage-first; making it Supabase-first touches `storage.js` (§16 guard — separate named phase required).
+- [ ] **A4 remaining**: update `pages/data-sync.html` + `page-data-sync.js` to cover all 20 live tables; extend `tests/supabase-sync.test.js` to cover newly documented user-state tables (goals, investments_*, debts_*, readiness_checklist).
