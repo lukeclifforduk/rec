@@ -82,7 +82,7 @@ Generated: 2026-05-26. Updated: 2026-05-27 (data security refactor — user-stat
 - `readiness.checklist` — boolean/null map; drives the "next action" on the dashboard readiness tile
 - `mortgage.comparisonsToOffer` — ["25y", "30y", "35y", "40y"]
 
-**Update pattern:** Flip booleans in `readiness.checklist` as Luke completes each action.
+**Update pattern:** Flip booleans in `readiness.checklist` as Alex completes each action.
 
 ---
 
@@ -125,7 +125,7 @@ Validates T212 column format, deduplicates by transaction ID, writes output file
 | `assets/js/affordability.js` | `assessAffordability()`, `assessAffordabilityScenarios()` | finances, criteria, goals | Bonus/payRise NOT used in main projections |
 | `assets/js/money-flow.js` | `getMoneyFlow()`, `getMoneyFlowPostMove()` | finances | Pre/post-move bucket shapes |
 | `assets/js/savings-velocity.js` | `getSavingsVelocity()`, `getVelocityFromHistory()` | finances / history | History variant stub-safe |
-| `assets/js/deposit-risk.js` | `assessDepositRisk()` | investments, goals | Luke current = high-risk (100% equity, 3-6mo) |
+| `assets/js/deposit-risk.js` | `assessDepositRisk()` | investments, goals | Alex current = high-risk (100% equity, 3-6mo) |
 | `assets/js/investment-performance.js` | `analysePerformance()`, `getMonthlyCumulativeDeposits()`, `getEpochAttribution()` | history | Stub-safe. v3 adds cumulative + per-epoch helpers. |
 | `assets/js/savings-series.js` | `buildSavingsSeries()` | history + finances + goal | v3: composes monthly cumulative deposits with the engine baseline projection for the savings-over-time chart. Stub-safe. |
 | `assets/js/finances.js` | `calcSDLT()`, `calcMonthlyMortgage()`, `calcLTV()` etc. | primitives | Pure; do not rewrite |

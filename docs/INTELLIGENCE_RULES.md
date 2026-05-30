@@ -116,7 +116,7 @@ Verdict thresholds for `assessDepositRisk(investments, goals)`:
 | `moderate-risk` | 50-100% equity **AND** timeline 6-12 months |
 | `high-risk` | 100% equity **AND** timeline < 6 months |
 
-**Luke's current state:** 100% in equity ETFs (VHYL/VUSA/VEVE/VFEM) + physical gold (SGLN), 3-6 month timeline → **high-risk**, urgency=high.
+**Alex's current state:** 100% in equity ETFs (VHYL/VUSA/VEVE/VFEM) + physical gold (SGLN), 3-6 month timeline → **high-risk**, urgency=high.
 
 **Risk recommendation logic:**
 
@@ -146,7 +146,7 @@ Three canned scenarios produced by `assessAffordabilityScenarios({ finances, cri
 
 **Important:** Bonus (£3,000 discretionary) and pay rise scenario (£66k) are **not** used in these projections. They are available as scenario toggles only.
 
-**Verdict for Luke's actual numbers (£3,543.54 take-home, £64k gross, April 2026):**
+**Verdict for Alex's actual numbers (£3,543.54 take-home, £64k gross, April 2026):**
 - buyNow £340k: stretch (LTI 4.76×, spare ~£229)
 - target £375k: tight (LTI 5.07×, spare ~£19 with £50k deposit)
 - higher £400k: tight (LTI 5.22×, spare negative without bonus)

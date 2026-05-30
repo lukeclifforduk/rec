@@ -49,7 +49,7 @@ export async function register({ test, assert, assertEqual }) {
     assertEqual(r.recommendation.urgency, 'medium');
   });
 
-  await test('deposit-risk: high-risk — Luke current state (100% equity ETF, 3-6mo timeline)', () => {
+  await test('deposit-risk: high-risk — Alex current state (100% equity ETF, 3-6mo timeline)', () => {
     const r = assessDepositRisk(HIGH_RISK_INVESTMENTS, GOALS_3_6MO);
     assertEqual(r.verdict, 'high-risk', `got ${r.verdict}`);
     assertEqual(r.recommendation.urgency, 'high');

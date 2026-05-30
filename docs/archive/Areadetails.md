@@ -1164,7 +1164,7 @@
     "Mobile signal patchy across the chalk downs",
     "Property stock is small and rarely turns over"
   ],
-  "whoItSuits": "Cash-buyer households wanting a chalk-downland setting with two-station train optionality (the Basingstoke route to Waterloo is one of the fastest in this whole batch) and accepting that day-to-day life is car-dependent. Best fit for retirees, remote workers, and downsizers from Alresford or Basingstoke. The Wield parish duplicates with the seed CSV's separate `upper-wield-gu35` record (batch 11); Luke should consider consolidating these into one record covering the parish, since the seed-data split between Upper Wield and the parish-level Wield is not reflected in the 2021 census or in the Wikipedia entry.",
+  "whoItSuits": "Cash-buyer households wanting a chalk-downland setting with two-station train optionality (the Basingstoke route to Waterloo is one of the fastest in this whole batch) and accepting that day-to-day life is car-dependent. Best fit for retirees, remote workers, and downsizers from Alresford or Basingstoke. The Wield parish duplicates with the seed CSV's separate `upper-wield-gu35` record (batch 11); the buyer should consider consolidating these into one record covering the parish, since the seed-data split between Upper Wield and the parish-level Wield is not reflected in the 2021 census or in the Wikipedia entry.",
   "councilTaxBand": null,
   "broadbandMedianMbps": null,
   "nearestStation": "Alton (5.5 mi)",

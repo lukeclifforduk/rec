@@ -1,4 +1,4 @@
-// affordability-scenarios.test.js — assessAffordabilityScenarios() for Luke's actual numbers.
+// affordability-scenarios.test.js — assessAffordabilityScenarios() for Alex's actual numbers.
 // £32,994.45 saved (T212 ISA), £2,000/mo contribution goal, £65,971 salary, take-home £3,623.52.
 
 import { assessAffordabilityScenarios } from '../assets/js/affordability.js';

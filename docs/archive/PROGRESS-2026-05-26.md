@@ -31,7 +31,7 @@ Key correction: take-home updated from £3590 → £3543.54 (April 2026 payslip)
 ## Phase 2 — Intelligence engine extensions
 _Status: COMPLETE_
 
-- `assets/js/deposit-risk.js`: new pure module; Luke's state → high-risk verdict (100% equity ETF, 3-6mo timeline, urgency=high)
+- `assets/js/deposit-risk.js`: new pure module; the buyer's state → high-risk verdict (100% equity ETF, 3-6mo timeline, urgency=high)
 - `assets/js/affordability.js`: added `assessAffordabilityScenarios()` — 3 scenarios: £340k/stretch/now, £375k/tight/10mo, £400k/tight/10mo
 - `assets/js/savings-velocity.js`: added `getVelocityFromHistory()` — stub-safe, 3-month window, 1/3/6/12mo projections
 - `assets/js/investment-performance.js`: new pure module — stub-safe, epoch attribution, total return %
@@ -86,7 +86,7 @@ _Status: COMPLETE_
 - `data/imports/trading212-history.json` — stub (ready for real CSV import)
 
 **Phase 2 — Intelligence engine:**
-- `assets/js/deposit-risk.js` — high-risk verdict for Luke's state (100% equity, 3-6mo)
+- `assets/js/deposit-risk.js` — high-risk verdict for the buyer's state (100% equity, 3-6mo)
 - `assets/js/affordability.js` — `assessAffordabilityScenarios()` (3-scenario: £340k/stretch/now, £375k/tight/10mo, £400k/tight/10mo)
 - `assets/js/savings-velocity.js` — `getVelocityFromHistory()` (stub-safe, 3-month window)
 - `assets/js/investment-performance.js` — `analysePerformance()` (stub-safe, epoch attribution)
