@@ -9,7 +9,7 @@ The single source of truth for how this app looks. Read this before any UI chang
 Two named anchors. Every view is one or the other — never both, never neither.
 
 ### Stripe-docs (long-form, editorial)
-For content-led views: `pages/profile.html`, `pages/area-detail.html`, `pages/house-types.html`, `pages/journey.html`.
+For content-led views: `pages/about-search.html` (the merged profile + criteria surface; `#about` reads as long-form), `pages/area-detail.html`, `pages/house-types.html`, `pages/journey.html`.
 
 - Single-column reading width (≤68ch) on mobile, two-column (content + sticky rail) ≥768 px.
 - Display headings in Fraunces with optical sizing; generous leading (1.5–1.6 body, 1.15 display).
@@ -18,7 +18,7 @@ For content-led views: `pages/profile.html`, `pages/area-detail.html`, `pages/ho
 - Inline figures with caption + licence; sources as footnotes with tap previews.
 
 ### Linear-dense (data-rich UI)
-For tools and data: `index.html`, `pages/criteria.html`, `pages/areas.html`, `pages/finances.html`, `pages/map.html`.
+For tools and data: `index.html`, `pages/about-search.html#search` (criteria; `pages/criteria.html` is a redirect into it), `pages/areas.html`, `pages/finances.html`, `pages/map.html`.
 
 - Compact rhythm: tight rows, dense tables, monospace numerals.
 - Asymmetric / bento layouts — never a uniform grid of identical cards.

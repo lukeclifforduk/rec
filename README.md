@@ -127,29 +127,20 @@ To set up Supabase for the first time, follow the interactive guide at **[`pages
 
 The Supabase schema lives in [`supabase/schema.sql`](supabase/schema.sql). The only files that talk to Supabase directly are `assets/js/storage.js` (data) and `assets/js/auth-guard.js` (sessions).
 
-## Storage abstraction → backend migration path
+## Storage abstraction
 
-Every page reads and writes user state through one module: `assets/js/storage.js`. The current
-implementation overlays user edits from `localStorage` on top of the JSON shipped in `data/`. The
-public API is intentionally async even when it doesn't need to be, so the swap to a real backend is
-mechanical:
+> **Historical note:** an earlier design treated `localStorage`-over-repo-JSON as the primary store
+> with a future backend "swap". That swap has already happened — **Supabase is now the canonical
+> source of truth for user state** (see `CLAUDE.md` §17/§18 and `docs/SUPABASE_SYNC.md`). The section
+> below documents the surviving piece: the localStorage **write-through cache**, not a source of truth.
 
-```js
-// today
-export async function getProfile()    { return readLocal('profile')   ?? await loadJSON('profile'); }
-export function       saveProfile(d)  { return writeLocal('profile', d); }
+Every page reads and writes user state through one module: `assets/js/storage.js`, which is backed by
+Supabase. `localStorage` is a write-through cache for instant renders: `getProfile()` returns the
+cached value immediately, then revalidates from Supabase in the background. User-state JSON files no
+longer live in the repo — only the Supabase row (redacted samples are in `data/fixtures/*.sample.json`
+for tests/fresh-install).
 
-// tomorrow (one-module swap; no page changes)
-export async function getProfile()    { return await fetch('/api/profile').then((r) => r.json()); }
-export async function saveProfile(d)  { return await fetch('/api/profile', { method: 'PUT', body: JSON.stringify(d) }); }
-```
-
-For multi-user: namespace endpoints by user id (`/api/users/:id/profile`). For optimistic UI: keep
-the localStorage layer as a write-through cache — `getProfile()` returns the cached value
-immediately, then revalidates from the server in the background. Pages remain untouched; only
-`storage.js` and `data-loader.js` change.
-
-`localStorage` namespace is `rec:*` (see `STORAGE_NS` in `assets/js/config.js`). Keys currently used:
+The cache namespace is `rec:*` (see `STORAGE_NS` in `assets/js/config.js`). Keys currently used:
 
 | Key                  | Owner                                  | Shape                                  |
 | -------------------- | -------------------------------------- | -------------------------------------- |

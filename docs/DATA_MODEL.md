@@ -2,7 +2,12 @@
 
 Generated: 2026-05-26. Updated: 2026-05-27 (data security refactor — user-state JSON files removed).
 
-> **Note (2026-05-27):** User-state data (profile, finances, criteria, goals, contacts, investments) was removed from the repo in the data security refactor. References to `data/profile.json`, `data/finances.json`, etc. in this document are historical — those files no longer exist. The canonical store is Supabase (access via `mcp__supabase__execute_sql`). Redacted sample data for tests lives in `data/fixtures/*.sample.json`.
+> **Note (updated 2026-05-30):** User-state data (profile, finances, criteria, goals, contacts,
+> investments, and Trading 212 imports) is **not** in the repo. References below to `data/profile.json`,
+> `data/finances.json`, `data/goals.json`, `data/investments.json`, `data/imports/trading212-history.json`,
+> etc. are **historical** — those files no longer exist. The canonical store is **Supabase** (15 user-state
+> tables, accessed via `mcp__supabase__execute_sql`; see `docs/SUPABASE_SYNC.md` §0 for the full table
+> inventory). Redacted sample data for tests/fresh-install lives in `data/fixtures/*.sample.json`.
 
 ---
 

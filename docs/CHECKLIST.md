@@ -1,25 +1,24 @@
 # CHECKLIST — live progress tracker
 
 Tick items as completed and **commit**. To resume in a fresh chat: read this file, then `docs/PLAN.md` +
-`docs/CONTEXT.md`, run a Haiku scan, run tests, continue at the first unchecked box.
+`docs/CONTEXT.md`, run `node tools/area-status.mjs`, run tests, continue at the first unchecked box.
 
-**Status:** Phases 0–7 functionally complete. All eight pages live (Home dashboard with sparkline +
-journey widget, Profile + Criteria editable forms, Areas directory + detail, Journey checklists,
-Finances with calculators, House types gallery, Map with draw tools). Two follow-up tracks remain:
-**(1) per-village geocoding** to populate map markers (currently 0/191 with coords) and
-**(2) per-village + per-house-type research/imagery batches** (CLAUDE.md §7 mandates web-cited
-content + licence-safe images before publishing rich profiles).
+**Status (reconciled 2026-05-30):** The app is well past the original eight-page plan. Shipped since:
+the data-model / intelligence-engine expansion, the investments split, the 5-band dashboard overhaul
+(A1–B5), Supabase as the live backend (auth + 20 tables, RLS), and the JS/CSS module refactor. Pages
+now include Home dashboard, About/Search (the merged profile + criteria surface), Areas directory +
+detail, Journey, Finances, House types, Map, and Data-sync. `criteria.html` is now a redirect into
+`about-search.html#search`.
 
-**New since plan:** user supplied a full budget (one-time costs, bills, expenses, shopping list, gift cards)
-→ Finances page expands to a budget dashboard; and viewing/moving **checklists** (`data/checklists.json`)
-→ likely a new "Journey" tab (confirming with user).
+**Areas:** 195 area records, **all geocoded** (every file carries `lat`). Status breakdown:
+**90 `researched`, 1 `partial`, 104 `directory` stubs**. The remaining content work is researching the
+104 `directory` areas (+ the 1 `partial`) per CLAUDE.md §7 — web-cited content + licence-safe imagery.
+Use `node tools/area-status.mjs --missing` for the live queue. **Do not auto-generate** this content.
 
-**Design-quality baseline (sideline pass, May 2026):** appended §9–§13 to `CLAUDE.md` (design quality,
-mobile-first, WCAG 2.2 AA, Pico conventions, verification rules — sourced from Anthropic frontend-design
-skill, web.dev, Polypane, WCAG 2.2, Pico v2 docs). Introduced `--space-*` / `--text-*` / `--focus-ring`
-tokens; added global `prefers-reduced-motion` + `:focus-visible` rules; bumped nav/button touch targets
-to ≥44 px; added skip-link, `id="main"` on every page, safe-area-inset on the sticky header, mobile
-fade hint + scroll-snap on the nav; added no-horizontal-scroll + skip-link smoke tests.
+**Design-quality baseline:** §9–§13 of `CLAUDE.md` (design quality, mobile-first, WCAG 2.2 AA, Pico
+conventions) are in force; tokens (`--space-*` / `--text-*` / `--focus-ring`), global
+`prefers-reduced-motion` + `:focus-visible`, ≥44 px touch targets, skip-link + `id="main"`, safe-area
+insets, and the no-horizontal-scroll / skip-link smoke tests all landed.
 
 ---
 
