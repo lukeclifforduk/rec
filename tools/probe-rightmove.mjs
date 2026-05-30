@@ -116,21 +116,38 @@ async function fetchListingsDirect(locationIdentifier) {
 
 // --- Apify fallback ----------------------------------------------------------
 
-async function fetchListingsApify(outcode) {
+// Build the Rightmove search URL the dhrumil/rightmove-scraper actor expects in
+// `listUrls`. It needs a real locationIdentifier (OUTCODE^nnnn) — which is why we
+// resolve the outcode first (the typeahead works from a Codespace's IP even
+// though it's blocked from the Claude sandbox).
+function buildSearchUrl(locationIdentifier) {
+  const params = new URLSearchParams({
+    searchType: 'SALE',
+    locationIdentifier,
+    sortType: '6', // newest first
+    maxDaysSinceAdded: String(MAX_DAYS_SINCE_ADDED),
+  });
+  return `https://www.rightmove.co.uk/property-for-sale/find.html?${params}`;
+}
+
+async function fetchListingsApify(locationIdentifier) {
   if (!APIFY_TOKEN || !APIFY_ACTOR_ID) {
     throw new Error('APIFY_TOKEN/APIFY_ACTOR_ID not set — cannot use Apify fallback');
+  }
+  if (!locationIdentifier) {
+    throw new Error('no locationIdentifier (outcode did not resolve) — dhrumil actor needs a listUrl');
   }
   // run-sync-get-dataset-items: runs the actor and returns its dataset inline.
   const url =
     `https://api.apify.com/v2/acts/${encodeURIComponent(APIFY_ACTOR_ID)}` +
     `/run-sync-get-dataset-items?token=${encodeURIComponent(APIFY_TOKEN)}`;
-  // NOTE: actor input schemas vary — adjust keys to the actor you picked.
+  // Input shape for dhrumil/rightmove-scraper: listUrls (array of {url}) + a cap.
+  // If you swap actors, this is the one block to change.
   const input = {
-    location: outcode,
-    listType: 'BUY',
-    sort: 'newest',
-    maxDaysSinceAdded: MAX_DAYS_SINCE_ADDED,
+    listUrls: [{ url: buildSearchUrl(locationIdentifier) }],
     maxItems: RESULTS_PER_OUTCODE,
+    monitoringMode: false,
+    includePriceHistory: false,
   };
   const res = await fetch(url, {
     method: 'POST',
@@ -139,12 +156,14 @@ async function fetchListingsApify(outcode) {
   });
   if (!res.ok) throw new Error(`apify HTTP ${res.status}`);
   const items = await res.json();
+  // Field names vary by actor — keep several fallbacks; the probe prints whatever
+  // it finds so we can lock the exact mapping for the L1 fetcher from real output.
   return (Array.isArray(items) ? items : []).map((p) => ({
-    address: p.displayAddress || p.address,
-    price: p.price?.amount ?? p.price,
-    beds: p.bedrooms ?? p.beds,
-    type: p.propertySubType || p.propertyType || p.type,
-    added: p.firstVisibleDate || p.addedOrReduced || p.added || null,
+    address: p.displayAddress || p.address || p.title || null,
+    price: p.price?.amount ?? p.price ?? p.priceValue ?? null,
+    beds: p.bedrooms ?? p.beds ?? null,
+    type: p.propertySubType || p.propertyType || p.type || null,
+    added: p.firstVisibleDate || p.addedOrReduced || p.addedOn || p.listingUpdate?.listingUpdateDate || null,
   }));
 }
 
@@ -153,20 +172,36 @@ async function fetchListingsApify(outcode) {
 async function probeOutcode(outcode) {
   const out = { outcode, route: null, count: 0, inOutcode: 0, wrongRegion: 0, rows: [], error: null };
 
-  // 1) direct route
+  // Resolve the outcode -> locationIdentifier once. Needed by BOTH routes
+  // (the direct _search and the dhrumil actor's listUrl).
+  let loc = null;
+  let resolveErr = null;
   try {
-    const loc = await resolveOutcodeDirect(outcode);
-    const rows = await fetchListingsDirect(loc.locationIdentifier);
-    out.route = `direct (${loc.locationIdentifier} · ${loc.displayName})`;
-    out.rows = rows;
-  } catch (errDirect) {
-    // 2) apify fallback
+    loc = await resolveOutcodeDirect(outcode);
+  } catch (e) {
+    resolveErr = e.message;
+  }
+
+  // 1) direct route (free)
+  let directErr = null;
+  if (loc) {
     try {
-      const rows = await fetchListingsApify(outcode);
-      out.route = `apify (${APIFY_ACTOR_ID})`;
-      out.rows = rows;
+      out.rows = await fetchListingsDirect(loc.locationIdentifier);
+      out.route = `direct (${loc.locationIdentifier} · ${loc.displayName})`;
+    } catch (e) {
+      directErr = e.message;
+    }
+  }
+
+  // 2) apify fallback (uses the resolved locationIdentifier)
+  if (!out.route) {
+    try {
+      out.rows = await fetchListingsApify(loc?.locationIdentifier);
+      out.route = `apify (${APIFY_ACTOR_ID} · ${loc?.locationIdentifier})`;
     } catch (errApify) {
-      out.error = `direct: ${errDirect.message} | apify: ${errApify.message}`;
+      out.error =
+        `resolve: ${resolveErr || 'ok'} | direct: ${directErr || (loc ? 'ok' : 'skipped')} | ` +
+        `apify: ${errApify.message}`;
       return out;
     }
   }
