@@ -1,5 +1,7 @@
 # CLAUDE.md — Operating Rules for this Repository
 
+> **Last reconciled 2026-05-30.** If reality and this file disagree, **reality wins — fix this file.**
+
 This file governs how Claude (and any AI assistant) works in this repo. Read it at the **start of every
 session**. These rules exist to keep work safe, resumable, and high quality.
 
@@ -31,12 +33,14 @@ session**. These rules exist to keep work safe, resumable, and high quality.
   ```
 - Delete temp files after a successful splice.
 
-## 3. Reading large files
-- Read large files in **chunks of ≤200 lines** (use `offset`/`limit`), not all at once.
+## 3. Reading files
+- Read what you need with `offset`/`limit`. Don't blind-`cat` huge generated/binary files. No fixed
+  line-chunk ritual — a capable model can read a whole source file at once.
 
 ## 4. Start-of-cycle scan
-- At the **start of any work session**, summarise current repo + relevant file state before editing
-  (use a cheap/fast model or subagent scan). Then read `docs/CHECKLIST.md` to find the next task.
+- At the **start of any work session**, summarise the current repo + relevant file state before editing,
+  then read `docs/CHECKLIST.md` to find the next task. This is a habit, not a required separate
+  cheap-model/subagent call — read the files directly.
 
 ## 5. Checklist discipline
 - Keep `docs/CHECKLIST.md` in lockstep with `docs/PLAN.md`.
@@ -56,26 +60,25 @@ session**. These rules exist to keep work safe, resumable, and high quality.
 
 ## 8. Resume protocol (start here in a fresh chat)
 
-**Step 0 is mandatory and comes before everything else.** See §18 for the full Supabase sync contract.
+See §18 for the full Supabase sync contract.
 
-0. **MCP-first Supabase freshness check.** Before any session that edits data, schema, or user-state, call the Supabase MCP connector (skip for pure code refactors that touch no data):
-   - `mcp__supabase__list_tables` — confirm all **20 tables** exist (15 user-state + 2 content mirrors + 3 system; 17 of these are "tracked" for sync) with RLS enabled. The canonical inventory lives in `docs/SUPABASE_SYNC.md`.
-   - `mcp__supabase__execute_sql` against the freshness view (or run
-     `node tools/check-supabase-freshness.mjs`) to fetch `MAX(updated_at)` per table.
-   - Compare to `data/snapshots/sync-state.json` (the locally-cached snapshot of last-known timestamps).
-     If Supabase is fresher for any user-state table (the user has been editing in the portal), **pull
-     that row via `execute_sql`** and update both the snapshot and the cached repo overlay. Surface the
-     diff to the user in one short line before continuing.
-1. **Run `node tools/area-status.mjs`** — prints which areas are `researched` /
-   `partial` / `stub` and exactly which fields are missing per area. Use
-   `--missing` to filter to incomplete areas and `--id <area-id>` to inspect one.
-   This is the canonical view of research progress and the next-to-do queue.
-2. Read `docs/CHECKLIST.md` (what's done / next) and `docs/PLAN.md` (master plan)
-   + `docs/CONTEXT.md` (research facts) + `docs/SUPABASE_SYNC.md` (sync contract).
-3. Run a Haiku scan of any files you'll touch.
-4. Run the test harness (`node tools/run-intelligence-tests.mjs` **and** the sync test in §6).
-5. Continue at the **first unchecked** checklist item — or, for area research,
-   the next `partial` or `directory` area surfaced by `area-status.mjs`.
+0. **Supabase freshness check — only if this session edits data, schema, or user-state** (skip entirely
+   for pure code/UI/docs refactors that touch no data). When it applies, it's a lightweight check, not a
+   blocking ceremony:
+   - `mcp__supabase__list_tables` — confirm the 20 tables exist with RLS enabled (inventory in
+     `docs/SUPABASE_SYNC.md` §0).
+   - `node tools/check-supabase-freshness.mjs` (or `execute_sql` for `MAX(updated_at)` per table),
+     compared to `data/snapshots/sync-state.json`. If a **user-state** table is fresher (the user edited
+     in the portal), pull that row via `execute_sql`, update the snapshot, and surface the diff in one
+     line before continuing.
+1. **Run `node tools/area-status.mjs`** — prints which areas are `researched` / `partial` / `stub` and
+   which fields are missing. Use `--missing` to filter and `--id <area-id>` to inspect one. This is the
+   canonical view of research progress and the next-to-do queue.
+2. Read `docs/CHECKLIST.md` (what's done / next) and `docs/PLAN.md` (master plan) + `docs/CONTEXT.md`
+   (research facts) + `docs/SUPABASE_SYNC.md` (sync contract).
+3. Run the test harness (`node tools/run-intelligence-tests.mjs` — includes the sync test, §6).
+4. Continue at the **first unchecked** checklist item — or, for area research, the next `partial` or
+   `directory` area surfaced by `area-status.mjs`.
 
 ## Project shape (quick reference)
 - Zero-build static site: plain HTML + CSS + vanilla JS, all libraries via CDN.
@@ -161,10 +164,8 @@ the relevant anchor (*Stripe-docs* or *Linear-dense*) in the commit message.
 
 ## 13. Verification for UI changes
 
-There is **no screenshot / Playwright / Chromium / Lighthouse step** in this workflow. The assistant runs
-in an environment without a browser, so do **not** attempt to capture screenshots, run `verify-ui.mjs`,
-or render pages — and do **not** keep announcing that these are unavailable. Just verify what you can in
-code and hand the visual check to the developer.
+No browser in this environment: there is **no screenshot / Playwright / Chromium / Lighthouse step**.
+Verify what you can in code; hand the visual pass to the developer. (No need to announce the absence.)
 
 Before declaring a UI change complete:
 
@@ -331,41 +332,18 @@ mirror the change to the matching Supabase table per §18.3.
 UPSERT them to Supabase; there is nothing to mirror to. If a mirror is wanted, add the table via
 `mcp__supabase__apply_migration` first (its own named §17 phase).
 
-## 19. Module layout (post-refactor)
+## 19. Module layout
 
-After the 2026-05 refactor (Phases 0–9), the JS and CSS are split as follows.
+The JS/CSS is split into small single-purpose modules (post 2026-05 refactor): flat utilities and
+calculators in `assets/js/`, tile modules in `assets/js/dashboard/`, finance sections in
+`assets/js/finances/`, outreach modules in `assets/js/outreach/`, and thin `page-*.js` coordinators
+(one per page). Rather than maintain a hand-written list here (which rots), get the **current** map
+on demand:
 
-### `assets/js/` — flat utilities
-| File | Purpose |
-|------|---------|
-| `dom.js` | `byId`, `setText`, `setHTML`, `on`, `esc` — DOM micro-utilities |
-| `motion.js` | `prefersReducedMotion()` helper |
-| `svg.js` | `SVG_NS`, `createSVGElement` |
-| `css-vars.js` | `cssVar()` — reads a CSS custom property value |
-| `intelligence-constants.js` | `LADDER_RANGE`, `LTI_BANDS`, `SDLT_BANDS`, `LISA_LIMIT`, `STRESS_RATE` |
-| `flow-constants.js` | `FLOW_PALETTE`, `FLOW_ORDER` |
-| `affordability.js` | Affordability verdict engine |
-| `finance-derive.js` | Derived finance figures |
-| `money-flow.js` | Money-flow shape |
-| `savings-velocity.js` | Savings velocity + projection |
-| `savings-series.js` | Savings time-series |
-| `deposit-risk.js` | Deposit-risk waterfall |
-| `investment-performance.js` | T212 investment performance |
-| `outreach-renderer.js` | Outreach template renderer |
-| `outreach-store.js` | Outreach persistence helpers |
-| `format.js` | Currency / date formatters |
-
-### `assets/js/dashboard/` — 12 dashboard tile modules
-`tile-lede`, `tile-deposit`, `tile-deposit-risk`, `tile-affordability`, `tile-affordability-scenarios`, `tile-money-flow`, `tile-shortlist`, `tile-journey`, `tile-criteria`, `tile-isa-ytd`, `tile-readiness`, `tile-savings-visuals`
-
-### `assets/js/finances/` — 8 finance section modules
-`chart-helpers`, `section-deposit`, `section-deposit-risk`, `section-flow`, `section-isa-attribution`, `section-later`, `section-breakdowns`, `section-v3-charts`
-
-### `assets/js/outreach/` — 8 outreach modules
-`context`, `grid`, `filters`, `dialog`, `contacts`, `log`, `toast`, `state`
-
-### `assets/js/page-*.js` — thin page coordinators
-One per page: `page-home`, `page-finances`, `page-outreach`, `page-data-sync`, `page-about-search`, `page-profile`, `page-profile-detail`, `page-area-detail`, `page-areas`, `page-criteria`, `page-house-types`, `page-journey`, `page-map`
+```bash
+find assets/js -name '*.js' | sort      # all JS modules
+find assets/css -name '*.css' | sort    # CSS partials (see §16 / dashboard.css import shell)
+```
 
 ### `assets/css/` — structure
 ```
