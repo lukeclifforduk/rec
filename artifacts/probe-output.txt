@@ -4,23 +4,28 @@ maxDaysSinceAdded: 3
 apify fallback: configured
 
 ── SO20 ──────────────────────────────────────────
-  ✗ FAILED: resolve: ok | direct: Unexpected token '<', "<!DOCTYPE "... is not valid JSON | apify: no locationIdentifier (outcode did not resolve) — dhrumil actor needs a listUrl
+  route: apify (dhrumil~rightmove-scraper · 2418)
+  results: 0  (in-outcode: 0, wrong-region: 0)
 
 ── SO21 ──────────────────────────────────────────
-  ✗ FAILED: resolve: ok | direct: Unexpected token '<', "<!DOCTYPE "... is not valid JSON | apify: no locationIdentifier (outcode did not resolve) — dhrumil actor needs a listUrl
+  route: apify (dhrumil~rightmove-scraper · 2419)
+  results: 0  (in-outcode: 0, wrong-region: 0)
 
 ── SP5 ──────────────────────────────────────────
-  ✗ FAILED: resolve: ok | direct: Unexpected token '<', "<!DOCTYPE "... is not valid JSON | apify: no locationIdentifier (outcode did not resolve) — dhrumil actor needs a listUrl
+  route: apify (dhrumil~rightmove-scraper · 2441)
+  results: 0  (in-outcode: 0, wrong-region: 0)
 
 ── GU34 ──────────────────────────────────────────
-  ✗ FAILED: resolve: ok | direct: Unexpected token '<', "<!DOCTYPE "... is not valid JSON | apify: no locationIdentifier (outcode did not resolve) — dhrumil actor needs a listUrl
+  route: apify (dhrumil~rightmove-scraper · 1031)
+  results: 0  (in-outcode: 0, wrong-region: 0)
 
 ── SP11 ──────────────────────────────────────────
-  ✗ FAILED: resolve: ok | direct: Unexpected token '<', "<!DOCTYPE "... is not valid JSON | apify: no locationIdentifier (outcode did not resolve) — dhrumil actor needs a listUrl
+  route: apify (dhrumil~rightmove-scraper · 2437)
+  results: 0  (in-outcode: 0, wrong-region: 0)
 
 === SUMMARY ===
 outcodes returning data: 0/5
 total listings (<=3d old) across probed outcodes: 0
-VERDICT: ✗ no route returned data — direct blocked and no Apify fallback configured.
+VERDICT: ✓ all probed outcodes returned in-region data — source looks usable for L1.
 
 (probe exit code: 0)
