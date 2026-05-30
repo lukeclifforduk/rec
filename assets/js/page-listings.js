@@ -229,7 +229,7 @@ async function render() {
     if (!listings.length) {
       listEl.appendChild(el('li', { class: 'listings-empty' }, [
         el('p', {}, 'No listings yet.'),
-        el('p', { class: 'listings-empty__hint' }, 'The daily fetch (fetch-listings workflow) hasn’t populated the listings table yet — run it from the Actions tab, or check the Apify / Supabase secrets are set.'),
+        el('p', { class: 'listings-empty__hint' }, 'The daily fetch (fetch-listings workflow) hasn’t populated the listings table yet — tap “Fetch new listings” above to run it on GitHub, or check the Apify / Supabase secrets are set.'),
       ]));
       if (summaryEl) { clear(summaryEl); }
       return;

@@ -25,10 +25,18 @@
 
     <section class="listings-controls">
       <p data-listings-summary class="listings-summary"></p>
-      <label class="listings-toggle">
-        <input type="checkbox" data-show-oor />
-        Show out-of-reach
-      </label>
+      <div class="listings-actions">
+        <label class="listings-toggle">
+          <input type="checkbox" data-show-oor />
+          Show out-of-reach
+        </label>
+        <a class="listings-fetch"
+           href="https://github.com/seanparkerai/rec/actions/workflows/fetch-listings.yml"
+           target="_blank" rel="noopener"
+           aria-label="Run the fetch-listings workflow on GitHub (opens in a new tab)">
+          Fetch new listings <span class="listings-fetch__ext" aria-hidden="true">↗</span>
+        </a>
+      </div>
     </section>
 
     <ol class="area-list listing-list" data-listings aria-label="Live listings ranked by fit"></ol>
