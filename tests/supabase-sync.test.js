@@ -26,7 +26,8 @@ test('snapshot file exists and is valid JSON', async () => {
 test('snapshot includes all 17 tracked tables', async () => {
   const path = resolve(root, 'data/snapshots/sync-state.json');
   const snapshot = JSON.parse(await readFile(path, 'utf8'));
-  // 15 user-state tables + 2 content mirrors
+  // Canonical: 15 user-state + 2 content mirrors = 17 tracked tables.
+  // Source of truth for this list is docs/SUPABASE_SYNC.md §0. Keep in sync.
   const expected = [
     'profile', 'criteria', 'finances', 'goals', 'shortlist', 'zones',
     'journey_checks', 'contacts', 'outreach',

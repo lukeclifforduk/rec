@@ -9,6 +9,24 @@ the table in §1 as authoritative — every data type in the app belongs to exac
 
 ---
 
+## 0. Canonical table inventory (single source of truth)
+
+**Live schema = 20 tables** (verified via `list_tables` 2026-05-30, all RLS-enabled):
+
+- **15 user-state** (per household_id, source of truth = Supabase): `profile`, `criteria`,
+  `finances`, `goals`, `shortlist`, `zones`, `journey_checks`, `contacts`, `outreach`,
+  `readiness_checklist`, `investments_accounts`, `investments_history`, `debts_credit_cards`,
+  `debts_student_loans`, `debts_other`.
+- **2 content mirrors** (source of truth = repo JSON): `areas` (195 rows), `house_types` (15 rows).
+- **3 system** (Supabase-managed, never synced by Claude): `households`, `household_members`, `sync_log`.
+
+**17 of the 20 are "tracked"** for the sync contract (15 user-state + 2 content) and appear in
+`data/snapshots/sync-state.json`. Note: `checklists` and `outreach_templates` have **no** mirror
+table — those catalogues are repo-JSON-only. Any other doc, test, or rule that states a different
+count is wrong and must be reconciled to this section.
+
+---
+
 ## 1. Source-of-truth matrix
 
 | Class | Tables / files | Canonical store | Writer | Reader |
@@ -16,7 +34,7 @@ the table in §1 as authoritative — every data type in the app belongs to exac
 | **User state** | `profile`, `criteria`, `finances`, `shortlist`, `zones`, `journey_checks`, `contacts`, `outreach` — **no repo JSON file** | Supabase row (one per household_id) | Portal via `storage.js`, OR Claude via MCP `execute_sql` | `storage.js` reads with localStorage write-through cache |
 | **Test fixtures** | `data/fixtures/*.sample.json` | Repo file (git-versioned, redacted) | Claude only | Test harness (`tools/run-intelligence-tests.mjs`) and fresh-install fallback in `storage.js` |
 | **Content (per-area)** | `data/areas/<id>.json` | Repo file (git-versioned) | Claude only | App fetches the JSON; Supabase `areas` mirror table answers ad-hoc queries |
-| **Content (catalogues)** | `data/house-types.json`, `data/checklists.json`, `data/outreach-templates.json` | Repo file | Claude only | App fetches the JSON; Supabase `house_types` / `checklists` / `outreach_templates` mirror tables for queries |
+| **Content (catalogues)** | `data/house-types.json`, `data/checklists.json`, `data/outreach-templates.json` | Repo file | Claude only | App fetches the JSON; only `house_types` has a Supabase mirror table — `checklists` / `outreach_templates` are repo-JSON-only (no mirror) |
 | **Index** | `data/areas.json` | Derived from per-area files via `tools/build-areas.mjs` | Build tool | App fetches the JSON; Supabase `areas` mirror table |
 | **Schema** | `supabase/schema.sql` | Migration history applied via MCP | Claude only, via `mcp__supabase__apply_migration` | Supabase project state |
 

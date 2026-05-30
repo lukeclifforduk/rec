@@ -59,7 +59,7 @@ session**. These rules exist to keep work safe, resumable, and high quality.
 **Step 0 is mandatory and comes before everything else.** See §18 for the full Supabase sync contract.
 
 0. **MCP-first Supabase freshness check.** Before any session that edits data, schema, or user-state, call the Supabase MCP connector (skip for pure code refactors that touch no data):
-   - `mcp__supabase__list_tables` — confirm all 10 tables exist with RLS enabled.
+   - `mcp__supabase__list_tables` — confirm all **20 tables** exist (15 user-state + 2 content mirrors + 3 system; 17 of these are "tracked" for sync) with RLS enabled. The canonical inventory lives in `docs/SUPABASE_SYNC.md`.
    - `mcp__supabase__execute_sql` against the freshness view (or run
      `node tools/check-supabase-freshness.mjs`) to fetch `MAX(updated_at)` per table.
    - Compare to `data/snapshots/sync-state.json` (the locally-cached snapshot of last-known timestamps).
@@ -252,7 +252,7 @@ and Claude MUST keep them in lockstep:
 
 ### 18.1 Data classification
 
-Live schema: **20 tables** as of 2026-05-28.
+Live schema: **20 tables** (verified via `list_tables` 2026-05-30) = **15 user-state + 2 content mirrors + 3 system**. Of these, **17 are "tracked"** for the sync contract (15 user-state + 2 content); the 3 system tables are Supabase-managed and never synced by Claude. This 15+2+3 split is the single source of truth — see `docs/SUPABASE_SYNC.md`; §8's count must match it.
 
 | Class | Tables | Source of truth | Sync direction |
 |-------|--------|-----------------|----------------|
@@ -320,14 +320,16 @@ The portal's `assets/js/storage.js` already writes the 8 user-state tables on ev
 - Claude does NOT bypass MCP "to save time". A skipped MCP call is a sync bug waiting to happen and
   will fail the §6 sync tests at commit time.
 
-### 18.7 Pending content-mirror schema work
+### 18.7 Content-mirror status
 
-The content mirror tables (`areas`, `house_types`, `checklists`, `outreach_templates`) are not yet in
-`supabase/schema.sql`. Phase 10 in `docs/CHECKLIST.md` covers adding them via
-`mcp__supabase__apply_migration`, backfilling from repo JSON, and wiring the sync verification test.
-Until that phase ships, content edits remain repo-JSON-only; the §18.2/§18.3 mirror steps activate
-once the migration is in place. Session-start freshness checks against user-state tables apply
-immediately.
+The `areas` (195 rows) and `house_types` (15 rows) mirror tables **exist and are live** (verified via
+`list_tables` 2026-05-30, RLS enabled). When Claude edits `data/areas/*.json` or `data/house-types.json`,
+mirror the change to the matching Supabase table per §18.3.
+
+`checklists` and `outreach_templates` have **no** mirror table yet — those content files
+(`data/checklists.json`, `data/outreach-templates.json`) remain repo-JSON-only. Do **not** attempt to
+UPSERT them to Supabase; there is nothing to mirror to. If a mirror is wanted, add the table via
+`mcp__supabase__apply_migration` first (its own named §17 phase).
 
 ## 19. Module layout (post-refactor)
 
