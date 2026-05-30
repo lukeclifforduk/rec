@@ -22,6 +22,27 @@ insets, and the no-horizontal-scroll / skip-link smoke tests all landed.
 
 ---
 
+## v3 — Live Listings (active)
+Plan: `docs/V3_LISTINGS_PLAN.md`. Build order L0→L6; minimum-lovable = L0–L4.
+
+- [x] **L0 — Probe spike** (throwaway): validated source. Actor `dhrumil~rightmove-scraper`,
+      field mapping locked, in-region listings confirmed. Probe + workflow now deleted (replaced by L1).
+- [x] **L1 — Listing engine**: `listings` table (migration `listings_l1` applied);
+      `tools/listings-normalise.mjs` (pure normalise / coordinate-first in-outcode validation /
+      dedupe / price-history, 11 tests); `tools/fetch-listings.mjs` +
+      `.github/workflows/fetch-listings.yml`; `storage.js#getListings`, `pages/listings.html`,
+      `page-listings.js`, `pages/listings.css`. **External prereq:** run the `fetch-listings`
+      workflow (needs APIFY_TOKEN / APIFY_ACTOR_ID / SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY)
+      to populate the table.
+- [x] **L2 — Fit score**: `assets/js/listing-fit.js` (5-band verdict, affordability hard gate,
+      explainable `contributions[]`; imports `assessAffordability`, 7 tests); `FIT_BANDS`/`FIT_WEIGHTS`
+      in `intelligence-constants.js` + `INTELLIGENCE_RULES.md` §"Listing fit"; 5-band dots + "why" expander.
+- [ ] **L3 — Reaction log + Layer 1** (next): `listing_reactions` table, reaction UI + reason chips,
+      shortlist personal-status extension.
+- [ ] **L4 — Learning + cold start** · [ ] **L5 — Recommendation loop + NBA** · [ ] **L6 — Dossier + workflow**
+
+---
+
 ## Phase 0 — Foundation & governance
 - [x] `CLAUDE.md` (operating rules)
 - [x] `.gitignore`

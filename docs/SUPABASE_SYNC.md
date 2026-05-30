@@ -25,6 +25,12 @@ the table in §1 as authoritative — every data type in the app belongs to exac
 table — those catalogues are repo-JSON-only. Any other doc, test, or rule that states a different
 count is wrong and must be reconciled to this section.
 
+**v3 L1 addition (2026-05-30):** `listings` — a new **live-content** class (see §1).
+Created by migration `listings_l1`. It is **not** one of the 17 git-tracked sync
+tables and is **not** mirrored to/from repo JSON: it is written exclusively by
+`tools/fetch-listings.mjs` (service role) and changes hourly, so it has no
+review/cite value the way `areas` does. Physical table count is now **22** (21 + `listings`).
+
 ---
 
 ## 1. Source-of-truth matrix
@@ -36,6 +42,7 @@ count is wrong and must be reconciled to this section.
 | **Content (per-area)** | `data/areas/<id>.json` | Repo file (git-versioned) | Claude only | App fetches the JSON; Supabase `areas` mirror table answers ad-hoc queries |
 | **Content (catalogues)** | `data/house-types.json`, `data/checklists.json`, `data/outreach-templates.json` | Repo file | Claude only | App fetches the JSON; only `house_types` has a Supabase mirror table — `checklists` / `outreach_templates` are repo-JSON-only (no mirror) |
 | **Index** | `data/areas.json` | Derived from per-area files via `tools/build-areas.mjs` | Build tool | App fetches the JSON; Supabase `areas` mirror table |
+| **Live content (v3)** | `listings` (Supabase only — no repo file) | Supabase (fetcher-written) | `tools/fetch-listings.mjs` via service-role REST UPSERT (`on_conflict=rightmove_id`) | `storage.js#getListings` → listings page. NOT git-versioned; not in the 17 tracked tables |
 | **Schema** | `supabase/schema.sql` | Migration history applied via MCP | Claude only, via `mcp__supabase__apply_migration` | Supabase project state |
 
 Anything not in this table is either ephemeral UI state (URL params, in-memory only) or a bug —
