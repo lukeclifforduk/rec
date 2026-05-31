@@ -65,9 +65,9 @@ const FETCH_LIMIT = Number(process.env.FETCH_LIMIT) || 0;
 const USE_LEARNED = process.env.USE_LEARNED === '1' || process.env.USE_LEARNED === 'true';
 const FOUNDATION_MODE = process.env.FOUNDATION_MODE === '1' || process.env.FOUNDATION_MODE === 'true';
 
-const FOUNDATION_DAYS = 14;
-// 3-day overlap so a missed cron run self-heals; FOUNDATION_MODE overrides to 14.
-const MAX_DAYS_SINCE_ADDED = FOUNDATION_MODE ? FOUNDATION_DAYS : (Number(process.env.MAX_DAYS_SINCE_ADDED) || 3);
+// Foundation mode: 30-day window to capture the full current market.
+// Daily mode: 3-day overlap so a missed cron self-heals.
+const MAX_DAYS_SINCE_ADDED = FOUNDATION_MODE ? 30 : (Number(process.env.MAX_DAYS_SINCE_ADDED) || 3);
 
 const RESULTS_PER_OUTCODE = Number(process.env.RESULTS_PER_OUTCODE) || 50;  // cap per target (lower = cheaper on pay-per-event actors)
 // Hard USD spend cap: passed to Apify as maxBudget. PPE actors self-terminate — no overrun possible.
