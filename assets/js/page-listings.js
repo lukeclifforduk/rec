@@ -9,10 +9,16 @@ import {
   getListings, getCriteria, getFinances, getAreas,
   getListingReactions, saveListingReaction,
   getShortlistStatuses, setShortlistStatus,
+  getLearnedPreferences, recomputeLearnedPreferences,
 } from './storage.js';
 import { deriveFinances } from './finance-derive.js';
 import { scoreListingFit } from './listing-fit.js';
 import { REACTIONS, REJECT_REASONS, PERSONAL_STATUSES } from './listing-reactions.js';
+import {
+  effectiveWeights, listingLearnedPrefs, isRecent, gradedCount, isColdStart,
+  diversifySelection, listingBucketKey, describeSignal,
+} from './learned-preferences.js';
+import { LEARNED_PREF, RECENCY_DAYS } from './intelligence-constants.js';
 import { el, clear } from './dom.js';
 
 const REACTION_LABELS = { like: 'Like', pass: 'Pass', reject: 'Reject' };
@@ -66,9 +72,16 @@ function buildWhy(scored) {
     .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
     .map((c) => {
       const sign = c.delta > 0 ? '＋' : '－';
+      // Prettify the L4 learned-preference contributions (the scoring seam labels
+      // them "Learned preference: <signal>"); keep everything else verbatim.
+      let label = c.label;
+      if (typeof c.signal === 'string' && c.signal.startsWith('learned:')) {
+        const verb = c.delta > 0 ? 'You tend to like' : 'You tend to pass on';
+        label = `${verb} ${describeSignal(c.signal.slice('learned:'.length))}`;
+      }
       return el('li', { class: `listing-why__item listing-why__item--${c.delta > 0 ? 'pos' : 'neg'}` }, [
         el('span', { class: 'listing-why__sign', 'aria-hidden': 'true' }, sign),
-        el('span', { class: 'listing-why__label' }, c.label),
+        el('span', { class: 'listing-why__label' }, label),
       ]);
     });
   if (!items.length) items.push(el('li', { class: 'listing-why__item' }, 'No distinguishing signals — neutral fit.'));
@@ -190,22 +203,118 @@ function buildSummary(shown, total, gatedCount) {
   return el('p', { class: 'listings-summary' }, bits.join(' · '));
 }
 
+// ── Review deck (cold-start bulk triage) ────────────────────────────────────
+// One full listing at a time; a reaction advances to the next un-reviewed recent
+// listing. Built for clearing the whole recent wave en masse so Layer-2 learning
+// gets dense, contrastive signal fast (the cold-start strategy).
+function buildDeckProgress(done, total) {
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  const fill = el('span', { class: 'deck-progress__fill' });
+  fill.style.width = `${pct}%`;
+  return el('div', { class: 'deck-progress' }, [
+    el('div', {
+      class: 'deck-progress__bar', role: 'progressbar',
+      'aria-valuenow': String(done), 'aria-valuemin': '0', 'aria-valuemax': String(total),
+      'aria-label': 'Review progress',
+    }, [fill]),
+    el('p', { class: 'deck-progress__label num' }, `${done} of ${total} reviewed`),
+  ]);
+}
+
+function buildDeckReactions(onReact) {
+  const like = el('button', { type: 'button', class: 'deck-react__btn deck-react__btn--like' }, 'Like');
+  const pass = el('button', { type: 'button', class: 'deck-react__btn deck-react__btn--pass' }, 'Pass');
+  const reject = el('button', { type: 'button', class: 'deck-react__btn deck-react__btn--reject' }, 'Reject');
+  const chips = REJECT_REASONS.map((r) => el('button', { type: 'button', class: 'listing-chip', 'data-reason': r.key }, r.label));
+  const reasons = el('div', { class: 'listing-reasons deck-reasons', role: 'group', 'aria-label': 'Why reject? (a tagged reason trains far better)' }, chips);
+  reasons.hidden = true;
+
+  like.addEventListener('click', () => onReact('like', null));
+  pass.addEventListener('click', () => onReact('pass', null));
+  reject.addEventListener('click', () => { reasons.hidden = false; reject.setAttribute('aria-pressed', 'true'); });
+  reasons.addEventListener('click', (e) => {
+    const c = e.target.closest('[data-reason]');
+    if (c) onReact('reject', c.dataset.reason);
+  });
+
+  return el('div', { class: 'deck-react-wrap' }, [
+    el('div', { class: 'deck-react', role: 'group', 'aria-label': 'Your reaction' }, [like, pass, reject]),
+    reasons,
+  ]);
+}
+
+function buildDeckCard(listing, scored, area, onReact) {
+  const verdict = scored?.verdict || 'unknown';
+  const media = listing.image_url
+    ? el('div', { class: 'deck-media' }, [el('img', { class: 'deck-media__img', src: listing.image_url, alt: '', loading: 'lazy' })])
+    : el('div', { class: 'deck-media deck-media--none', 'aria-hidden': 'true' }, (listing.property_type || '•').slice(0, 1));
+
+  const tags = [];
+  if (listing.status && listing.status !== 'live') tags.push(el('span', { class: `listing-tag listing-tag--${listing.status}` }, STATUS_LABELS[listing.status] || listing.status));
+  const drop = lastPriceDrop(listing);
+  if (drop) tags.push(el('span', { class: 'listing-tag listing-tag--drop' }, `↓ ${fmtPrice(drop)}`));
+
+  const placeBits = [];
+  if (listing.address) placeBits.push(listing.address);
+  else if (area?.name) placeBits.push(area.name);
+  if (listing.outcode) placeBits.push(listing.outcode);
+
+  const metaBits = [
+    listing.beds != null ? `${listing.beds} bed` : '',
+    listing.baths != null ? `${listing.baths} bath` : '',
+    listing.property_type || '',
+    fmtAgo(listing.added_date),
+  ].filter(Boolean);
+
+  const body = el('div', { class: 'deck-card__body' }, [
+    el('div', { class: 'deck-card__head' }, [
+      el('span', { class: `fit-dot fit-dot--${verdict}`, 'aria-hidden': 'true' }),
+      el('span', { class: `verdict verdict--${verdict}` }, VERDICT_LABELS[verdict]),
+      el('span', { class: 'deck-card__price num' }, fmtPrice(listing.price)),
+    ]),
+    el('p', { class: 'deck-card__title' }, listing.title || `${listing.beds ?? '?'}-bed ${listing.property_type || 'property'}`),
+    el('p', { class: 'deck-card__place' }, placeBits.join(' · ')),
+    el('p', { class: 'deck-card__meta num' }, metaBits.join(' · ')),
+    tags.length ? el('div', { class: 'listing-tags' }, tags) : null,
+    buildWhy(scored),
+    listing.url ? el('a', { class: 'deck-card__open', href: listing.url, target: '_blank', rel: 'noopener' }, 'Open on Rightmove ↗') : null,
+    buildDeckReactions(onReact),
+  ].filter(Boolean));
+
+  return el('article', { class: 'deck-card', 'data-id': listing.rightmove_id }, [media, body]);
+}
+
 async function render() {
   const main = document.querySelector('#main') || document.body;
   const listEl = main.querySelector('[data-listings]') || main.querySelector('.area-list');
+  const deckEl = main.querySelector('[data-review-deck]');
   const summaryEl = main.querySelector('[data-listings-summary]');
+  const learningEl = main.querySelector('[data-learning]');
   const showOOR = main.querySelector('[data-show-oor]');
+  const browseOnly = main.querySelector('[data-browse-only]');
+  const reviewCountEl = main.querySelector('[data-review-count]');
+  const modeBtns = [...main.querySelectorAll('[data-mode]')];
   if (!listEl) return;
 
-  const [listings, criteria, rawFinances, areas, reactions, statuses] = await Promise.all([
+  const [listings, criteria, rawFinances, areas, reactions, statuses, learned] = await Promise.all([
     getListings({ limit: 200 }), getCriteria(), getFinances(), getAreas(),
-    getListingReactions(), getShortlistStatuses(),
+    getListingReactions(), getShortlistStatuses(), getLearnedPreferences(),
   ]);
   const finances = rawFinances ? deriveFinances(rawFinances) : null;
   const areasById = new Map((areas || []).map((a) => [a.id, a]));
+  const now = new Date();
 
-  // Capture a compact snapshot of the listing at reaction time so the training
-  // signal survives the live row being withdrawn/deleted (L3 durability).
+  // Layer 2 ⊕ Layer 3 → the effective weights fed (per-listing) into scoring.
+  let overrides = learned?.overrides || {};
+  let effective = effectiveWeights(learned?.derived || {}, overrides);
+
+  const areaOf = (l) => (l.area_id ? areasById.get(l.area_id) : null);
+  const scoreOf = (l) => (finances
+    ? scoreListingFit({ listing: l, finances, criteria, area: areaOf(l), learnedPrefs: listingLearnedPrefs(l, effective) })
+    : { verdict: 'unknown', score: 0, gated: false, contributions: [] });
+
+  // Snapshot the listing at reaction time so the training signal survives the
+  // live row being withdrawn/deleted (L3 durability).
   const snapshotOf = (l) => ({
     rightmove_id: l.rightmove_id, title: l.title, address: l.address, outcode: l.outcode,
     area_id: l.area_id, price: l.price, beds: l.beds, baths: l.baths,
@@ -216,50 +325,140 @@ async function render() {
       listing_id: listing.rightmove_id, reaction, reason, listing_snapshot: snapshotOf(listing),
     });
     if (ok) reactions[listing.rightmove_id] = { reaction, reason: reason ?? null, created_at: new Date().toISOString() };
+    return ok;
   };
   const onStatus = async (listing, status) => {
     const ok = await setShortlistStatus(listing.rightmove_id, status);
     if (ok) { if (status) statuses[listing.rightmove_id] = status; else delete statuses[listing.rightmove_id]; }
   };
 
+  // The recent "wave" the cold-start deck reviews: added within RECENCY_DAYS and
+  // not affordability-gated (gating is learning-independent, so the wave is
+  // stable). Diversified once so consecutive cards contrast (faster learning).
+  const deckOrder = diversifySelection(
+    listings.filter((l) => isRecent(l, now) && !scoreOf(l).gated),
+    listingBucketKey,
+  );
+  const gradedLocal = () => Object.values(reactions).filter((r) => r && (r.reaction === 'like' || r.reaction === 'reject')).length;
+
+  // ── learning state / training feedback ──────────────────────────────────
+  function updateLearning() {
+    if (!learningEl) return;
+    if (!listings.length) { learningEl.hidden = true; return; }
+    const g = gradedLocal();
+    const sigCount = Object.values(effective).filter((w) => w).length;
+    const cold = g < LEARNED_PREF.COLD_START_MIN;
+    clear(learningEl);
+    learningEl.hidden = false;
+    learningEl.classList.toggle('learning-status--cold', cold);
+    learningEl.appendChild(el('span', { class: `learning-status__dot${cold ? '' : ' learning-status__dot--on'}`, 'aria-hidden': 'true' }));
+    learningEl.appendChild(el('span', {}, cold
+      ? `Learning your taste — react to listings to train your feed (${g}/${LEARNED_PREF.COLD_START_MIN} graded so far).`
+      : `Trained on ${g} reaction${g === 1 ? '' : 's'} · ${sigCount} learned signal${sigCount === 1 ? '' : 's'} now shaping your feed.`));
+  }
+  function updateReviewCount() {
+    const n = deckOrder.filter((l) => !reactions[l.rightmove_id]).length;
+    if (reviewCountEl) { reviewCountEl.hidden = n === 0; reviewCountEl.textContent = n ? ` ${n}` : ''; }
+  }
+
+  // ── debounced authoritative re-training (full reaction log) ─────────────
+  let retrainTimer = null;
+  let retraining = false;
+  function scheduleRetrain() {
+    if (retrainTimer) clearTimeout(retrainTimer);
+    retrainTimer = setTimeout(runRetrain, 1800);
+  }
+  async function runRetrain() {
+    if (retraining) { scheduleRetrain(); return; }
+    retraining = true;
+    try {
+      const res = await recomputeLearnedPreferences({ now: new Date() });
+      if (res) { overrides = res.overrides || {}; effective = effectiveWeights(res.derived || {}, overrides); }
+    } catch { /* surfaced via storage toast */ }
+    retraining = false;
+    updateLearning();
+    if (mode === 'browse') paint();
+  }
+
+  // ── Browse mode ─────────────────────────────────────────────────────────
   function paint() {
     clear(listEl);
     const includeOOR = !!(showOOR && showOOR.checked);
-
     if (!listings.length) {
       listEl.appendChild(el('li', { class: 'listings-empty' }, [
         el('p', {}, 'No listings yet.'),
         el('p', { class: 'listings-empty__hint' }, 'The daily fetch (fetch-listings workflow) hasn’t populated the listings table yet — tap “Fetch new listings” above to run it on GitHub, or check the Apify / Supabase secrets are set.'),
       ]));
-      if (summaryEl) { clear(summaryEl); }
+      if (summaryEl) clear(summaryEl);
       return;
     }
-
-    const scoredRows = listings.map((listing) => {
-      const area = listing.area_id ? areasById.get(listing.area_id) : null;
-      const scored = finances
-        ? scoreListingFit({ listing, finances, criteria, area })
-        : { verdict: 'unknown', score: 0, gated: false, contributions: [] };
-      return { listing, scored, area };
-    });
-
+    const scoredRows = listings.map((listing) => ({ listing, scored: scoreOf(listing), area: areaOf(listing) }));
     const gated = scoredRows.filter((r) => r.scored.gated);
-    let visible = includeOOR ? scoredRows : scoredRows.filter((r) => !r.scored.gated);
+    const visible = includeOOR ? scoredRows : scoredRows.filter((r) => !r.scored.gated);
     visible.sort((a, b) =>
       (b.scored.score - a.scored.score) ||
       (new Date(b.listing.first_seen) - new Date(a.listing.first_seen)));
-
     visible.forEach((r, i) => listEl.appendChild(buildRow(r.listing, i, r.scored, r.area, {
       reaction: reactions[r.listing.rightmove_id] || null,
       status: statuses[r.listing.rightmove_id] || '',
       onReact, onStatus,
     })));
-
     if (summaryEl) { clear(summaryEl); summaryEl.appendChild(buildSummary(visible.length, listings.length, includeOOR ? 0 : gated.length)); }
   }
 
-  if (showOOR) showOOR.addEventListener('change', paint);
-  paint();
+  // ── Review mode (the deck) ──────────────────────────────────────────────
+  const deckOnReact = async (rx, reason) => {
+    const cur = deckOrder.find((l) => !reactions[l.rightmove_id]);
+    if (!cur) return;
+    await onReact(cur, rx, reason);
+    paintDeck();
+    updateReviewCount();
+    scheduleRetrain();
+  };
+  function paintDeck() {
+    if (!deckEl) return;
+    clear(deckEl);
+    const total = deckOrder.length;
+    const done = deckOrder.filter((l) => reactions[l.rightmove_id]).length;
+    deckEl.appendChild(buildDeckProgress(done, total));
+    if (!total) {
+      deckEl.appendChild(el('div', { class: 'deck-done' }, [
+        el('p', { class: 'deck-done__title' }, 'Nothing recent to review'),
+        el('p', { class: 'deck-done__hint' }, `No listings added in the last ${RECENCY_DAYS} days. Run a fetch to pull fresh recent listings from every area, then come back to review them.`),
+      ]));
+      return;
+    }
+    const next = deckOrder.find((l) => !reactions[l.rightmove_id]);
+    if (!next) {
+      deckEl.appendChild(el('div', { class: 'deck-done' }, [
+        el('p', { class: 'deck-done__title' }, `All ${total} reviewed — your taste is trained.`),
+        el('p', { class: 'deck-done__hint' }, 'Switch to Browse for the re-ranked feed, or run a fetch to pull fresh recent listings from every area using your new filters.'),
+        el('button', { type: 'button', class: 'deck-done__browse', 'data-goto-browse': '' }, 'See re-ranked feed →'),
+      ]));
+      const goto = deckEl.querySelector('[data-goto-browse]');
+      if (goto) goto.addEventListener('click', () => setMode('browse'));
+      return;
+    }
+    deckEl.appendChild(buildDeckCard(next, scoreOf(next), areaOf(next), deckOnReact));
+  }
+
+  // ── Mode switching ──────────────────────────────────────────────────────
+  let mode = 'browse';
+  function setMode(m) {
+    mode = m;
+    modeBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === m)));
+    const review = m === 'review';
+    listEl.hidden = review;
+    if (deckEl) deckEl.hidden = !review;
+    if (browseOnly) browseOnly.hidden = review;
+    if (review) { if (summaryEl) clear(summaryEl); paintDeck(); } else { paint(); }
+  }
+  modeBtns.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
+  if (showOOR) showOOR.addEventListener('change', () => { if (mode === 'browse') paint(); });
+
+  updateLearning();
+  updateReviewCount();
+  setMode('browse');
 }
 
 render();

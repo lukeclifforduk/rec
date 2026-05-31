@@ -23,10 +23,18 @@
       <p class="lead">Properties on the market across your areas, ranked by fit. Each verdict combines affordability, your criteria, and the matched area — affordability is a hard gate, so out-of-reach homes are hidden by default. Open “Why this verdict” on any row to see what counted for and against.</p>
     </header>
 
+    <div data-learning class="learning-status" role="status" hidden></div>
+
     <section class="listings-controls">
+      <div role="group" class="listings-modes" data-modes aria-label="View mode">
+        <button type="button" class="listings-mode" data-mode="browse" aria-pressed="true">Browse</button>
+        <button type="button" class="listings-mode" data-mode="review" aria-pressed="false">
+          Review<span class="listings-mode__count num" data-review-count hidden></span>
+        </button>
+      </div>
       <p data-listings-summary class="listings-summary"></p>
       <div class="listings-actions">
-        <label class="listings-toggle">
+        <label class="listings-toggle" data-browse-only>
           <input type="checkbox" data-show-oor />
           Show out-of-reach
         </label>
@@ -40,6 +48,7 @@
     </section>
 
     <ol class="area-list listing-list" data-listings aria-label="Live listings ranked by fit"></ol>
+    <section class="review-deck" data-review-deck aria-label="Review recent listings" hidden></section>
   </main>
 
   <div data-include="components/footer.html"></div>
