@@ -1,0 +1,169 @@
+// meta-observations.js — v3 L5 recommendation loop. Pure, side-effect-free:
+// no DOM, no DB, no fetch, no clock except an injectable `now`. Two jobs:
+//
+//   1. detectConflicts() — when the household's LIKES contradict their stated
+//      criteria (over budget, an excluded type, below the bed minimum), surface
+//      a prompt. It NEVER edits criteria — conflicts are recommendations. A
+//      3-condition trigger keeps it off noise; a dismissed prompt stays quiet
+//      for META_OBS.DISMISS_DAYS.
+//
+//   2. computeNextBestActions() — a small, ordered list of the most useful next
+//      moves, computed from timestamps/counts (un-reviewed strong matches, a
+//      recent wave to review, saved-but-unviewed homes, the cold-start nudge).
+//
+// Imported by assets/js/page-listings.js (conflict banner), the dashboard NBA
+// tile, and tests/meta-observations.test.js.
+
+import { META_OBS, RECENCY_DAYS } from './intelligence-constants.js';
+
+const norm = (s) => String(s || '').trim().toLowerCase();
+const round2 = (n) => Math.round(n * 100) / 100;
+
+function withinDays(iso, now, days) {
+  if (!iso) return false;
+  const t = new Date(iso).getTime();
+  if (!Number.isFinite(t)) return false;
+  return now.getTime() - t <= days * 86_400_000;
+}
+
+/** Graded LIKE rows that carry a usable snapshot (the only training-grade evidence). */
+function likeRows(reactions) {
+  return (Array.isArray(reactions) ? reactions : []).filter(
+    (r) => r && r.reaction === 'like' && r.listing_snapshot,
+  );
+}
+
+// ── Conflict detection ───────────────────────────────────────────────────────
+
+/**
+ * The 3-condition trigger, shared by every conflict kind:
+ *   (1) at least MIN_CONFLICT_LIKES violating likes,
+ *   (2) violating likes are ≥ MIN_CONFLICT_SHARE of the comparable likes,
+ *   (3) at least one violating like is within CONFLICT_RECENCY_DAYS (it persists).
+ * @returns {{ triggered, count, comparable, share, reaction_ids }}
+ */
+function evaluate(violating, comparable, now, cfg) {
+  const count = violating.length;
+  const denom = comparable.length || 0;
+  const share = denom ? count / denom : 0;
+  const recent = violating.some((r) => withinDays(r.created_at, now, cfg.CONFLICT_RECENCY_DAYS));
+  const triggered = count >= cfg.MIN_CONFLICT_LIKES && share >= cfg.MIN_CONFLICT_SHARE && recent;
+  return { triggered, count, comparable: denom, share: round2(share), recent, reaction_ids: violating.map((r) => r.id ?? r.listing_id) };
+}
+
+/**
+ * Detect criteria conflicts in the like history. Dismissed prompts (whose
+ * `dismissed_until` is still in the future) are filtered out.
+ * @param {Array} reactions   reaction rows { id, reaction, created_at, listing_snapshot }
+ * @param {object} criteria   household criteria record
+ * @param {object} [opts]     { now, dismissals: { [key]: iso }, cfg }
+ * @returns {Array<{ key, kind, message, suggestion, count, share, threshold, reaction_ids }>}
+ */
+export function detectConflicts(reactions, criteria = {}, opts = {}) {
+  const now = opts.now ? (opts.now instanceof Date ? opts.now : new Date(opts.now)) : new Date();
+  const cfg = { ...META_OBS, ...(opts.cfg || {}) };
+  const dismissals = opts.dismissals || {};
+  const likes = likeRows(reactions);
+  const out = [];
+
+  const push = (key, kind, evalRes, message, suggestion, threshold) => {
+    if (!evalRes.triggered) return;
+    const until = dismissals[key];
+    if (until && new Date(until).getTime() > now.getTime()) return; // still dismissed
+    out.push({ key, kind, message, suggestion, count: evalRes.count, share: evalRes.share, threshold, reaction_ids: evalRes.reaction_ids });
+  };
+
+  // 1. Over budget — likes priced above criteria.budget.max.
+  const maxBudget = Number(criteria?.budget?.max) || 0;
+  if (maxBudget) {
+    const withPrice = likes.filter((r) => Number(r.listing_snapshot?.price) > 0);
+    const over = withPrice.filter((r) => Number(r.listing_snapshot.price) > maxBudget);
+    push('conflict:over-budget', 'over-budget', evaluate(over, withPrice, now, cfg),
+      `You've liked ${over.length} home${over.length === 1 ? '' : 's'} above your £${maxBudget.toLocaleString('en-GB')} budget ceiling.`,
+      'Raise your budget, or keep it as a hard filter — your call.', maxBudget);
+  }
+
+  // 2. Excluded type — likes of a property type marked excluded.
+  const excluded = (criteria?.propertyTypePrefs?.excluded || []).map(norm).filter(Boolean);
+  if (excluded.length) {
+    const withType = likes.filter((r) => r.listing_snapshot?.property_type);
+    const isExcluded = (t) => { const n = norm(t); return excluded.some((e) => n.includes(e) || e.includes(n)); };
+    const bad = withType.filter((r) => isExcluded(r.listing_snapshot.property_type));
+    const types = [...new Set(bad.map((r) => r.listing_snapshot.property_type))].join(', ');
+    push('conflict:excluded-type', 'excluded-type', evaluate(bad, withType, now, cfg),
+      `You keep liking ${types || 'types'} — which you marked as excluded.`,
+      'Add the type back to your accepted list, or keep excluding it.', types);
+  }
+
+  // 3. Below the bed minimum — likes with fewer beds than criteria.size.minBeds.
+  const minBeds = Number(criteria?.size?.minBeds) || 0;
+  if (minBeds) {
+    const withBeds = likes.filter((r) => r.listing_snapshot?.beds != null && Number.isFinite(Number(r.listing_snapshot.beds)));
+    const small = withBeds.filter((r) => Number(r.listing_snapshot.beds) < minBeds);
+    push('conflict:below-min-beds', 'below-min-beds', evaluate(small, withBeds, now, cfg),
+      `You've liked ${small.length} home${small.length === 1 ? '' : 's'} below your ${minBeds}-bed minimum.`,
+      'Lower your bed minimum, or keep it firm.', minBeds);
+  }
+
+  return out;
+}
+
+/** ISO timestamp META_OBS.DISMISS_DAYS in the future — store as `dismissed_until`. */
+export function dismissUntil(now = new Date(), days = META_OBS.DISMISS_DAYS) {
+  const ref = now instanceof Date ? now : new Date(now);
+  return new Date(ref.getTime() + days * 86_400_000).toISOString();
+}
+
+// ── Next-best-action ─────────────────────────────────────────────────────────
+
+/**
+ * Compute the ordered next-best-actions from current state. Pure: scoring is
+ * injected via `scoreOf(listing) -> { verdict, gated }` so this module never
+ * imports the fit engine.
+ * @param {object} ctx
+ * @param {object} ctx.reactions  map listing_id -> { reaction, ... } (latest per listing)
+ * @param {Array}  ctx.listings   live listings rows
+ * @param {object} ctx.statuses   map listing_id -> personal status
+ * @param {Date}   [ctx.now]
+ * @param {(l)=>{verdict,gated}} [ctx.scoreOf]
+ * @param {number} [ctx.coldStartMin]
+ * @returns {Array<{ key, priority, text, href }>}
+ */
+export function computeNextBestActions(ctx = {}) {
+  const { reactions = {}, listings = [], statuses = {}, scoreOf } = ctx;
+  const now = ctx.now ? (ctx.now instanceof Date ? ctx.now : new Date(ctx.now)) : new Date();
+  const recencyDays = ctx.recencyDays ?? RECENCY_DAYS;
+  const reactedCount = Object.keys(reactions).length;
+  const actions = [];
+
+  const isRecentAdded = (l) => {
+    const a = l?.added_date; if (!a) return false;
+    const t = new Date(a).getTime();
+    return Number.isFinite(t) && now.getTime() - t <= recencyDays * 86_400_000;
+  };
+  const reactedTo = (l) => !!reactions[l.rightmove_id];
+
+  // Cold start — nothing learned yet.
+  if (reactedCount === 0) {
+    actions.push({ key: 'nba:start', priority: 1, text: 'Start training your feed — react to a few listings.', href: 'pages/listings.html' });
+  }
+
+  // Un-reviewed strong matches (recent, not gated, not yet reacted).
+  if (typeof scoreOf === 'function') {
+    const strong = listings.filter((l) => isRecentAdded(l) && !reactedTo(l)).filter((l) => {
+      const s = scoreOf(l) || {};
+      return !s.gated && s.verdict === 'strong';
+    }).length;
+    if (strong > 0) actions.push({ key: 'nba:strong', priority: 2, text: `${strong} un-reviewed strong match${strong === 1 ? '' : 'es'} waiting.`, href: 'pages/listings.html' });
+  }
+
+  // Saved but not yet viewed.
+  const savedUnviewed = Object.values(statuses).filter((s) => s === 'saved').length;
+  if (savedUnviewed > 0) actions.push({ key: 'nba:saved', priority: 3, text: `${savedUnviewed} saved home${savedUnviewed === 1 ? '' : 's'} you haven't marked viewed.`, href: 'pages/listings.html' });
+
+  // A recent wave still to review (only when not already covered by cold start).
+  const toReview = listings.filter((l) => isRecentAdded(l) && !reactedTo(l)).length;
+  if (toReview > 0 && reactedCount > 0) actions.push({ key: 'nba:review', priority: 4, text: `${toReview} recent listing${toReview === 1 ? '' : 's'} to review.`, href: 'pages/listings.html' });
+
+  return actions.sort((a, b) => a.priority - b.priority).slice(0, ctx.max ?? META_OBS.NBA_MAX);
+}
