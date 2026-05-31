@@ -1,6 +1,6 @@
 # v3 — Live Listings architecture & build plan
 
-> Status as of 2026-05-30: **L0 done, L1 + L2 built.** L3→L6 pending.
+> Status as of 2026-05-31: **L0–L4 done.** L5 + L6 pending.
 > Checklist mirror: `docs/CHECKLIST.md` (v3 section). Rule constants:
 > `docs/INTELLIGENCE_RULES.md` §"Listing fit". Sync class: `docs/SUPABASE_SYNC.md` §1.
 
@@ -71,7 +71,11 @@ Four committed decisions (do not relitigate without new evidence):
 - Personal lifecycle (new→saved→viewed→offered→rejected) = a small status map on the
   existing `shortlist` row, NOT a parallel state machine.
 
-## L4 — Learning + cold start
+## L4 — Learning + cold start (built)
+- Implemented 2026-05-31: pure `assets/js/learned-preferences.js`, `learned_preferences` table
+  (migration `learned_preferences_l4`), `storage.js` get/save/recompute, listings re-ranking +
+  Browse/Review triage deck + cold-start diversification, and the `USE_LEARNED=1` optimised fetch.
+  Algorithm + constants documented in `INTELLIGENCE_RULES.md §"Learned preferences"`.
 - `learned_preferences` (one row/household): `derived` (Layer 2) + `overrides` (Layer 3),
   each override storing `derived_weight_at_set` so "reactions since the override" is
   computable. Re-derivation rebuilds `derived` without touching `overrides`.

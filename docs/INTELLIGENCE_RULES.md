@@ -189,5 +189,52 @@ over-budget -0.20 · LISA-eligible +0.08 · EPC meets min +0.05.
 Constants live in `assets/js/intelligence-constants.js` (`LISTING_VERDICTS`, `FIT_BANDS`,
 `FIT_WEIGHTS`). Change them and this section together. *(v3 L2 — added 2026-05-30.)*
 
+## Learned preferences (v3 L4)
+
+The append-only `listing_reactions` log (Layer 1) is distilled into **derived weights**
+(Layer 2) that re-rank listings through the `listing-fit.js` `learnedPrefs` seam, then merged
+with **overrides** (Layer 3). The pure core is `assets/js/learned-preferences.js`; the persisted
+state is the `learned_preferences` table (one row/household: `derived` + `overrides`).
+
+**Signals** are extracted symmetrically from a live listing and from a reaction's
+`listing_snapshot` (so we learn on exactly what we score on): `type:<t>`, `beds:<n>` (5+ collapsed),
+`outcode:<oc>`, `area:<id>`, `price-band:<band>` (coarse, market-aligned).
+
+**`deriveWeights(reactions)` algorithm** — three non-negotiable properties:
+1. **Train only on graded reactions** (`like` / `reject`). `pass`, `ignored`, and passive `viewed`
+   are *unlabelled* and never train — absence is not a negative (the single most important
+   guardrail: busy weeks would otherwise teach suppression).
+2. **Base-rate calibrated.** A signal earns weight from its *discrimination*
+   `P(signal | liked) − P(signal | rejected)`. A signal present in everything cancels to ≈0, so we
+   never just re-learn `criteria`.
+3. **Recency-decayed + traceable.** Each reaction's contribution is weighted `0.5^(ageDays / HALF_LIFE_DAYS)`
+   (decay basis = days), and each derived weight records the `reaction_ids` that produced it plus
+   `n / n_liked / n_rejected / discrimination / confidence`.
+
+`weight = discrimination × MAX_LEARNED_WEIGHT × confidence`, where `confidence = n / (n + SMOOTHING)`;
+signals below `MIN_SIGNAL_N` are dropped; weights below 0.01 are not surfaced.
+
+**Cold start.** Below `COLD_START_MIN` graded reactions, `deriveWeights` returns `{}` (scoring falls
+back to static fit) and the listings page shows a **review deck** that diversifies the recent wave
+(`diversifySelection` across type × price-band × beds) so early reactions are maximally contrastive.
+A signal is "recent" when `added_date ≥ now − RECENCY_DAYS` (undated never counts).
+
+**Effective weights & overrides.** `effectiveWeights(derived, overrides)` is a flat `signal → weight`
+map where an override **replaces** the derived weight (Layer-3 precedence); the override keeps
+`derived_weight_at_set` so L5 can detect drift and surface a conflict — never resolved silently.
+`listingLearnedPrefs(listing, effective)` pre-selects the signals a listing exhibits before they hit
+the scoring seam (so a `type:detached` weight only touches detached homes).
+
+**Optimised next fetch.** `deriveSearchSpec(effective, criteria)` turns the learned weights + criteria
+into a Rightmove query narrowing (price floor/ceiling, bed minimum, `RECENCY_DAYS` window, excluded
+types, focus outcodes). Learned weights only *add* focus or exclude on a **strong** signal
+(`|weight| ≥ STRONG_FRACTION × MAX_LEARNED_WEIGHT`) — a weak/uncertain weight never removes a class
+(asymmetric caution). Consumed by `tools/fetch-listings.mjs` under `USE_LEARNED=1` to cut paid results.
+
+**Constants (`LEARNED_PREF`, `RECENCY_DAYS`)** — CALIBRATED, revisable; change them and this section
+together:
+`COLD_START_MIN` 10 graded · `HALF_LIFE_DAYS` 30 · `MAX_LEARNED_WEIGHT` 0.30 · `MIN_SIGNAL_N` 2 ·
+`SMOOTHING` 3 · `STRONG_FRACTION` 0.5 · `RECENCY_DAYS` 14. *(v3 L4 — added 2026-05-31.)*
+
 ### Maintenance (deposit-risk, cont.)
 4. Commit with `docs: update intelligence rules — deposit-risk thresholds`.

@@ -15,10 +15,18 @@
 //   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY   — required to write
 //   APIFY_TOKEN, APIFY_ACTOR_ID               — required to fetch
 //   FETCH_LIMIT (optional)                     — cap outcodes processed (debug)
+//   USE_LEARNED=1 (optional)                   — v3 L4 "optimised search": read the
+//                                                household's criteria + learned
+//                                                preferences and narrow the Apify
+//                                                query (minPrice/maxPrice/minBeds +
+//                                                14-day recency), post-filter excluded
+//                                                types, and process learned-favourite
+//                                                outcodes first. Fewer paid results.
 //   DRY_RUN=1 (optional)                       — fetch + normalise, print, do not write
 //
-// Usage:  node tools/fetch-listings.mjs            (writes)
-//         DRY_RUN=1 node tools/fetch-listings.mjs  (no writes)
+// Usage:  node tools/fetch-listings.mjs                        (writes)
+//         DRY_RUN=1 node tools/fetch-listings.mjs              (no writes)
+//         USE_LEARNED=1 DRY_RUN=1 node tools/fetch-listings.mjs (preview the optimised search)
 
 import { readFile, readdir } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
@@ -30,6 +38,8 @@ import {
   mergePriceHistory,
   haversineKm,
 } from './listings-normalise.mjs';
+import { effectiveWeights, deriveSearchSpec, isRecent } from '../assets/js/learned-preferences.js';
+import { RECENCY_DAYS } from '../assets/js/intelligence-constants.js';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -39,6 +49,7 @@ const APIFY_TOKEN = process.env.APIFY_TOKEN || '';
 const APIFY_ACTOR_ID = process.env.APIFY_ACTOR_ID || 'dhrumil~rightmove-scraper';
 const DRY_RUN = process.env.DRY_RUN === '1' || process.env.DRY_RUN === 'true';
 const FETCH_LIMIT = Number(process.env.FETCH_LIMIT) || 0;
+const USE_LEARNED = process.env.USE_LEARNED === '1' || process.env.USE_LEARNED === 'true';
 
 const MAX_DAYS_SINCE_ADDED = 3;     // 3-day overlap so a missed run self-heals.
 const RESULTS_PER_OUTCODE = Number(process.env.RESULTS_PER_OUTCODE) || 50;  // cap per outcode (lower = cheaper on pay-per-event actors)
@@ -92,24 +103,54 @@ async function resolveLocationId(outcode) {
   return id;
 }
 
-function buildSearchUrl(locationIdentifier) {
+// Build the Rightmove search URL. A learned `spec` (v3 L4) narrows it: price
+// floor/ceiling and a bed minimum cut the paid result count, and the recency
+// window comes from the spec (14d for an optimised run vs the 3d cron overlap).
+function buildSearchUrl(locationIdentifier, spec = null) {
   const params = new URLSearchParams({
     searchType: 'SALE',
     locationIdentifier,
     sortType: '6',                 // newest first
-    maxDaysSinceAdded: String(MAX_DAYS_SINCE_ADDED),
+    maxDaysSinceAdded: String(spec?.recencyDays ?? MAX_DAYS_SINCE_ADDED),
   });
+  if (spec?.priceMin) params.set('minPrice', String(spec.priceMin));
+  if (spec?.priceMax) params.set('maxPrice', String(spec.priceMax));
+  if (spec?.minBeds) params.set('minBedrooms', String(spec.minBeds));
   return `https://www.rightmove.co.uk/property-for-sale/find.html?${params}`;
 }
 
+// Post-filter normalised listings by the learned spec: drop excluded property
+// types and (when a listing carries an added_date) anything outside the recency
+// window. Undated listings are kept (we can't prove they're stale). Pure.
+function filterListingsBySpec(listings, spec, now = new Date()) {
+  if (!spec) return listings;
+  const excl = new Set((spec.excludeTypes || []).map((s) => String(s).toLowerCase()));
+  return listings.filter((l) => {
+    if (excl.size && l.property_type && excl.has(String(l.property_type).toLowerCase())) return false;
+    if (spec.recencyDays && l.added_date && !isRecent(l, now, spec.recencyDays)) return false;
+    return true;
+  });
+}
+
+// Reorder outcodes so the household's learned-favourite outcodes come first
+// (under a FETCH_LIMIT cap they get priority). Never drops the others — the
+// user wants the whole patch covered. Pure.
+function orderOutcodesByFocus(outcodes, spec) {
+  if (!spec || !spec.focusOutcodes?.length) return outcodes;
+  const focus = new Set(spec.focusOutcodes.map((s) => String(s).toUpperCase()));
+  const f = [], rest = [];
+  for (const oc of outcodes) (focus.has(String(oc).toUpperCase()) ? f : rest).push(oc);
+  return [...f, ...rest];
+}
+
 // ── Apify actor ──────────────────────────────────────────────────────────────
-async function fetchRawForOutcode(locationIdentifier) {
+async function fetchRawForOutcode(locationIdentifier, spec = null) {
   if (!APIFY_TOKEN) throw new Error('APIFY_TOKEN not set');
   const url =
     `https://api.apify.com/v2/acts/${encodeURIComponent(APIFY_ACTOR_ID)}` +
     `/run-sync-get-dataset-items?token=${encodeURIComponent(APIFY_TOKEN)}`;
   const input = {
-    listUrls: [{ url: buildSearchUrl(locationIdentifier) }],
+    listUrls: [{ url: buildSearchUrl(locationIdentifier, spec) }],
     maxItems: RESULTS_PER_OUTCODE,
     monitoringMode: false,
     includePriceHistory: false,
@@ -175,14 +216,48 @@ async function syncLog(entries) {
   if (!res.ok) console.warn(`sync_log write failed: ${res.status}`);
 }
 
+async function restGetOne(table, select) {
+  const url = `${SUPABASE_URL}/rest/v1/${table}?select=${select}&limit=1`;
+  const res = await fetch(url, { headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } });
+  if (!res.ok) throw new Error(`GET ${table} failed: ${res.status}`);
+  const rows = await res.json();
+  return rows[0] ?? null;
+}
+
+// v3 L4 optimised search: read the household's criteria + learned preferences and
+// distil them into a narrowing spec (deriveSearchSpec). Returns null when learned
+// mode is off or there's nothing to read — the fetcher then behaves exactly as L1.
+async function loadSearchSpec() {
+  if (!USE_LEARNED) return null;
+  if (!SERVICE_KEY) { console.warn('USE_LEARNED set but no service key — skipping learned narrowing'); return null; }
+  try {
+    const [crit, lp] = await Promise.all([
+      restGetOne('criteria', 'data'),
+      restGetOne('learned_preferences', 'derived,overrides'),
+    ]);
+    const effective = effectiveWeights(lp?.derived || {}, lp?.overrides || {});
+    return deriveSearchSpec(effective, crit?.data || {}, { recencyDays: RECENCY_DAYS });
+  } catch (e) {
+    console.warn('learned spec load failed:', e.message);
+    return null;
+  }
+}
+
 // ── main ─────────────────────────────────────────────────────────────────────
 async function main() {
   console.log('=== L1 fetch-listings ===');
   console.log(`actor: ${APIFY_ACTOR_ID} · maxDaysSinceAdded: ${MAX_DAYS_SINCE_ADDED} · resultsPerOutcode: ${RESULTS_PER_OUTCODE} · fetchLimit: ${FETCH_LIMIT || 'all'} · dry-run: ${DRY_RUN}`);
   if (!DRY_RUN && !SERVICE_KEY) throw new Error('SUPABASE_SERVICE_ROLE_KEY required to write (or set DRY_RUN=1)');
 
+  const spec = await loadSearchSpec();
+  if (spec) {
+    console.log('learned search spec:', JSON.stringify(spec));
+  } else if (USE_LEARNED) {
+    console.log('learned mode requested but no spec resolved — running as plain L1');
+  }
+
   const outcodeMap = await loadOutcodeMap();
-  let outcodes = [...outcodeMap.keys()].sort();
+  let outcodes = orderOutcodesByFocus([...outcodeMap.keys()].sort(), spec);
   if (FETCH_LIMIT) outcodes = outcodes.slice(0, FETCH_LIMIT);
   console.log(`outcodes: ${outcodes.length} (${outcodes.join(', ')})`);
 
@@ -193,7 +268,7 @@ async function main() {
     const areas = outcodeMap.get(oc) || [];
     try {
       const locId = await resolveLocationId(oc);
-      const raw = await fetchRawForOutcode(locId);
+      const raw = await fetchRawForOutcode(locId, spec);
       totalRaw += raw.length;
 
       const normalised = raw.map((r) => normaliseRawListing(r, { outcode: oc, source: SOURCE, now })).filter(Boolean);
@@ -201,10 +276,14 @@ async function main() {
       const rejected = normalised.length - inRegion.length;
       totalRejected += rejected;
 
-      const deduped = dedupeByRightmoveId(inRegion).map((l) => ({ ...l, area_id: assignArea(l, areas) }));
+      // v3 L4: apply the learned post-filter (excluded types + recency).
+      const onSpec = filterListingsBySpec(inRegion, spec, now);
+      const filteredOut = inRegion.length - onSpec.length;
+
+      const deduped = dedupeByRightmoveId(onSpec).map((l) => ({ ...l, area_id: assignArea(l, areas) }));
       totalKept += deduped.length;
 
-      console.log(`── ${oc} (${locId}): raw ${raw.length} → in-region ${inRegion.length} → unique ${deduped.length}${rejected ? `  [${rejected} rejected]` : ''}`);
+      console.log(`── ${oc} (${locId}): raw ${raw.length} → in-region ${inRegion.length}${filteredOut ? ` → on-spec ${onSpec.length}` : ''} → unique ${deduped.length}${rejected ? `  [${rejected} rejected]` : ''}`);
 
       if (DRY_RUN) {
         for (const l of deduped.slice(0, 5)) {
@@ -249,4 +328,4 @@ if (import.meta.url === pathToFileURL(process.argv[1] || '').href) {
   main().catch((e) => { console.error('FETCH CRASHED:', e); process.exit(1); });
 }
 
-export { loadOutcodeMap, assignArea, buildSearchUrl };
+export { loadOutcodeMap, assignArea, buildSearchUrl, filterListingsBySpec, orderOutcodesByFocus };

@@ -45,7 +45,19 @@ Plan: `docs/V3_LISTINGS_PLAN.md`. Build order L0→L6; minimum-lovable = L0–L4
       extended onto the existing shortlist record via `getShortlistStatuses`/`setShortlistStatus`.
       Also fixed a latent L2 bug: `page-listings.js` imported `el`/`clear` from `dom.js`, which never
       exported them — added both helpers.
-- [ ] **L4 — Learning + cold start** · [ ] **L5 — Recommendation loop + NBA** · [ ] **L6 — Dossier + workflow**
+- [x] **L4 — Learning + cold start**: `learned_preferences` table (migration `learned_preferences_l4`;
+      one row/household — `derived` Layer-2 + `overrides` Layer-3; RLS read+insert+update). Pure core
+      `assets/js/learned-preferences.js` (base-rate-calibrated · recency-decayed · traceable
+      `deriveWeights`; `effectiveWeights` override precedence; `listingLearnedPrefs` per-listing
+      seam-feed; `diversifySelection`; `isRecent` 14-day window; `deriveSearchSpec`; trains ONLY on
+      like/reject — 16 tests). `storage.js` (§17): `getLearnedPreferences`/`saveLearnedPreferences`/
+      `recomputeLearnedPreferences`. Listings page re-ranks with learned weights (prettified in "Why"),
+      adds a **Browse/Review** segmented control + a cold-start **triage deck** (one recent non-gated
+      listing at a time, diversified, react→advance, progress + live training banner). Fetcher
+      `USE_LEARNED=1` optimised search (all 24 outcodes + 14-day recency + price/beds narrowing +
+      excluded-type post-filter + focus-outcode ordering; 5 tests). Sync contract reconciled to 19
+      tracked tables. INTELLIGENCE_RULES §"Learned preferences" added. 228/228 green.
+- [ ] **L5 — Recommendation loop + NBA** · [ ] **L6 — Dossier + workflow**
 
 ---
 
