@@ -14,7 +14,16 @@
 // Env:
 //   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY   — required to write
 //   APIFY_TOKEN, APIFY_ACTOR_ID               — required to fetch
-//   FETCH_LIMIT (optional)                     — cap outcodes processed (debug)
+//   FETCH_LIMIT (optional)                     — cap targets processed (debug)
+//   MAX_DAYS_SINCE_ADDED (optional)            — recency window in days (default 3);
+//                                                overridden to 14 when FOUNDATION_MODE=1
+//   FOUNDATION_MODE=1 (optional)               — 14-day backfill: sets the recency
+//                                                window to 14 days for one-time pulls;
+//                                                print a dry-run cost estimate first
+//   APIFY_MAX_BUDGET_USD (optional)            — hard USD spend cap passed to the Apify
+//                                                actor; Apify self-terminates at this
+//                                                limit (default 25). PPE actors stop
+//                                                cleanly — no overrun possible.
 //   USE_LEARNED=1 (optional)                   — v3 L4 "optimised search": read the
 //                                                household's criteria + learned
 //                                                preferences and narrow the Apify
@@ -22,11 +31,13 @@
 //                                                14-day recency), post-filter excluded
 //                                                types, and process learned-favourite
 //                                                outcodes first. Fewer paid results.
-//   DRY_RUN=1 (optional)                       — fetch + normalise, print, do not write
+//   DRY_RUN=1 (optional)                       — resolve + preview, print projected
+//                                                target count + estimated cost, no writes
 //
-// Usage:  node tools/fetch-listings.mjs                        (writes)
-//         DRY_RUN=1 node tools/fetch-listings.mjs              (no writes)
-//         USE_LEARNED=1 DRY_RUN=1 node tools/fetch-listings.mjs (preview the optimised search)
+// Usage:  node tools/fetch-listings.mjs                           (writes, daily mode)
+//         DRY_RUN=1 node tools/fetch-listings.mjs                 (preview daily mode)
+//         FOUNDATION_MODE=1 DRY_RUN=1 node tools/fetch-listings.mjs  (preview foundation pull)
+//         FOUNDATION_MODE=1 node tools/fetch-listings.mjs             (CONFIRM before running!)
 
 import { readFile, readdir } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
@@ -52,9 +63,21 @@ const APIFY_ACTOR_ID = process.env.APIFY_ACTOR_ID || 'dhrumil~rightmove-scraper'
 const DRY_RUN = process.env.DRY_RUN === '1' || process.env.DRY_RUN === 'true';
 const FETCH_LIMIT = Number(process.env.FETCH_LIMIT) || 0;
 const USE_LEARNED = process.env.USE_LEARNED === '1' || process.env.USE_LEARNED === 'true';
+const FOUNDATION_MODE = process.env.FOUNDATION_MODE === '1' || process.env.FOUNDATION_MODE === 'true';
 
-const MAX_DAYS_SINCE_ADDED = 3;     // 3-day overlap so a missed run self-heals.
-const RESULTS_PER_OUTCODE = Number(process.env.RESULTS_PER_OUTCODE) || 50;  // cap per outcode (lower = cheaper on pay-per-event actors)
+const FOUNDATION_DAYS = 14;
+// 3-day overlap so a missed cron run self-heals; FOUNDATION_MODE overrides to 14.
+const MAX_DAYS_SINCE_ADDED = FOUNDATION_MODE ? FOUNDATION_DAYS : (Number(process.env.MAX_DAYS_SINCE_ADDED) || 3);
+
+const RESULTS_PER_OUTCODE = Number(process.env.RESULTS_PER_OUTCODE) || 50;  // cap per target (lower = cheaper on pay-per-event actors)
+// Hard USD spend cap: passed to Apify as maxBudget. PPE actors self-terminate — no overrun possible.
+const APIFY_MAX_BUDGET_USD = Number(process.env.APIFY_MAX_BUDGET_USD) || 25;
+
+// Always-on baseline source filters — injected into EVERY Rightmove search URL.
+// Never removed, only tightened by the learned spec.
+const BASELINE_PRICE_MAX = 500000;
+const BASELINE_MIN_BEDS = 2;
+const BASELINE_DONT_SHOW = 'retirement,shared_ownership';
 const SOURCE = 'rightmove-apify';
 
 const BROWSER_HEADERS = {
@@ -203,19 +226,26 @@ async function resolveLocationId(outcode) {
   return id;
 }
 
-// Build the Rightmove search URL. A learned `spec` (v3 L4) narrows it: price
-// floor/ceiling and a bed minimum cut the paid result count, and the recency
-// window comes from the spec (14d for an optimised run vs the 3d cron overlap).
+// Build the Rightmove search URL. Always-on baseline (BASELINE_PRICE_MAX,
+// BASELINE_MIN_BEDS, BASELINE_DONT_SHOW) is injected into every call — a
+// learned `spec` (v3 L4) can only tighten these, never loosen them.
+// opts.days overrides the recency window (used by tests; production passes via spec).
 function buildSearchUrl(locationIdentifier, spec = null, opts = {}) {
+  const days = opts.days ?? spec?.recencyDays ?? MAX_DAYS_SINCE_ADDED;
   const params = new URLSearchParams({
     searchType: 'SALE',
     locationIdentifier,
     sortType: '6',                 // newest first
-    maxDaysSinceAdded: String(spec?.recencyDays ?? MAX_DAYS_SINCE_ADDED),
+    maxDaysSinceAdded: String(days),
   });
+  // Always-on baseline: hard price cap, minimum beds, excluded categories.
+  params.set('maxPrice', String(BASELINE_PRICE_MAX));
+  params.set('minBedrooms', String(BASELINE_MIN_BEDS));
+  params.set('dontShow', BASELINE_DONT_SHOW);
+  // A learned spec can tighten (lower maxPrice, higher minBeds) within the baseline.
   if (spec?.priceMin) params.set('minPrice', String(spec.priceMin));
-  if (spec?.priceMax) params.set('maxPrice', String(spec.priceMax));
-  if (spec?.minBeds) params.set('minBedrooms', String(spec.minBeds));
+  if (spec?.priceMax && spec.priceMax < BASELINE_PRICE_MAX) params.set('maxPrice', String(spec.priceMax));
+  if (spec?.minBeds && spec.minBeds > BASELINE_MIN_BEDS) params.set('minBedrooms', String(spec.minBeds));
   // L7.4: a search radius (miles) turns a point identifier (POSTCODE^/REGION^/
   // STATION^) into a tight disk — so a sparse outcode stops returning Andover.
   const radiusMiles = opts.radiusMiles ?? spec?.radiusMiles;
@@ -258,6 +288,7 @@ async function fetchRawForOutcode(locationIdentifier, spec = null, radiusMiles =
     maxItems: RESULTS_PER_OUTCODE,
     monitoringMode: false,
     includePriceHistory: false,
+    maxBudget: APIFY_MAX_BUDGET_USD,   // USD hard cap; actor self-terminates at limit
   };
   const res = await fetch(url, {
     method: 'POST',
@@ -350,7 +381,8 @@ async function loadSearchSpec() {
 // ── main ─────────────────────────────────────────────────────────────────────
 async function main() {
   console.log('=== L1 fetch-listings ===');
-  console.log(`actor: ${APIFY_ACTOR_ID} · mode: ${SEARCH_MODE} · maxDaysSinceAdded: ${MAX_DAYS_SINCE_ADDED} · resultsPerTarget: ${RESULTS_PER_OUTCODE} · fetchLimit: ${FETCH_LIMIT || 'all'} · dry-run: ${DRY_RUN}`);
+  const modeLabel = FOUNDATION_MODE ? 'FOUNDATION(14d)' : `daily(${MAX_DAYS_SINCE_ADDED}d)`;
+  console.log(`actor: ${APIFY_ACTOR_ID} · mode: ${SEARCH_MODE} · recency: ${modeLabel} · resultsPerTarget: ${RESULTS_PER_OUTCODE} · budget-cap: $${APIFY_MAX_BUDGET_USD} · fetchLimit: ${FETCH_LIMIT || 'all'} · dry-run: ${DRY_RUN}`);
   if (!DRY_RUN && !SERVICE_KEY) throw new Error('SUPABASE_SERVICE_ROLE_KEY required to write (or set DRY_RUN=1)');
 
   const spec = await loadSearchSpec();
@@ -383,7 +415,11 @@ async function main() {
     targets = [...targets.filter((t) => focus.has(t.outcode)), ...targets.filter((t) => !focus.has(t.outcode))];
   }
   if (FETCH_LIMIT) targets = targets.slice(0, FETCH_LIMIT);
+  const worstCaseResults = targets.length * RESULTS_PER_OUTCODE;
+  const estimatedCostUSD = (worstCaseResults / 1000) * 2;
   console.log(`targets: ${targets.length} (${SEARCH_MODE}) · active villages: ${ALL_ACTIVE.length}`);
+  console.log(`cost estimate: ${targets.length} targets × ${RESULTS_PER_OUTCODE} results = ${worstCaseResults} worst-case results → ~$${estimatedCostUSD.toFixed(2)} USD (@$2/1k) · hard cap: $${APIFY_MAX_BUDGET_USD}`);
+  if (DRY_RUN) console.log('DRY RUN — no Apify calls or writes will be made');
 
   const now = new Date();
   let totalRaw = 0, totalKept = 0, totalRejected = 0, totalFlagged = 0, totalWritten = 0, totalPriceChanges = 0;
@@ -473,4 +509,4 @@ if (import.meta.url === pathToFileURL(process.argv[1] || '').href) {
   main().catch((e) => { console.error('FETCH CRASHED:', e); process.exit(1); });
 }
 
-export { loadOutcodeMap, assignArea, buildSearchUrl, filterListingsBySpec, orderOutcodesByFocus, clusterVillages, buildSearchTargets };
+export { loadOutcodeMap, assignArea, buildSearchUrl, filterListingsBySpec, orderOutcodesByFocus, clusterVillages, buildSearchTargets, BASELINE_PRICE_MAX, BASELINE_MIN_BEDS, BASELINE_DONT_SHOW, FOUNDATION_MODE, MAX_DAYS_SINCE_ADDED };

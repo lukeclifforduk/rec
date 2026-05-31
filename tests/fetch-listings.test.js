@@ -1,8 +1,9 @@
-// tests/fetch-listings.test.js — v3 L4 optimised-fetch helpers.
+// tests/fetch-listings.test.js — v3 L4 optimised-fetch helpers + Step2 baseline.
 // Only the PURE pieces are exercised (no network): the learned search-spec is
 // threaded into the Rightmove URL, the post-filter drops excluded types and
-// stale listings, and learned-favourite outcodes are processed first.
-import { buildSearchUrl, filterListingsBySpec, orderOutcodesByFocus, clusterVillages, buildSearchTargets } from '../tools/fetch-listings.mjs';
+// stale listings, learned-favourite outcodes are processed first, and the
+// always-on baseline (price cap, min beds, dontShow) is verified.
+import { buildSearchUrl, filterListingsBySpec, orderOutcodesByFocus, clusterVillages, buildSearchTargets, BASELINE_PRICE_MAX, BASELINE_MIN_BEDS, BASELINE_DONT_SHOW } from '../tools/fetch-listings.mjs';
 
 export async function register({ test, assert, assertEqual }) {
   const NOW = new Date('2026-05-31T00:00:00Z');
@@ -69,6 +70,35 @@ export async function register({ test, assert, assertEqual }) {
     assert(url.includes('locationIdentifier=OUTCODE%5E123'), 'carries the location id');
     assert(url.includes('maxDaysSinceAdded=3'), 'default 3-day cron overlap');
     assert(!url.includes('minPrice'), 'no learned price floor without a spec');
+    // Baseline params are always present even without a spec.
+    assert(url.includes(`maxPrice=${BASELINE_PRICE_MAX}`), 'baseline price cap always present');
+    assert(url.includes(`minBedrooms=${BASELINE_MIN_BEDS}`), 'baseline min beds always present');
+    assert(url.includes('dontShow='), 'dontShow always present');
+    assert(url.includes('retirement'), 'retirement excluded');
+    assert(url.includes('shared_ownership'), 'shared_ownership excluded');
+  });
+
+  test('fetch-listings: dontShow param emitted on every call', () => {
+    const plain = buildSearchUrl('OUTCODE^1');
+    const withSpec = buildSearchUrl('OUTCODE^1', { recencyDays: 7, priceMax: 400000, minBeds: 3 });
+    const withRadius = buildSearchUrl('POSTCODE^9', null, { radiusMiles: 3 });
+    for (const url of [plain, withSpec, withRadius]) {
+      assert(url.includes('dontShow='), `dontShow present in all call forms`);
+      assert(url.includes('retirement'), 'retirement always excluded');
+      assert(url.includes('shared_ownership'), 'shared_ownership always excluded');
+    }
+  });
+
+  test('fetch-listings: baseline price cap always applied', () => {
+    const url = buildSearchUrl('OUTCODE^1');
+    assert(url.includes(`maxPrice=${BASELINE_PRICE_MAX}`), `£${BASELINE_PRICE_MAX} cap always in URL`);
+    assertEqual(BASELINE_PRICE_MAX, 500000, 'baseline is £500k hard cap');
+  });
+
+  test('fetch-listings: baseline min beds always applied', () => {
+    const url = buildSearchUrl('OUTCODE^1');
+    assert(url.includes(`minBedrooms=${BASELINE_MIN_BEDS}`), 'baseline 2-bed minimum always in URL');
+    assertEqual(BASELINE_MIN_BEDS, 2, 'baseline min beds is 2');
   });
 
   test('fetch-listings: a learned spec narrows the Apify query', () => {
@@ -76,8 +106,30 @@ export async function register({ test, assert, assertEqual }) {
     const url = buildSearchUrl('OUTCODE^123', spec);
     assert(url.includes('maxDaysSinceAdded=14'), 'recency window from spec');
     assert(url.includes('minPrice=250000'), 'price floor');
-    assert(url.includes('maxPrice=450000'), 'price ceiling');
-    assert(url.includes('minBedrooms=3'), 'bed minimum');
+    assert(url.includes('maxPrice=450000'), 'price ceiling tightened below baseline');
+    assert(url.includes('minBedrooms=3'), 'bed minimum tightened above baseline');
+    // Baseline exclusions still present alongside the spec.
+    assert(url.includes('dontShow='), 'dontShow still present with spec');
+  });
+
+  test('fetch-listings: spec at baseline price does not double-set maxPrice', () => {
+    // priceMax equal to baseline → baseline wins (no change in behaviour).
+    const spec = { priceMax: BASELINE_PRICE_MAX, minBeds: 2 };
+    const url = buildSearchUrl('OUTCODE^1', spec);
+    assert(url.includes(`maxPrice=${BASELINE_PRICE_MAX}`), 'maxPrice still the baseline value');
+  });
+
+  test('fetch-listings: env recency override passes through via opts.days', () => {
+    // opts.days simulates a MAX_DAYS_SINCE_ADDED env override without reloading the module.
+    const url7 = buildSearchUrl('OUTCODE^123', null, { days: 7 });
+    assert(url7.includes('maxDaysSinceAdded=7'), '7-day env override reflected');
+    const url14 = buildSearchUrl('OUTCODE^123', null, { days: 14 });
+    assert(url14.includes('maxDaysSinceAdded=14'), '14-day foundation window reflected');
+  });
+
+  test('fetch-listings: baseline dont-show constant is well-formed', () => {
+    assert(BASELINE_DONT_SHOW.includes('retirement'), 'retirement in BASELINE_DONT_SHOW');
+    assert(BASELINE_DONT_SHOW.includes('shared_ownership'), 'shared_ownership in BASELINE_DONT_SHOW');
   });
 
   test('fetch-listings: post-filter drops excluded types but keeps undated listings', () => {
