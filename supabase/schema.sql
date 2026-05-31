@@ -317,10 +317,14 @@ CREATE TABLE IF NOT EXISTS listing_reactions (
   user_id          uuid,                                    -- auth.uid() of the reactor
   listing_id       text NOT NULL,                           -- listings.rightmove_id (loose ref by design)
   reaction         text NOT NULL CHECK (reaction IN ('like','pass','reject')),
-  reason           text,                                    -- chip key / free text; meaningful for reject
+  reason           text,                                    -- chip key / free text; PRIMARY reason key, dual-written for back-compat
+  reasons          jsonb NOT NULL DEFAULT '[]'::jsonb,       -- v3 multi-reason: [{key, detail, note}] — source of truth (migration listing_reactions_multi_reason)
   listing_snapshot jsonb,                                   -- listing at reaction time (training durability)
   created_at       timestamptz NOT NULL DEFAULT now()
 );
+
+-- Idempotent column add (so re-running on an existing table picks up multi-reason).
+ALTER TABLE listing_reactions ADD COLUMN IF NOT EXISTS reasons jsonb NOT NULL DEFAULT '[]'::jsonb;
 
 ALTER TABLE listing_reactions ENABLE ROW LEVEL SECURITY;
 
