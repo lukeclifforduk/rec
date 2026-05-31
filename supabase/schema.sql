@@ -346,6 +346,7 @@ CREATE TABLE IF NOT EXISTS learned_preferences (
   household_id uuid NOT NULL UNIQUE REFERENCES households(id) ON DELETE CASCADE,
   derived      jsonb NOT NULL DEFAULT '{}',  -- signal -> { weight, reaction_ids[], n, n_liked, n_rejected, ... }
   overrides    jsonb NOT NULL DEFAULT '{}',  -- signal -> { weight, derived_weight_at_set, note? }
+  dismissals   jsonb NOT NULL DEFAULT '{}',  -- v3 L5: conflict key -> dismissed_until ISO (14-day quiet)
   updated_at   timestamptz NOT NULL DEFAULT now()
 );
 

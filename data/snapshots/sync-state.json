@@ -76,7 +76,7 @@
     "count": 0,
     "last_synced_at": null,
     "_class": "user-state",
-    "_note": "v3 L4: distilled preference weights, one row/household (derived = Layer 2 from the reaction log; overrides = Layer 3 manual/AI). Table created (migration learned_preferences_l4) 2026-05-31; no rows yet (recomputed once reactions exist). Tracked sync table #19 (17 user-state + 2 content)."
+    "_note": "v3 L4/L5: distilled preference weights, one row/household (derived = Layer 2 from the reaction log; overrides = Layer 3 manual/AI; dismissals = L5 conflict-prompt quiet-until map, added by migration learned_preferences_dismissals_l5). Table created (migration learned_preferences_l4) 2026-05-31; no rows yet (recomputed once reactions exist). Tracked sync table #19 (17 user-state + 2 content)."
   },
   "listings": {
     "count": 1298,

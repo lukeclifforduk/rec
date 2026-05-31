@@ -577,7 +577,7 @@ async function _sbGetLearnedPrefs() {
   try {
     const { data, error } = await sb
       .from('learned_preferences')
-      .select('derived, overrides')
+      .select('derived, overrides, dismissals')
       .eq('household_id', hid)
       .limit(1);
     if (error) throw error;
@@ -593,7 +593,7 @@ export async function getLearnedPreferences(opts = {}) {
   if (cached !== null) {
     _sbGetLearnedPrefs().then((row) => {
       if (!row) return;
-      const fresh = { derived: row.derived ?? {}, overrides: row.overrides ?? {} };
+      const fresh = { derived: row.derived ?? {}, overrides: row.overrides ?? {}, dismissals: row.dismissals ?? {} };
       if (JSON.stringify(fresh) !== JSON.stringify(cached)) {
         writeLocal('learned-preferences', fresh);
         if (opts.onUpdate) opts.onUpdate(fresh);
@@ -602,23 +602,24 @@ export async function getLearnedPreferences(opts = {}) {
     return cached;
   }
   const row = await _sbGetLearnedPrefs();
-  const val = { derived: row?.derived ?? {}, overrides: row?.overrides ?? {} };
+  const val = { derived: row?.derived ?? {}, overrides: row?.overrides ?? {}, dismissals: row?.dismissals ?? {} };
   if (row) writeLocal('learned-preferences', val);
   return val;
 }
 
-export async function saveLearnedPreferences({ derived, overrides } = {}) {
+export async function saveLearnedPreferences({ derived, overrides, dismissals } = {}) {
   const prev = readLocal('learned-preferences') || {};
   const next = {
     derived: derived ?? prev.derived ?? {},
     overrides: overrides ?? prev.overrides ?? {},
+    dismissals: dismissals ?? prev.dismissals ?? {},
   };
   writeLocal('learned-preferences', next);
   const [sb, hid] = await Promise.all([_initSb(), _getHid()]);
   if (!sb || !hid) return false;
   try {
     const { error } = await sb.from('learned_preferences').upsert(
-      { household_id: hid, derived: next.derived, overrides: next.overrides, updated_at: new Date().toISOString() },
+      { household_id: hid, derived: next.derived, overrides: next.overrides, dismissals: next.dismissals, updated_at: new Date().toISOString() },
       { onConflict: 'household_id' }
     );
     if (error) throw error;
@@ -628,6 +629,15 @@ export async function saveLearnedPreferences({ derived, overrides } = {}) {
     _toast(`Sync error (learned_preferences): ${e.message}`, true);
     return false;
   }
+}
+
+// v3 L5: record a conflict-prompt dismissal (key -> dismissed_until ISO) on the
+// learned_preferences row, preserving derived + overrides.
+export async function dismissConflict(key, dismissedUntil) {
+  if (!key) return false;
+  const prev = readLocal('learned-preferences') || (await _sbGetLearnedPrefs()) || {};
+  const dismissals = { ...(prev.dismissals || {}), [key]: dismissedUntil };
+  return saveLearnedPreferences({ derived: prev.derived || {}, overrides: prev.overrides || {}, dismissals });
 }
 
 // Recompute path: read the full append-only reaction log (with snapshots), run
@@ -651,8 +661,9 @@ export async function recomputeLearnedPreferences({ now } = {}) {
   const { derived } = deriveWeights(rows, now ? { now } : {});
   const existing = readLocal('learned-preferences') || (await _sbGetLearnedPrefs()) || {};
   const overrides = existing.overrides ?? {};
-  await saveLearnedPreferences({ derived, overrides });
-  return { derived, overrides };
+  const dismissals = existing.dismissals ?? {};
+  await saveLearnedPreferences({ derived, overrides, dismissals });
+  return { derived, overrides, dismissals };
 }
 
 // ── Auth helpers ───────────────────────────────────────────────────────
