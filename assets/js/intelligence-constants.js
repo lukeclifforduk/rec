@@ -61,3 +61,36 @@ export const FIT_WEIGHTS = {
   lisaEligible: 0.08,
   epcMeetsMin: 0.05,
 };
+
+// ── Learned preferences (v3 L4) ──────────────────────────────────────────────
+// The append-only reaction log (Layer 1) is distilled into derived weights
+// (Layer 2) that re-rank listings through the listing-fit learnedPrefs seam.
+// These numbers are CALIBRATED and revisable — change them here and in
+// docs/INTELLIGENCE_RULES.md §"Learned preferences" in the same commit.
+//
+//   COLD_START_MIN  graded (like/reject) reactions required before any derived
+//                   weight is credited — below this, scoring falls back to the
+//                   static fit and the feed diversifies to elicit contrast.
+//   HALF_LIFE_DAYS  exponential recency half-life: a reaction's training weight
+//                   halves every N days (decay basis = days since the reaction).
+//   MAX_LEARNED_WEIGHT  magnitude ceiling for a single learned contribution
+//                   (comparable to the strongest FIT_WEIGHTS entry).
+//   MIN_SIGNAL_N    a signal must appear in at least this many graded reactions
+//                   before it earns any weight (sparsity guard).
+//   SMOOTHING       confidence shrinkage denominator: weight is scaled by
+//                   n / (n + SMOOTHING) so thin evidence is discounted.
+//   STRONG_FRACTION a learned weight counts as "strong" (e.g. for narrowing the
+//                   next fetch) only at |weight| ≥ STRONG_FRACTION × MAX.
+export const LEARNED_PREF = {
+  COLD_START_MIN: 10,
+  HALF_LIFE_DAYS: 30,
+  MAX_LEARNED_WEIGHT: 0.30,
+  MIN_SIGNAL_N: 2,
+  SMOOTHING: 3,
+  STRONG_FRACTION: 0.5,
+};
+
+/** Recency window (days) for the "recent / optimal" listing wave: a listing is
+ *  recent when added_date ≥ now − RECENCY_DAYS. Drives the cold-start review
+ *  deck and the optimised fetch. Undated listings are never "recent". */
+export const RECENCY_DAYS = 14;
