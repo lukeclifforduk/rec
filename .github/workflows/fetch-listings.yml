@@ -18,6 +18,14 @@ on:
         description: 'Fetch + normalise only, do not write'
         type: boolean
         default: false
+      fetch_limit:
+        description: 'Max outcodes to process (0 = all 24). Set 1 for a cheap validation run.'
+        type: string
+        default: '0'
+      results_per_outcode:
+        description: 'Max listings per outcode (lower = cheaper on pay-per-event actors)'
+        type: string
+        default: '50'
   schedule:
     - cron: '10 7 * * *'
 
@@ -39,4 +47,6 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+          FETCH_LIMIT: ${{ inputs.fetch_limit || '0' }}
+          RESULTS_PER_OUTCODE: ${{ inputs.results_per_outcode || '50' }}
         run: node tools/fetch-listings.mjs

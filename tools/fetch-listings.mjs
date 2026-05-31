@@ -41,7 +41,7 @@ const DRY_RUN = process.env.DRY_RUN === '1' || process.env.DRY_RUN === 'true';
 const FETCH_LIMIT = Number(process.env.FETCH_LIMIT) || 0;
 
 const MAX_DAYS_SINCE_ADDED = 3;     // 3-day overlap so a missed run self-heals.
-const RESULTS_PER_OUTCODE = 50;
+const RESULTS_PER_OUTCODE = Number(process.env.RESULTS_PER_OUTCODE) || 50;  // cap per outcode (lower = cheaper on pay-per-event actors)
 const SOURCE = 'rightmove-apify';
 
 const BROWSER_HEADERS = {
@@ -178,7 +178,7 @@ async function syncLog(entries) {
 // ── main ─────────────────────────────────────────────────────────────────────
 async function main() {
   console.log('=== L1 fetch-listings ===');
-  console.log(`actor: ${APIFY_ACTOR_ID} · maxDaysSinceAdded: ${MAX_DAYS_SINCE_ADDED} · dry-run: ${DRY_RUN}`);
+  console.log(`actor: ${APIFY_ACTOR_ID} · maxDaysSinceAdded: ${MAX_DAYS_SINCE_ADDED} · resultsPerOutcode: ${RESULTS_PER_OUTCODE} · fetchLimit: ${FETCH_LIMIT || 'all'} · dry-run: ${DRY_RUN}`);
   if (!DRY_RUN && !SERVICE_KEY) throw new Error('SUPABASE_SERVICE_ROLE_KEY required to write (or set DRY_RUN=1)');
 
   const outcodeMap = await loadOutcodeMap();
