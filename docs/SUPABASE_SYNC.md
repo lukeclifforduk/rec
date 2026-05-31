@@ -11,16 +11,16 @@ the table in §1 as authoritative — every data type in the app belongs to exac
 
 ## 0. Canonical table inventory (single source of truth)
 
-**Live schema = 21 tables** (verified via `list_tables` 2026-05-30, all RLS-enabled):
+**Live schema = 22 curated tables** (verified via `list_tables` 2026-05-31, all RLS-enabled):
 
-- **16 user-state** (per household_id, source of truth = Supabase): `profile`, `criteria`,
+- **17 user-state** (per household_id, source of truth = Supabase): `profile`, `criteria`,
   `finances`, `goals`, `shortlist`, `zones`, `journey_checks`, `contacts`, `outreach`,
   `readiness_checklist`, `investments_accounts`, `investments_history`, `debts_credit_cards`,
-  `debts_student_loans`, `debts_other`, `listing_reactions`.
+  `debts_student_loans`, `debts_other`, `listing_reactions`, `learned_preferences`.
 - **2 content mirrors** (source of truth = repo JSON): `areas` (195 rows), `house_types` (15 rows).
 - **3 system** (Supabase-managed, never synced by Claude): `households`, `household_members`, `sync_log`.
 
-**18 of the 21 are "tracked"** for the sync contract (16 user-state + 2 content) and appear in
+**19 of the 22 are "tracked"** for the sync contract (17 user-state + 2 content) and appear in
 `data/snapshots/sync-state.json`. Note: `checklists` and `outreach_templates` have **no** mirror
 table — those catalogues are repo-JSON-only. Any other doc, test, or rule that states a different
 count is wrong and must be reconciled to this section.
@@ -35,8 +35,14 @@ review/cite value the way `areas` does.
 but **append-only**: every reaction (like/pass/reject + optional reject reason + `listing_snapshot`)
 is a new row; the latest row per listing is the current reaction. Created by migration
 `listing_reactions_l3`. RLS allows household members to read + insert only (no update/delete). It is
-tracked sync table #18. Physical table count is now **23** (the 21 above + the un-curated `reports`
-table + `listings`).
+tracked sync table #18.
+
+**v3 L4 addition (2026-05-31):** `learned_preferences` — a **user-state** table (one row per
+household_id), holding the distilled `derived` weights (Layer 2, recomputed from the
+`listing_reactions` log — base-rate calibrated · recency decayed · traceable) and the `overrides`
+(Layer 3, manual/AI intent). Created by migration `learned_preferences_l4`. RLS allows household
+members to read + insert + update. It is tracked sync table #19. Physical table count is now **24**
+(the 22 curated above + the un-curated `reports` table + the live-content `listings` table).
 
 ---
 
@@ -51,6 +57,7 @@ table + `listings`).
 | **Index** | `data/areas.json` | Derived from per-area files via `tools/build-areas.mjs` | Build tool | App fetches the JSON; Supabase `areas` mirror table |
 | **Live content (v3)** | `listings` (Supabase only — no repo file) | Supabase (fetcher-written) | `tools/fetch-listings.mjs` via service-role REST UPSERT (`on_conflict=rightmove_id`) | `storage.js#getListings` → listings page. NOT git-versioned; not a tracked table |
 | **User state (append-only, v3 L3)** | `listing_reactions` (Supabase only — no repo file) | Supabase (per household_id) | Portal via `storage.js#saveListingReaction` (INSERT — append-only); Claude via MCP `execute_sql` INSERT | `storage.js#getListingReactions` reduces the log to the latest reaction per listing. Tracked table #18 |
+| **User state (recomputed, v3 L4)** | `learned_preferences` (Supabase only — no repo file) | Supabase (per household_id) | Portal via `storage.js#saveLearnedPreferences` / `recomputeLearnedPreferences` (UPSERT); Claude via MCP `execute_sql` UPSERT | `storage.js#getLearnedPreferences` → `{ derived, overrides }`; `derived` recomputed from the reaction log, `overrides` preserved. Tracked table #19 |
 | **Schema** | `supabase/schema.sql` | Migration history applied via MCP | Claude only, via `mcp__supabase__apply_migration` | Supabase project state |
 
 Anything not in this table is either ephemeral UI state (URL params, in-memory only) or a bug —

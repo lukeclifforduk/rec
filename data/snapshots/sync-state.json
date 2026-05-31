@@ -72,10 +72,16 @@
     "_class": "user-state (append-only)",
     "_note": "v3 L3: append-only reaction log (like/pass/reject + reason, listing_snapshot). Table created (migration listing_reactions_l3) 2026-05-30; no rows yet. Tracked sync table #18 (16 user-state + 2 content)."
   },
-  "listings": {
+  "learned_preferences": {
     "count": 0,
     "last_synced_at": null,
+    "_class": "user-state",
+    "_note": "v3 L4: distilled preference weights, one row/household (derived = Layer 2 from the reaction log; overrides = Layer 3 manual/AI). Table created (migration learned_preferences_l4) 2026-05-31; no rows yet (recomputed once reactions exist). Tracked sync table #19 (17 user-state + 2 content)."
+  },
+  "listings": {
+    "count": 1298,
+    "last_synced_at": "2026-05-31T02:07:30.988Z",
     "_class": "live-content",
-    "_note": "v3 L1: fetcher-written live content (NOT git-versioned, NOT one of the 17 tracked git-synced tables). Populated by tools/fetch-listings.mjs via the fetch-listings workflow. Table created (migration listings_l1) 2026-05-30; awaiting first fetch run."
+    "_note": "v3 L1: fetcher-written live content (NOT git-versioned, NOT one of the 19 tracked git-synced tables). Backfilled 2026-05-31 with 1298 real listings via tools/import-apify-runs.mjs (storage read of already-paid Apify datasets, no new spend) across 12 outcodes; 0 unmatched, 0 out-of-region."
   }
 }

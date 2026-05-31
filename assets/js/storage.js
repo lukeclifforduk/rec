@@ -5,6 +5,7 @@
 import { loadJSON } from './data-loader.js';
 import { STORAGE_NS } from './config.js';
 import { normaliseReaction, latestPerListing, isPersonalStatus } from './listing-reactions.js';
+import { deriveWeights } from './learned-preferences.js';
 
 // ── localStorage helpers ──────────────────────────────────────────────
 const key = (k) => `${STORAGE_NS}:${k}`;
@@ -564,6 +565,94 @@ export async function saveListingReaction({ listing_id, reaction, reason = null,
     _toast(`Sync error (reactions): ${e.message}`, true);
     return false;
   }
+}
+
+// ── Learned preferences (v3 L4 — distilled reaction weights) ───────────────
+// User-state, household-scoped. ONE row per household: `derived` (Layer 2,
+// recomputed from the reaction log) + `overrides` (Layer 3, manual/AI intent).
+// Cached + revalidated like the other user-state reads.
+async function _sbGetLearnedPrefs() {
+  const [sb, hid] = await Promise.all([_initSb(), _getHid()]);
+  if (!sb || !hid) return null;
+  try {
+    const { data, error } = await sb
+      .from('learned_preferences')
+      .select('derived, overrides')
+      .eq('household_id', hid)
+      .limit(1);
+    if (error) throw error;
+    return data?.[0] ?? null;
+  } catch (e) {
+    console.error('storage: read learned_preferences', e.message);
+    return null;
+  }
+}
+
+export async function getLearnedPreferences(opts = {}) {
+  const cached = readLocal('learned-preferences');
+  if (cached !== null) {
+    _sbGetLearnedPrefs().then((row) => {
+      if (!row) return;
+      const fresh = { derived: row.derived ?? {}, overrides: row.overrides ?? {} };
+      if (JSON.stringify(fresh) !== JSON.stringify(cached)) {
+        writeLocal('learned-preferences', fresh);
+        if (opts.onUpdate) opts.onUpdate(fresh);
+      }
+    }).catch(() => {});
+    return cached;
+  }
+  const row = await _sbGetLearnedPrefs();
+  const val = { derived: row?.derived ?? {}, overrides: row?.overrides ?? {} };
+  if (row) writeLocal('learned-preferences', val);
+  return val;
+}
+
+export async function saveLearnedPreferences({ derived, overrides } = {}) {
+  const prev = readLocal('learned-preferences') || {};
+  const next = {
+    derived: derived ?? prev.derived ?? {},
+    overrides: overrides ?? prev.overrides ?? {},
+  };
+  writeLocal('learned-preferences', next);
+  const [sb, hid] = await Promise.all([_initSb(), _getHid()]);
+  if (!sb || !hid) return false;
+  try {
+    const { error } = await sb.from('learned_preferences').upsert(
+      { household_id: hid, derived: next.derived, overrides: next.overrides, updated_at: new Date().toISOString() },
+      { onConflict: 'household_id' }
+    );
+    if (error) throw error;
+    return true;
+  } catch (e) {
+    console.error('storage: write learned_preferences', e.message);
+    _toast(`Sync error (learned_preferences): ${e.message}`, true);
+    return false;
+  }
+}
+
+// Recompute path: read the full append-only reaction log (with snapshots), run
+// the pure deriveWeights(), persist the new `derived`, PRESERVE `overrides`.
+// Returns the fresh { derived, overrides } so callers re-rank immediately.
+export async function recomputeLearnedPreferences({ now } = {}) {
+  const [sb, hid] = await Promise.all([_initSb(), _getHid()]);
+  if (!sb || !hid) return null;
+  let rows = [];
+  try {
+    const { data, error } = await sb
+      .from('listing_reactions')
+      .select('id, listing_id, reaction, created_at, listing_snapshot')
+      .eq('household_id', hid);
+    if (error) throw error;
+    rows = data ?? [];
+  } catch (e) {
+    console.error('storage: recompute read listing_reactions', e.message);
+    return null;
+  }
+  const { derived } = deriveWeights(rows, now ? { now } : {});
+  const existing = readLocal('learned-preferences') || (await _sbGetLearnedPrefs()) || {};
+  const overrides = existing.overrides ?? {};
+  await saveLearnedPreferences({ derived, overrides });
+  return { derived, overrides };
 }
 
 // ── Auth helpers ───────────────────────────────────────────────────────

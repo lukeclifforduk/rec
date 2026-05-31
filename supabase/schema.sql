@@ -336,6 +336,34 @@ CREATE INDEX IF NOT EXISTS idx_listing_reactions_household ON listing_reactions 
 CREATE INDEX IF NOT EXISTS idx_listing_reactions_listing   ON listing_reactions (household_id, listing_id, created_at DESC);
 
 -- -----------------------------------------------------------------------
+-- learned_preferences — v3 L4 distilled preference weights (one row/household).
+-- `derived` is the Layer-2 recomputation of the append-only listing_reactions
+-- log (base-rate calibrated · recency decayed · traceable); `overrides` is the
+-- Layer-3 manual/AI intent that takes precedence. Migration: learned_preferences_l4.
+-- -----------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS learned_preferences (
+  id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  household_id uuid NOT NULL UNIQUE REFERENCES households(id) ON DELETE CASCADE,
+  derived      jsonb NOT NULL DEFAULT '{}',  -- signal -> { weight, reaction_ids[], n, n_liked, n_rejected, ... }
+  overrides    jsonb NOT NULL DEFAULT '{}',  -- signal -> { weight, derived_weight_at_set, note? }
+  updated_at   timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE learned_preferences ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "household members can read learned_preferences" ON learned_preferences;
+CREATE POLICY "household members can read learned_preferences"
+  ON learned_preferences FOR SELECT USING (is_household_member(household_id));
+
+DROP POLICY IF EXISTS "household members can insert learned_preferences" ON learned_preferences;
+CREATE POLICY "household members can insert learned_preferences"
+  ON learned_preferences FOR INSERT WITH CHECK (is_household_member(household_id));
+
+DROP POLICY IF EXISTS "household members can update learned_preferences" ON learned_preferences;
+CREATE POLICY "household members can update learned_preferences"
+  ON learned_preferences FOR UPDATE USING (is_household_member(household_id));
+
+-- -----------------------------------------------------------------------
 -- updated_at trigger — applied to every data table
 -- DROP TRIGGER IF EXISTS inside a DO block is already idempotent.
 -- -----------------------------------------------------------------------
@@ -350,7 +378,7 @@ BEGIN
   FOREACH tbl IN ARRAY ARRAY[
     'profile','criteria','finances','shortlist',
     'zones','journey_checks','contacts','outreach',
-    'areas','house_types'
+    'areas','house_types','learned_preferences'
   ]
   LOOP
     EXECUTE format(
