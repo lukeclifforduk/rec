@@ -271,6 +271,15 @@
       </div>
     </div>
 
+    <!-- Resolve area identifiers (prerequisite for cluster-mode precision) -->
+    <div class="fetch-prereq-bar">
+      <div class="fetch-prereq-info">
+        <span class="fetch-prereq-step">Step 0 · one-time · prerequisite</span>
+        <p class="fetch-prereq-desc">Resolve per-village Rightmove identifiers for all 194 areas. Runs via GitHub Actions (~5 min), writes tight <code>POSTCODE^</code> identifiers into each area file, and commits back to <code>main</code>. Required for cluster-mode precision — without it, fetches use whole-outcode searches (correct but broader).</p>
+      </div>
+      <button type="button" id="btn-resolve-areas" class="outline secondary">Resolve area identifiers</button>
+    </div>
+
     <div class="fetch-cost-grid">
 
       <!-- Daily top-up -->

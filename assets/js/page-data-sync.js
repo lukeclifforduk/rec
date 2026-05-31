@@ -646,10 +646,11 @@ $$;`;
 
 
 // ── Fetch listings (§03) ──────────────────────────────────────────
-const GH_PAT_KEY = 'rec:gh-pat';
-const GH_REPO    = 'seanparkerai/rec';
-const GH_WF_FILE = 'fetch-listings.yml';
-const GH_REF     = 'main';
+const GH_PAT_KEY    = 'rec:gh-pat';
+const GH_REPO       = 'seanparkerai/rec';
+const GH_WF_FILE    = 'fetch-listings.yml';
+const GH_WF_RESOLVE = 'resolve-areas.yml';
+const GH_REF        = 'main';
 
 function loadGhPat()  { try { return localStorage.getItem(GH_PAT_KEY) || ''; } catch { return ''; } }
 function saveGhPat(t) { try { localStorage.setItem(GH_PAT_KEY, t); } catch {} }
@@ -697,6 +698,38 @@ function fetchLog(msg, type = 'info') {
   log.appendChild(span);
   log.scrollTop = log.scrollHeight;
 }
+
+async function triggerResolveAreas() {
+  const pat = loadGhPat();
+  if (!pat) { alert('Save a GitHub PAT first (§03 above).'); return; }
+  const url = `https://api.github.com/repos/${GH_REPO}/actions/workflows/${GH_WF_RESOLVE}/dispatches`;
+  fetchLog('Triggering resolve-areas workflow…', 'info');
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${pat}`,
+        Accept: 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+      body: JSON.stringify({ ref: GH_REF }),
+    });
+    if (res.status === 204) {
+      fetchLog('resolve-areas dispatched — check GitHub Actions. It resolves all 194 areas and commits tight identifiers back to main (~5 min).', 'ok');
+    } else {
+      const text = await res.text().catch(() => String(res.status));
+      fetchLog(`GitHub API error ${res.status}: ${text}`, 'err');
+    }
+  } catch (e) {
+    fetchLog(`Network error: ${e.message}`, 'err');
+  }
+}
+
+on(byId('btn-resolve-areas'), 'click', () => {
+  if (!loadGhPat()) { alert('Save a GitHub PAT first (§03 above).'); return; }
+  triggerResolveAreas();
+});
 
 async function triggerWorkflow(foundationMode, dryRun) {
   const pat = loadGhPat();
