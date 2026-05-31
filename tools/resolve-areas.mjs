@@ -170,11 +170,15 @@ async function main() {
 
   const report = { generatedAt: new Date().toISOString(), tight: 0, coarse: 0, unresolved: 0, coarseList: [] };
   let mirrored = 0;
+  // Be polite to Rightmove's typeahead across ~195 areas (avoid rate-limiting).
+  const throttleMs = Number(process.env.RESOLVE_THROTTLE_MS) || 150;
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   for (const f of files) {
     const path = resolve(dir, f);
     const area = JSON.parse(await readFile(path, 'utf8'));
     if (area.active === false) continue;
     const rm = await resolveArea(area, flaggedIds);
+    if (throttleMs) await sleep(throttleMs);
     if (!rm) { report.unresolved += 1; console.log(`  ? ${area.id}: unresolved (network?)`); continue; }
     if (rm.identifierQuality === 'tight') report.tight += 1; else { report.coarse += 1; report.coarseList.push(area.id); }
     console.log(`  ${rm.identifierQuality === 'tight' ? '✓' : '·'} ${area.id}: ${rm.identifierType}^… (${rm.identifierQuality})`);
