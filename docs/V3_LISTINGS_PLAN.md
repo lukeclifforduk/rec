@@ -1,6 +1,6 @@
 # v3 — Live Listings architecture & build plan
 
-> Status as of 2026-05-31: **L0–L4 done.** L5 + L6 pending.
+> Status as of 2026-05-31: **L0–L5 done.** L6 pending.
 > Checklist mirror: `docs/CHECKLIST.md` (v3 section). Rule constants:
 > `docs/INTELLIGENCE_RULES.md` §"Listing fit". Sync class: `docs/SUPABASE_SYNC.md` §1.
 
@@ -85,8 +85,10 @@ Four committed decisions (do not relitigate without new evidence):
 - The scoring engine already reads `learnedPrefs` (the L4 seam in `listing-fit.js`).
 
 ## L5 / L6
-- L5: meta-observations + conflict prompts (3-condition trigger, 14-day dismissal) + an
-  NBA strip above the existing dashboard tiles (computed on load from timestamps).
+- L5 (built 2026-05-31): meta-observations + conflict prompts (3-condition trigger, 14-day
+  dismissal) + an NBA strip above the dashboard tiles. Pure core `assets/js/meta-observations.js`;
+  dismissals on `learned_preferences.dismissals`; documented in `INTELLIGENCE_RULES.md
+  §"Recommendation loop"`.
 - L6: `pages/property.html` dossier + `property_outreach` join (extends the outreach
   renderer; dual lifecycle timelines never merged). Per user priority, L6 (bookings/
   outreach) is lower priority than the listings/learning core (L1–L4).

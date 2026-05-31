@@ -236,5 +236,32 @@ together:
 `COLD_START_MIN` 10 graded · `HALF_LIFE_DAYS` 30 · `MAX_LEARNED_WEIGHT` 0.30 · `MIN_SIGNAL_N` 2 ·
 `SMOOTHING` 3 · `STRONG_FRACTION` 0.5 · `RECENCY_DAYS` 14. *(v3 L4 — added 2026-05-31.)*
 
+## Recommendation loop (v3 L5)
+
+The learning loop closes by *talking back*: when behaviour and stated criteria disagree, the app
+**recommends** — it never rewrites criteria silently. Pure core: `assets/js/meta-observations.js`.
+
+**Conflict prompts (`detectConflicts`).** Three kinds, each comparing **likes** to a stated rule:
+`over-budget` (price > `budget.max`), `excluded-type` (liked a `propertyTypePrefs.excluded` type),
+`below-min-beds` (beds < `size.minBeds`). A conflict fires only on the **3-condition trigger** — all
+three must hold, so it stays off noise:
+1. **Volume** — at least `MIN_CONFLICT_LIKES` (3) violating likes.
+2. **Dominance** — violating likes are ≥ `MIN_CONFLICT_SHARE` (60%) of the *comparable* likes (those
+   that could violate the rule), so an occasional outlier never triggers.
+3. **Recency** — at least one violating like within `CONFLICT_RECENCY_DAYS` (30), so a stale one-off
+   pattern stays quiet.
+A dismissed prompt is silenced for `DISMISS_DAYS` (14) via a `dismissed_until` ISO stamp stored in
+`learned_preferences.dismissals` (user-state; migration `learned_preferences_dismissals_l5`). Trains
+on **likes only** — pass/reject/viewed are never counted as a contradiction.
+
+**Next-best-action (`computeNextBestActions`).** An ordered, count-driven strip (no black box):
+cold-start nudge → un-reviewed strong matches → saved-but-unviewed homes → recent wave to review,
+capped at `NBA_MAX` (3). Scoring is injected via a `scoreOf` callback so the module stays pure;
+rendered above the dashboard bento (`assets/js/dashboard/tile-nba.js`).
+
+**Constants (`META_OBS`)** — CALIBRATED, revisable; change them and this section together:
+`MIN_CONFLICT_LIKES` 3 · `MIN_CONFLICT_SHARE` 0.6 · `CONFLICT_RECENCY_DAYS` 30 · `DISMISS_DAYS` 14 ·
+`SAVED_STALE_DAYS` 7 · `NBA_MAX` 3. *(v3 L5 — added 2026-05-31.)*
+
 ### Maintenance (deposit-risk, cont.)
 4. Commit with `docs: update intelligence rules — deposit-risk thresholds`.

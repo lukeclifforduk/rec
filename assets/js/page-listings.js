@@ -10,7 +10,9 @@ import {
   getListingReactions, saveListingReaction,
   getShortlistStatuses, setShortlistStatus,
   getLearnedPreferences, recomputeLearnedPreferences,
+  getReactionLog, dismissConflict,
 } from './storage.js';
+import { detectConflicts, dismissUntil } from './meta-observations.js';
 import { deriveFinances } from './finance-derive.js';
 import { scoreListingFit } from './listing-fit.js';
 import { REACTIONS, REJECT_REASONS, PERSONAL_STATUSES } from './listing-reactions.js';
@@ -19,6 +21,7 @@ import {
   diversifySelection, listingBucketKey, describeSignal,
 } from './learned-preferences.js';
 import { LEARNED_PREF, RECENCY_DAYS } from './intelligence-constants.js';
+import { url } from './config.js';
 import { el, clear } from './dom.js';
 
 const REACTION_LABELS = { like: 'Like', pass: 'Pass', reject: 'Reject' };
@@ -290,15 +293,16 @@ async function render() {
   const deckEl = main.querySelector('[data-review-deck]');
   const summaryEl = main.querySelector('[data-listings-summary]');
   const learningEl = main.querySelector('[data-learning]');
+  const conflictsEl = main.querySelector('[data-conflicts]');
   const showOOR = main.querySelector('[data-show-oor]');
   const browseOnly = main.querySelector('[data-browse-only]');
   const reviewCountEl = main.querySelector('[data-review-count]');
   const modeBtns = [...main.querySelectorAll('[data-mode]')];
   if (!listEl) return;
 
-  const [listings, criteria, rawFinances, areas, reactions, statuses, learned] = await Promise.all([
+  const [listings, criteria, rawFinances, areas, reactions, statuses, learned, reactionLogInit] = await Promise.all([
     getListings({ limit: 200 }), getCriteria(), getFinances(), getAreas(),
-    getListingReactions(), getShortlistStatuses(), getLearnedPreferences(),
+    getListingReactions(), getShortlistStatuses(), getLearnedPreferences(), getReactionLog(),
   ]);
   const finances = rawFinances ? deriveFinances(rawFinances) : null;
   const areasById = new Map((areas || []).map((a) => [a.id, a]));
@@ -307,6 +311,8 @@ async function render() {
   // Layer 2 ⊕ Layer 3 → the effective weights fed (per-listing) into scoring.
   let overrides = learned?.overrides || {};
   let effective = effectiveWeights(learned?.derived || {}, overrides);
+  let dismissals = learned?.dismissals || {};
+  let reactionLog = reactionLogInit || [];
 
   const areaOf = (l) => (l.area_id ? areasById.get(l.area_id) : null);
   const scoreOf = (l) => (finances
@@ -361,6 +367,32 @@ async function render() {
     if (reviewCountEl) { reviewCountEl.hidden = n === 0; reviewCountEl.textContent = n ? ` ${n}` : ''; }
   }
 
+  // ── conflict prompts (L5) — likes that contradict stated criteria ─────────
+  function updateConflicts() {
+    if (!conflictsEl) return;
+    clear(conflictsEl);
+    const conflicts = detectConflicts(reactionLog, criteria, { now: new Date(), dismissals });
+    for (const c of conflicts) {
+      const dismiss = el('button', { type: 'button', class: 'conflict-prompt__dismiss' }, 'Dismiss for 14 days');
+      dismiss.addEventListener('click', async () => {
+        const until = dismissUntil(new Date());
+        dismissals = { ...dismissals, [c.key]: until };
+        await dismissConflict(c.key, until);
+        updateConflicts();
+      });
+      conflictsEl.appendChild(el('div', { class: 'conflict-prompt', role: 'note' }, [
+        el('div', { class: 'conflict-prompt__body' }, [
+          el('p', { class: 'conflict-prompt__msg' }, c.message),
+          el('p', { class: 'conflict-prompt__hint' }, c.suggestion),
+        ]),
+        el('div', { class: 'conflict-prompt__actions' }, [
+          el('a', { class: 'conflict-prompt__adjust', href: `${url('pages/about-search.html')}#search` }, 'Adjust criteria →'),
+          dismiss,
+        ]),
+      ]));
+    }
+  }
+
   // ── debounced authoritative re-training (full reaction log) ─────────────
   let retrainTimer = null;
   let retraining = false;
@@ -373,10 +405,12 @@ async function render() {
     retraining = true;
     try {
       const res = await recomputeLearnedPreferences({ now: new Date() });
-      if (res) { overrides = res.overrides || {}; effective = effectiveWeights(res.derived || {}, overrides); }
+      if (res) { overrides = res.overrides || {}; effective = effectiveWeights(res.derived || {}, overrides); dismissals = res.dismissals || dismissals; }
+      reactionLog = await getReactionLog();
     } catch { /* surfaced via storage toast */ }
     retraining = false;
     updateLearning();
+    updateConflicts();
     if (mode === 'browse') paint();
   }
 
@@ -458,6 +492,7 @@ async function render() {
 
   updateLearning();
   updateReviewCount();
+  updateConflicts();
   setMode('browse');
 }
 

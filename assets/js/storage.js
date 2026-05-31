@@ -539,6 +539,25 @@ export async function getListingReactions(opts = {}) {
   return map;
 }
 
+// Full append-only reaction log (with snapshots + ids) — the evidence the L5
+// conflict detector and any re-derivation need. Distinct from getListingReactions,
+// which reduces the log to the latest reaction per listing for the UI.
+export async function getReactionLog() {
+  const [sb, hid] = await Promise.all([_initSb(), _getHid()]);
+  if (!sb || !hid) return [];
+  try {
+    const { data, error } = await sb
+      .from('listing_reactions')
+      .select('id, listing_id, reaction, reason, created_at, listing_snapshot')
+      .eq('household_id', hid);
+    if (error) throw error;
+    return data ?? [];
+  } catch (e) {
+    console.error('storage: read reaction log', e.message);
+    return [];
+  }
+}
+
 export async function saveListingReaction({ listing_id, reaction, reason = null, listing_snapshot = null }) {
   const norm = normaliseReaction({ listing_id, reaction, reason, listing_snapshot });
   if (!norm) { console.error('storage: invalid listing reaction', reaction); return false; }

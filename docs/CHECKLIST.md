@@ -57,7 +57,16 @@ Plan: `docs/V3_LISTINGS_PLAN.md`. Build order L0→L6; minimum-lovable = L0–L4
       `USE_LEARNED=1` optimised search (all 24 outcodes + 14-day recency + price/beds narrowing +
       excluded-type post-filter + focus-outcode ordering; 5 tests). Sync contract reconciled to 19
       tracked tables. INTELLIGENCE_RULES §"Learned preferences" added. 228/228 green.
-- [ ] **L5 — Recommendation loop + NBA** · [ ] **L6 — Dossier + workflow**
+- [x] **L5 — Recommendation loop + NBA**: pure `assets/js/meta-observations.js` —
+      `detectConflicts` (over-budget / excluded-type / below-min-beds; 3-condition trigger
+      count≥3 · share≥60% · recent; 14-day dismissal; likes-only) + `computeNextBestActions`
+      (cold-start → strong matches → saved-unviewed → recent wave; `scoreOf` injected; 11 tests).
+      `learned_preferences.dismissals` column (migration `learned_preferences_dismissals_l5`, no new
+      table). `storage.js`: `getReactionLog`, `dismissConflict`, dismissals carried through
+      get/save/recompute. Conflict-prompt banner on the listings page ("Adjust criteria" /
+      "Dismiss 14 days"); NBA strip above the dashboard bento (`tile-nba.js` + `tile-nba.css`
+      appended to the `dashboard.css` import shell). INTELLIGENCE_RULES §"Recommendation loop". 237/237 green.
+- [ ] **L6 — Dossier + workflow**
 
 ---
 
