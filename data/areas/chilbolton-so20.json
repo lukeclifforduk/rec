@@ -129,5 +129,14 @@
     "https://en.wikipedia.org/wiki/Test_Valley_School",
     "https://www.testvalley.gov.uk/benefitsandcounciltax/counciltax/council-tax-charges",
     "https://www.hants.gov.uk/thingstodo/countryside/walking/wherwellchilbolton"
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "POSTCODE^1595022",
+    "identifierType": "POSTCODE",
+    "identifierQuality": "tight",
+    "resolvedAt": "2026-05-31T20:01:46.675Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

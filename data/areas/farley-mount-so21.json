@@ -89,5 +89,14 @@
       "label": "Visit Hampshire — Farley Mount Monument",
       "url": "https://www.visit-hampshire.co.uk/things-to-do/farley-mount-monument-p1414861"
     }
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "POSTCODE^4511249",
+    "identifierType": "POSTCODE",
+    "identifierQuality": "tight",
+    "resolvedAt": "2026-05-31T20:02:01.865Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

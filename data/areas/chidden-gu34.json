@@ -100,5 +100,14 @@
     "https://findthatpostcode.uk/places/IPN0014489.html",
     "https://en.wikipedia.org/wiki/Hambledon,_Hampshire",
     "https://reports.ofsted.gov.uk/"
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "POSTCODE^1493104",
+    "identifierType": "POSTCODE",
+    "identifierQuality": "tight",
+    "resolvedAt": "2026-05-31T20:01:45.514Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

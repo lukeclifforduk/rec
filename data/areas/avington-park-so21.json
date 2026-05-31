@@ -101,5 +101,14 @@
       "label": "Rightmove House Prices SO24",
       "url": "https://www.rightmove.co.uk/house-prices/SO24.html"
     }
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "POSTCODE^1389516",
+    "identifierType": "POSTCODE",
+    "identifierQuality": "tight",
+    "resolvedAt": "2026-05-31T20:01:25.642Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

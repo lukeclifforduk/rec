@@ -163,5 +163,14 @@
       "label": "Rightmove — GU35 house prices",
       "url": "https://www.rightmove.co.uk/house-prices/gu35.html"
     }
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "POSTCODE^357208",
+    "identifierType": "POSTCODE",
+    "identifierQuality": "tight",
+    "resolvedAt": "2026-05-31T20:01:34.712Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

@@ -35,5 +35,14 @@
   "nearestStation": null,
   "primarySupermarket": null,
   "images": [],
-  "sources": []
+  "sources": [],
+  "rightmove": {
+    "locationIdentifier": "POSTCODE^806982",
+    "identifierType": "POSTCODE",
+    "identifierQuality": "tight",
+    "resolvedAt": "2026-05-31T20:02:53.489Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

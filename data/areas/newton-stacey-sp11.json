@@ -121,5 +121,14 @@
     "https://mapcarta.com/N1272258398",
     "https://www.thetrainline.com/train-times/andover-to-london-waterloo",
     "https://www.testvalley.gov.uk/benefitsandcounciltax/counciltax/council-tax-charges"
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "POSTCODE^1668940",
+    "identifierType": "POSTCODE",
+    "identifierQuality": "tight",
+    "resolvedAt": "2026-05-31T20:02:30.968Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

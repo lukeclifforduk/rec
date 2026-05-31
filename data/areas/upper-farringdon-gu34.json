@@ -128,5 +128,14 @@
     "https://www.easthants.gov.uk/sites/default/files/2026-03/Council%20tax%20per%20valuation%20band%202026-27.pdf",
     "https://www.thetrainline.com/stations/alton",
     "https://www.rightmove.co.uk/house-prices/gu34.html"
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "POSTCODE^356852",
+    "identifierType": "POSTCODE",
+    "identifierQuality": "tight",
+    "resolvedAt": "2026-05-31T20:03:01.443Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

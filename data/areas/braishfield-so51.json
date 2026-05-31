@@ -101,5 +101,14 @@
       "label": "Romsey School",
       "url": "https://www.theromseyschool.org/"
     }
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "POSTCODE^805657",
+    "identifierType": "POSTCODE",
+    "identifierQuality": "tight",
+    "resolvedAt": "2026-05-31T20:01:37.051Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }
