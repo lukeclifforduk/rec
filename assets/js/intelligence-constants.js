@@ -96,6 +96,13 @@ export const LEARNED_PREF = {
   SMOOTHING: 3,
   STRONG_FRACTION: 0.5,
   UNATTRIBUTED_DISCOUNT: 0.35,
+  // Pass weak-negative: passes are treated as weak rejects at this fraction of
+  // their recency weight (after UNATTRIBUTED_DISCOUNT). Only modifies existing
+  // graded signal — never bootstraps cold-start or creates new signal keys.
+  PASS_WEIGHT: 0.12,
+  // Viewed/offered multiplier: a listing that reached a real decision (booking
+  // or offer) earns this multiple of its normal recency weight in the graded pool.
+  VIEWED_MULTIPLIER: 2.0,
 };
 
 /** Named training milestones (graded-reaction counts) for the L4 progress visual.

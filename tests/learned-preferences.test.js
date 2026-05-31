@@ -6,7 +6,7 @@ import {
   signalsForListing, priceBand, isRecent,
   deriveWeights, effectiveWeights, listingLearnedPrefs,
   gradedCount, isColdStart, diversifySelection, listingBucketKey,
-  deriveSearchSpec, implicatedKinds, REASON_SIGNAL_KINDS, trainingProgress,
+  deriveSearchSpec, implicatedKinds, REASON_SIGNAL_KINDS, SUBREASON_SIGNAL_KINDS, trainingProgress,
 } from '../assets/js/learned-preferences.js';
 import { LEARNED_PREF, RECENCY_DAYS, TRAINING_MILESTONES } from '../assets/js/intelligence-constants.js';
 
@@ -197,12 +197,84 @@ export async function register({ test, assert, assertEqual }) {
   });
 
   test('learned-prefs: guardrail holds — reasons on a pass never train', () => {
-    // A pass carrying reasons (shouldn't happen, but be defensive) is still
-    // unlabelled: it must not cross cold-start or earn any weight.
+    // A pass carrying reasons is still unlabelled: cold-start fires first so passes
+    // alone produce no weights and never graduate cold start.
     const passes = withReasons(many(30, 'pass', { outcode: 'SP5' }), [{ key: 'wrong_area' }]);
     const { derived, meta } = deriveWeights(passes, { now: NOW });
     assertEqual(meta.coldStart, true, 'passes never graduate cold start');
-    assertEqual(Object.keys(derived).length, 0, 'no weights from passes');
+    assertEqual(Object.keys(derived).length, 0, 'passes alone produce no weights (cold start guard)');
+  });
+
+  // ── sub-reason attribution (v3 L4 refinement) ──────────────────────────────
+  test('learned-prefs: too_expensive→poor_value adds type signal to price-band', () => {
+    const kinds = implicatedKinds([{ key: 'too_expensive', detail: 'poor_value' }]);
+    assert(kinds.has('price-band'), 'price-band from parent too_expensive');
+    assert(kinds.has('type'), 'type added by poor_value sub-reason');
+  });
+
+  test('learned-prefs: right_size→plot adds outdoor signal to beds', () => {
+    const kinds = implicatedKinds([{ key: 'right_size', detail: 'plot' }]);
+    assert(kinds.has('beds'), 'beds from parent right_size');
+    assert(kinds.has('outdoor'), 'outdoor added by plot sub-reason');
+  });
+
+  test('learned-prefs: no_outdoor→no_parking adds parking signal', () => {
+    const kinds = implicatedKinds([{ key: 'no_outdoor', detail: 'no_parking' }]);
+    assert(kinds.has('outdoor'), 'outdoor from parent no_outdoor');
+    assert(kinds.has('parking'), 'parking added by no_parking sub-reason');
+  });
+
+  // ── outdoor / parking signals ───────────────────────────────────────────────
+  test('learned-prefs: signalsForListing extracts outdoor and parking signals', () => {
+    assert(signalsForListing(snap({ outdoor_space: true })).includes('outdoor:yes'), 'outdoor yes');
+    assert(signalsForListing(snap({ outdoor_space: false })).includes('outdoor:no'), 'outdoor no');
+    assert(signalsForListing(snap({ has_parking: true })).includes('parking:yes'), 'parking yes');
+    assert(signalsForListing(snap({ has_parking: false })).includes('parking:no'), 'parking no');
+    assert(!signalsForListing(snap()).some((s) => s.startsWith('outdoor:')), 'null outdoor_space → no signal');
+    assert(!signalsForListing(snap()).some((s) => s.startsWith('parking:')), 'null has_parking → no signal');
+  });
+
+  // ── pass weak-negative (once cold-start cleared) ────────────────────────────
+  test('learned-prefs: passes on a liked signal dampen its positive weight', () => {
+    // Mathematically: passes add passW to rejectedMass but only passW*discount to
+    // rejectedW, so pRejected grows → discrimination shrinks for a liked signal.
+    // 10 likes on SO24 clears cold start; 15 passes on SO24 create doubt.
+    const likes  = many(10, 'like', { outcode: 'SO24' });
+    const passes = many(15, 'pass', { outcode: 'SO24' });
+    const { derived: withPasses }    = deriveWeights([...likes, ...passes], { now: NOW });
+    const { derived: withoutPasses } = deriveWeights(likes,                  { now: NOW });
+    const wWith    = withPasses['outcode:so24']?.weight    ?? 0;
+    const wWithout = withoutPasses['outcode:so24']?.weight ?? 0;
+    assert(wWithout > wWith, `passes reduce SO24 confidence: without=${wWithout}, with=${wWith}`);
+    assert(wWith > 0, 'SO24 stays positive despite passes');
+  });
+
+  test('learned-prefs: passes alone never cross cold-start or create signal', () => {
+    // 30 passes, 0 graded → cold start fires, acc is never populated, derived = {}
+    const { derived, meta } = deriveWeights(many(30, 'pass'), { now: NOW });
+    assertEqual(meta.coldStart, true, 'passes do not count toward cold start');
+    assertEqual(Object.keys(derived).length, 0, 'no signal created by passes alone');
+  });
+
+  // ── viewed / offered multiplier ─────────────────────────────────────────────
+  test('learned-prefs: viewed listings earn a stronger positive weight than unviewed', () => {
+    // Build two like sets with NON-COLLIDING listing IDs (both use 'like' reaction so
+    // many() would produce identical ids like-0…like-5 for each batch).
+    const ts = ago(1);
+    const mkLike = (outcode, prefix) => Array.from({ length: 6 }, (_, i) => ({
+      id: `${prefix}-${i}`, listing_id: `${prefix}-${i}`, reaction: 'like', created_at: ts,
+      listing_snapshot: snap({ outcode, id: `${prefix}-${i}` }),
+    }));
+    const likesGU35 = mkLike('GU35', 'gu');
+    const likesSO24 = mkLike('SO24', 'so');
+    const rejects   = many(12, 'reject', { outcode: 'SP5' });
+    const statusMap = {};
+    for (const r of likesSO24) statusMap[r.listing_id] = 'viewed';
+    const { derived } = deriveWeights([...likesGU35, ...likesSO24, ...rejects], { now: NOW, statusMap });
+    const wGU35 = derived['outcode:gu35']?.weight ?? 0;
+    const wSO24 = derived['outcode:so24']?.weight ?? 0;
+    assert(wSO24 > wGU35, `viewed SO24 (${wSO24}) outweighs unviewed GU35 (${wGU35})`);
+    assert(wSO24 > 0.05, 'viewed signal earns real weight');
   });
 
   // ── training progress (balance-aware) ───────────────────────────────────────

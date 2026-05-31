@@ -453,6 +453,8 @@ async function render() {
     area_id: l.area_id, price: l.price, beds: l.beds, baths: l.baths,
     property_type: l.property_type, status: l.status, url: l.url,
     distance_mi: l.distance_mi ?? null,   // L7.5: lets meta-observations propose a tighter buffer
+    outdoor_space: l.outdoor_space ?? null,   // null until fetcher provides; captured for future signal
+    has_parking:   l.has_parking   ?? null,
   });
 
   // Persist ONLY on Save (one clean consolidated row per finished decision). Verb
@@ -629,6 +631,7 @@ async function render() {
     const total = deckOrder.length;
     const done = deckOrder.filter((l) => isReviewed(l.rightmove_id)).length;
     deckEl.appendChild(buildDeckProgress(done, total));
+    deckEl.appendChild(buildTrainingProgress(trainingProgress(Object.values(reactions)), done, total));
     if (!total) {
       deckEl.appendChild(el('div', { class: 'deck-done' }, [
         el('p', { class: 'deck-done__title' }, 'Nothing recent to review'),

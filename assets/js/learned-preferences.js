@@ -13,12 +13,17 @@
 //   Layer 3  overrides — manual/AI weights that take precedence; conflicts with
 //            Layer 2 surface as recommendations (L5), never resolved silently.
 //
-//   GUARDRAIL: train ONLY on like/reject. `pass`, ignored, and passive `viewed`
-//   are UNLABELLED, never negative — training on absence would teach suppression.
+//   GUARDRAIL: cold-start (gradedCount) counts only like/reject. Passes are
+//   UNLABELLED for graduation but carry a small weak-negative contribution
+//   (PASS_WEIGHT × UNATTRIBUTED_DISCOUNT) once cold-start is cleared — they can
+//   only deepen existing graded signal, never create new signal keys alone.
+//   `viewed`/`offered` personal status applies VIEWED_MULTIPLIER to the matching
+//   reaction's recency weight so real decisions outweigh casual likes.
 
 import { LEARNED_PREF, RECENCY_DAYS, TRAINING_MILESTONES } from './intelligence-constants.js';
 
 const GRADED = new Set(['like', 'reject']);
+const PASS   = new Set(['pass']);
 const norm = (s) => String(s || '').trim().toLowerCase();
 const round3 = (n) => Math.round(n * 1000) / 1000;
 
@@ -79,6 +84,8 @@ export function signalsForListing(l) {
   if (a) sigs.push(`area:${a}`);
   const pb = priceBand(l.price);
   if (pb) sigs.push(`price-band:${pb}`);
+  if (l.outdoor_space != null) sigs.push(`outdoor:${l.outdoor_space ? 'yes' : 'no'}`);
+  if (l.has_parking != null) sigs.push(`parking:${l.has_parking ? 'yes' : 'no'}`);
   return sigs;
 }
 
@@ -93,6 +100,8 @@ export function describeSignal(signal) {
     case 'outcode':    return `the ${val.toUpperCase()} area`;
     case 'area':       return `the ${val} area`;
     case 'price-band': return `the ${val} price band`;
+    case 'outdoor':    return val === 'yes' ? 'homes with outdoor space' : 'homes without outdoor space';
+    case 'parking':    return val === 'yes' ? 'homes with parking' : 'homes without parking';
     default:           return signal;
   }
 }
@@ -118,18 +127,114 @@ export const REASON_SIGNAL_KINDS = {
   busy_road:     ['outcode', 'area'],
   poor_layout:   ['baths'],
   needs_work:    ['type'],   // work-intensity correlates with property type/age
-  no_outdoor:    [],         // not captured as listing attribute
+  no_outdoor:    ['outdoor'],
   // like reasons (positive)
   great_area:    ['outcode', 'area'],
   good_value:    ['price-band'],
   right_size:    ['beds'],
   good_layout:   ['baths'],
-  kitchen:       [],   // property-intrinsic — not captured (generic positive)
+  kitchen:       [],   // property-intrinsic — not captured
   light:         [],   // not captured
-  parking:       [],   // not captured
+  parking:       ['parking'],
   move_in_ready: ['type'],   // new builds / modern stock cluster by type
-  outdoor_space: [],
+  outdoor_space: ['outdoor'],
   character:     ['type'],
+};
+
+/**
+ * Second-level sub-reason → signal KINDS, namespaced under their parent primary
+ * key. Used by implicatedKinds() to ADD extra signal kinds when a sub-reason is
+ * more specific than (or orthogonal to) its parent. Only entries that are
+ * DIFFERENT FROM or ADDITIVE TO the parent are significant; the rest default to
+ * the parent's mapping via union.
+ *
+ * Lookup: SUBREASON_SIGNAL_KINDS[primaryKey]?.[detailKey] → string[] | undefined
+ */
+export const SUBREASON_SIGNAL_KINDS = {
+  needs_work: {
+    structural: ['type'],   // period/older stock — strong type signal
+    cosmetic:   [],         // any age; doesn't narrow type
+    dated:      [],         // liveable but dated — any age
+  },
+  too_expensive: {
+    over_budget:    ['price-band'],
+    poor_value:     ['price-band', 'type'],   // spec for the money → price + type
+  },
+  too_small: {
+    beds:       ['beds'],
+    reception:  [],
+    plot:       ['outdoor'],   // small plot → outdoor signal
+    storage:    [],
+  },
+  poor_layout: {
+    bathrooms:  ['baths'],
+    flow:       [],
+    no_storage: [],
+  },
+  no_outdoor: {
+    no_garden:  ['outdoor'],
+    no_parking: ['parking'],   // property-level parking shortage
+  },
+  busy_road: {
+    noise:   ['outcode', 'area'],
+    safety:  ['outcode', 'area'],
+    parking: [],   // road-related parking problem ≠ property parking attribute
+  },
+  wrong_area: {
+    too_rural:  ['outcode', 'area'],
+    too_urban:  ['outcode', 'area'],
+    commute:    ['outcode', 'area'],
+    schools:    ['outcode', 'area'],
+    flood:      ['outcode', 'area'],
+  },
+  // like sub-reasons
+  great_area: {
+    quiet:       ['outcode', 'area'],
+    connected:   ['outcode', 'area'],
+    schools:     ['outcode', 'area'],
+    green_space: ['outcode', 'area'],
+    amenities:   ['outcode', 'area'],
+  },
+  good_value: {
+    under_priced:    ['price-band'],
+    price_drop:      ['price-band'],
+    space_for_money: ['price-band', 'type'],
+  },
+  right_size: {
+    beds:      ['beds'],
+    reception: [],
+    plot:      ['outdoor'],
+    storage:   [],
+  },
+  good_layout: {
+    open_plan:      [],
+    separate_rooms: [],
+    flow:           [],
+    bathrooms:      ['baths'],
+  },
+  outdoor_space: {
+    garden:  ['outdoor'],
+    patio:   ['outdoor'],
+    balcony: [],
+  },
+  parking: {
+    driveway: ['parking'],
+    garage:   ['parking'],
+    ev:       ['parking'],
+  },
+  move_in_ready: {
+    modern_finish: ['type'],
+    renovated:     [],
+    new_build:     ['type'],
+  },
+  character: {
+    period:        ['type'],
+    fireplace:     [],
+    beams:         [],
+    high_ceilings: [],
+  },
+  kitchen: {},   // no sub-reasons map to captured signals
+  light:   {},
 };
 
 /**
@@ -147,6 +252,10 @@ export function implicatedKinds(reasons) {
   for (const r of reasons) {
     const ks = REASON_SIGNAL_KINDS[r?.key];
     if (ks) for (const k of ks) kinds.add(k);
+    if (r?.detail) {
+      const subKs = SUBREASON_SIGNAL_KINDS[r.key]?.[r.detail];
+      if (subKs) for (const k of subKs) kinds.add(k);
+    }
   }
   return kinds;
 }
@@ -259,7 +368,9 @@ export function trainingProgress(reactions, opts = {}) {
  *      counts, so MIN_SIGNAL_N / confidence are unaffected.)
  *
  * @param {Array} reactions  rows { id, listing_id, reaction, reasons, created_at, listing_snapshot }
- * @param {object} [opts]    { now, halfLifeDays, maxWeight, minSignalN, smoothing, coldStartMin, unattributedDiscount }
+ * @param {object} [opts]    { now, halfLifeDays, maxWeight, minSignalN, smoothing, coldStartMin,
+ *                             unattributedDiscount, passWeight, viewedMultiplier,
+ *                             statusMap: { [listing_id]: 'viewed'|'offered'|… } }
  * @returns {{ derived: object, meta: object }}
  */
 export function deriveWeights(reactions, opts = {}) {
@@ -270,10 +381,13 @@ export function deriveWeights(reactions, opts = {}) {
   const smoothing = opts.smoothing ?? LEARNED_PREF.SMOOTHING;
   const coldMin = opts.coldStartMin ?? LEARNED_PREF.COLD_START_MIN;
   const discount = opts.unattributedDiscount ?? LEARNED_PREF.UNATTRIBUTED_DISCOUNT;
+  const passWeight = opts.passWeight ?? LEARNED_PREF.PASS_WEIGHT;
+  const viewedMult = opts.viewedMultiplier ?? LEARNED_PREF.VIEWED_MULTIPLIER;
+  const statusMap = opts.statusMap ?? {};
 
-  const graded = (Array.isArray(reactions) ? reactions : []).filter(
-    (r) => r && GRADED.has(r.reaction) && r.listing_snapshot
-  );
+  const all = Array.isArray(reactions) ? reactions : [];
+  const graded = all.filter((r) => r && GRADED.has(r.reaction) && r.listing_snapshot);
+  const passes = all.filter((r) => r && PASS.has(r.reaction)  && r.listing_snapshot);
 
   const meta = {
     coldStart: graded.length < coldMin,
@@ -291,7 +405,9 @@ export function deriveWeights(reactions, opts = {}) {
 
   for (const r of graded) {
     const ageDays = Math.max(0, (now.getTime() - new Date(r.created_at).getTime()) / 86_400_000);
-    const w = Math.pow(0.5, ageDays / halfLife);
+    const status = statusMap[r.listing_id];
+    const statusMult = (status === 'viewed' || status === 'offered') ? viewedMult : 1;
+    const w = Math.pow(0.5, ageDays / halfLife) * statusMult;
     const liked = r.reaction === 'like';
     if (liked) likedMass += w; else rejectedMass += w;
 
@@ -307,6 +423,22 @@ export function deriveWeights(reactions, opts = {}) {
       if (!e) { e = { likedW: 0, rejectedW: 0, n: 0, n_liked: 0, n_rejected: 0, reaction_ids: new Set() }; acc.set(s, e); }
       if (liked) { e.likedW += cw; e.n_liked += 1; } else { e.rejectedW += cw; e.n_rejected += 1; }
       e.n += 1;
+      e.reaction_ids.add(id);
+    }
+  }
+
+  // Passes: weak rejected signal — can only deepen existing signal, never create
+  // new signal keys (n is not incremented, so MIN_SIGNAL_N guards still apply).
+  for (const r of passes) {
+    const ageDays = Math.max(0, (now.getTime() - new Date(r.created_at).getTime()) / 86_400_000);
+    const passW = Math.pow(0.5, ageDays / halfLife) * passWeight;
+    rejectedMass += passW;
+    const id = r.id ?? `${r.listing_id}@${r.created_at}`;
+    for (const s of signalsForListing(r.listing_snapshot)) {
+      const cw = passW * discount; // always unattributed — passes carry no reasons
+      const e = acc.get(s);
+      if (!e) continue; // no graded evidence for this signal — skip
+      e.rejectedW += cw;
       e.reaction_ids.add(id);
     }
   }

@@ -712,18 +712,25 @@ export async function recomputeLearnedPreferences({ now } = {}) {
   const [sb, hid] = await Promise.all([_initSb(), _getHid()]);
   if (!sb || !hid) return null;
   let rows = [];
+  let statusMap = {};
   try {
-    const { data, error } = await sb
-      .from('listing_reactions')
-      .select('id, listing_id, reaction, reason, reasons, created_at, listing_snapshot')
-      .eq('household_id', hid);
-    if (error) throw error;
-    rows = data ?? [];
+    const [reactRes, slRes] = await Promise.all([
+      sb.from('listing_reactions')
+        .select('id, listing_id, reaction, reason, reasons, created_at, listing_snapshot')
+        .eq('household_id', hid),
+      sb.from('shortlist')
+        .select('data')
+        .eq('household_id', hid)
+        .limit(1),
+    ]);
+    if (reactRes.error) throw reactRes.error;
+    rows = reactRes.data ?? [];
+    statusMap = _normShortlist(slRes.data?.[0]?.data).status;
   } catch (e) {
     console.error('storage: recompute read listing_reactions', e.message);
     return null;
   }
-  const { derived } = deriveWeights(rows, now ? { now } : {});
+  const { derived } = deriveWeights(rows, now ? { now, statusMap } : { statusMap });
   const existing = readLocal('learned-preferences') || (await _sbGetLearnedPrefs()) || {};
   const overrides = existing.overrides ?? {};
   const dismissals = existing.dismissals ?? {};
