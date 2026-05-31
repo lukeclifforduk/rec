@@ -34,9 +34,11 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import {
   normaliseRawListing,
   isInOutcode,
+  withinGeofence,
   dedupeByRightmoveId,
   mergePriceHistory,
   haversineKm,
+  MILES_PER_KM,
 } from './listings-normalise.mjs';
 import { effectiveWeights, deriveSearchSpec, isRecent } from '../assets/js/learned-preferences.js';
 import { RECENCY_DAYS } from '../assets/js/intelligence-constants.js';
@@ -68,16 +70,29 @@ const BROWSER_HEADERS = {
 async function loadOutcodeMap() {
   const dir = resolve(root, 'data/areas');
   const files = (await readdir(dir)).filter((f) => f.endsWith('.json'));
-  const map = new Map(); // outcode → [{ id, name, lat, lng }]
+  const map = new Map(); // outcode → [{ id, name, outcode, lat, lng, geofenceRadiusKm? }]
   for (const f of files) {
     const a = JSON.parse(await readFile(resolve(dir, f), 'utf8'));
+    if (a.active === false) continue;                       // L7.5 pruning (default active)
     const oc = String(a.postcode || '').toUpperCase().trim();
     const lat = a.coords?.lat, lng = a.coords?.lng;
     if (!oc || lat == null || lng == null) continue;
     if (!map.has(oc)) map.set(oc, []);
-    map.get(oc).push({ id: a.id, name: a.name, lat: Number(lat), lng: Number(lng) });
+    map.get(oc).push({
+      id: a.id, name: a.name, outcode: oc, lat: Number(lat), lng: Number(lng),
+      geofenceRadiusKm: a.geofenceRadiusMi != null ? Number(a.geofenceRadiusMi) / MILES_PER_KM : undefined,
+    });
   }
   return map;
+}
+
+/** Flatten the outcode map into the global active-village index. The geofence is
+ *  measured GLOBALLY so a listing near a border village in a neighbouring outcode
+ *  is matched/kept correctly rather than wrongly rejected. */
+function flattenVillages(outcodeMap) {
+  const all = [];
+  for (const arr of outcodeMap.values()) for (const v of arr) all.push(v);
+  return all;
 }
 
 // ── outcode → Rightmove locationIdentifier (typeahead) ───────────────────────
@@ -257,12 +272,13 @@ async function main() {
   }
 
   const outcodeMap = await loadOutcodeMap();
+  const ALL_ACTIVE = flattenVillages(outcodeMap);          // global geofence index
   let outcodes = orderOutcodesByFocus([...outcodeMap.keys()].sort(), spec);
   if (FETCH_LIMIT) outcodes = outcodes.slice(0, FETCH_LIMIT);
-  console.log(`outcodes: ${outcodes.length} (${outcodes.join(', ')})`);
+  console.log(`outcodes: ${outcodes.length} · active villages: ${ALL_ACTIVE.length} (${outcodes.join(', ')})`);
 
   const now = new Date();
-  let totalRaw = 0, totalKept = 0, totalRejected = 0, totalWritten = 0, totalPriceChanges = 0;
+  let totalRaw = 0, totalKept = 0, totalRejected = 0, totalFlagged = 0, totalWritten = 0, totalPriceChanges = 0;
 
   for (const oc of outcodes) {
     const areas = outcodeMap.get(oc) || [];
@@ -272,22 +288,41 @@ async function main() {
       totalRaw += raw.length;
 
       const normalised = raw.map((r) => normaliseRawListing(r, { outcode: oc, source: SOURCE, now })).filter(Boolean);
-      const inRegion = normalised.filter((l) => isInOutcode(l, { outcode: oc, areaCoords: areas }));
-      const rejected = normalised.length - inRegion.length;
+
+      // L7: the DECISIVE gate is the coordinate geofence against the GLOBAL active
+      // village set — not the 20km isInOutcode wrong-region guard (kept only as a
+      // diagnostic). Coordinates decide; the listing's own name/postcode text
+      // corroborates. corroborated=false → FLAG for audit, never silently dropped.
+      const geo = normalised.map((l) => ({ l, g: withinGeofence(l, { villages: ALL_ACTIVE }) }));
+      const inBuffer = geo.filter((x) => x.g.pass).map((x) => ({
+        ...x.l,
+        area_id: x.g.area_id,
+        distance_mi: x.g.distance_mi,
+        geofence_pass: true,
+        name_match: x.g.name_match,
+        corroborated: x.g.corroborated,
+        match_source: x.g.name_match !== null ? 'coordinates+name' : 'coordinates',
+      }));
+      const rejected = normalised.length - inBuffer.length;
       totalRejected += rejected;
+      // Diagnostic only: how many of the rejected were also out of the coarse region.
+      const outOfRegion = geo.filter((x) => !x.g.pass && !isInOutcode(x.l, { outcode: oc, areaCoords: areas })).length;
 
       // v3 L4: apply the learned post-filter (excluded types + recency).
-      const onSpec = filterListingsBySpec(inRegion, spec, now);
-      const filteredOut = inRegion.length - onSpec.length;
+      const onSpec = filterListingsBySpec(inBuffer, spec, now);
+      const filteredOut = inBuffer.length - onSpec.length;
 
-      const deduped = dedupeByRightmoveId(onSpec).map((l) => ({ ...l, area_id: assignArea(l, areas) }));
+      const deduped = dedupeByRightmoveId(onSpec);          // area_id already set by the geofence
+      const flagged = deduped.filter((l) => l.corroborated === false).length;
       totalKept += deduped.length;
+      totalFlagged += flagged;
 
-      console.log(`── ${oc} (${locId}): raw ${raw.length} → in-region ${inRegion.length}${filteredOut ? ` → on-spec ${onSpec.length}` : ''} → unique ${deduped.length}${rejected ? `  [${rejected} rejected]` : ''}`);
+      console.log(`── ${oc} (${locId}): raw ${raw.length} → in-buffer ${inBuffer.length}${filteredOut ? ` → on-spec ${onSpec.length}` : ''} → unique ${deduped.length}${rejected ? `  [${rejected} out-of-buffer, ${outOfRegion} out-of-region]` : ''}${flagged ? ` · ${flagged} flagged` : ''}`);
 
       if (DRY_RUN) {
         for (const l of deduped.slice(0, 5)) {
-          console.log(`    • ${l.address ?? '—'} — £${(l.price ?? 0).toLocaleString('en-GB')} — ${l.beds ?? '?'}bd ${l.property_type ?? ''} → area ${l.area_id ?? '—'}`);
+          const flag = l.corroborated === false ? ' ⚠' : '';
+          console.log(`    • ${l.address ?? '—'} — £${(l.price ?? 0).toLocaleString('en-GB')} — ${l.beds ?? '?'}bd ${l.property_type ?? ''} → ${l.area_id ?? '—'} (${(l.distance_mi ?? 0).toFixed(1)}mi)${flag}`);
         }
         continue;
       }
@@ -320,7 +355,7 @@ async function main() {
   }
 
   console.log('\n=== SUMMARY ===');
-  console.log(`raw ${totalRaw} · kept(in-region,unique) ${totalKept} · rejected ${totalRejected} · written ${totalWritten} · price-changes ${totalPriceChanges}`);
+  console.log(`raw ${totalRaw} · kept(in-buffer,unique) ${totalKept} · out-of-buffer ${totalRejected} · flagged(corroborated=false) ${totalFlagged} · written ${totalWritten} · price-changes ${totalPriceChanges}`);
 }
 
 // Only run when invoked directly (so the orchestrator can be imported safely).
