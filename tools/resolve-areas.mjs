@@ -75,24 +75,46 @@ export function parseTypeaheadMatch(m) {
 }
 
 // ── network ───────────────────────────────────────────────────────────────────
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/** GET JSON with small exponential backoff on transient failures (429/5xx/network). */
+async function getJson(url, { headers = {}, tries = 3 } = {}) {
+  let lastErr = null;
+  for (let i = 0; i < tries; i++) {
+    try {
+      const res = await fetch(url, { headers });
+      if (res.ok) return res.json();
+      if (res.status !== 429 && res.status < 500) return null;   // hard miss, don't retry
+      lastErr = new Error(`HTTP ${res.status}`);
+    } catch (e) { lastErr = e; }
+    await wait(300 * (i + 1));
+  }
+  throw lastErr || new Error('getJson failed');
+}
+
+/**
+ * Nearest full postcode to a coordinate. Rural village centres often have no
+ * postcode within the default search radius, so fall back to wideSearch=true
+ * (postcodes.io expands the radius up to ~20km) — this is what lets the sparse
+ * Hampshire/Wiltshire villages resolve to a tight POSTCODE rather than an outcode.
+ */
 async function reverseGeocode(lat, lng) {
-  const res = await fetch(`https://api.postcodes.io/postcodes?lon=${lng}&lat=${lat}&limit=1`, { headers: { Accept: 'application/json' } });
-  if (!res.ok) throw new Error(`postcodes.io HTTP ${res.status}`);
-  const j = await res.json();
-  return j?.result?.[0]?.postcode ?? null;
+  const base = `https://api.postcodes.io/postcodes?lon=${lng}&lat=${lat}&limit=1`;
+  const headers = { Accept: 'application/json' };
+  const near = await getJson(base, { headers });
+  const hit = near?.result?.[0]?.postcode;
+  if (hit) return hit;
+  const wide = await getJson(`${base}&wideSearch=true`, { headers });
+  return wide?.result?.[0]?.postcode ?? null;
 }
 
 async function geocodePlace(name) {
-  const res = await fetch(`https://api.postcodes.io/places?q=${encodeURIComponent(name)}&limit=5`, { headers: { Accept: 'application/json' } });
-  if (!res.ok) return [];
-  const j = await res.json();
+  const j = await getJson(`https://api.postcodes.io/places?q=${encodeURIComponent(name)}&limit=5`, { headers: { Accept: 'application/json' } }).catch(() => null);
   return (j?.result || []).map((p) => ({ lat: p.latitude, lng: p.longitude, name: p.name_1 }));
 }
 
 async function typeahead(query) {
-  const res = await fetch(`https://los.rightmove.co.uk/typeahead?query=${encodeURIComponent(query)}&limit=10`, { headers: BROWSER_HEADERS });
-  if (!res.ok) throw new Error(`typeahead HTTP ${res.status}`);
-  const j = await res.json();
+  const j = await getJson(`https://los.rightmove.co.uk/typeahead?query=${encodeURIComponent(query)}&limit=10`, { headers: BROWSER_HEADERS });
   const matches = j?.matches || j?.typeAheadLocations || j?.locations || j?.suggestions || [];
   return matches.map(parseTypeaheadMatch).filter((m) => m.id);
 }

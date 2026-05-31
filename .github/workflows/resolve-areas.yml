@@ -1,4 +1,6 @@
 # resolve-areas — L7.3 per-village Rightmove resolution.
+# (rev2: wideSearch reverse-geocode + retry/backoff so rural villages resolve to a
+#  tight POSTCODE rather than falling back to a coarse outcode.)
 # Runs tools/resolve-areas.mjs on a GitHub runner (which has internet + the repo
 # secrets, unlike the Claude sandbox). For every active area it resolves the
 # tightest Rightmove locationIdentifier (so an address / town / village / postcode

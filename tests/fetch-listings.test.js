@@ -30,7 +30,7 @@ export async function register({ test, assert, assertEqual }) {
   test('fetch-listings: buildSearchTargets modes produce the right shapes', () => {
     const map = new Map([
       ['SP11', [
-        { id: 'wherwell-sp11', name: 'Wherwell', outcode: 'SP11', lat: 51.162, lng: -1.476, searchRadiusMi: 3, rightmove: { locationIdentifier: 'POSTCODE^1' } },
+        { id: 'wherwell-sp11', name: 'Wherwell', outcode: 'SP11', lat: 51.162, lng: -1.476, searchRadiusMi: 3, rightmove: { locationIdentifier: 'POSTCODE^1', identifierQuality: 'tight' } },
         { id: 'newton-stacey-sp11', name: 'Newton Stacey', outcode: 'SP11', lat: 51.177, lng: -1.454 },  // unresolved
       ]],
     ]);
@@ -44,8 +44,24 @@ export async function register({ test, assert, assertEqual }) {
     const unresolved = village.find((t) => t.label === 'newton-stacey-sp11');
     assertEqual(unresolved.locationIdentifier, null);   // falls back to outcode resolve at fetch time
 
+    // Mixed outcode (one tight + one coarse) → ONE whole-outcode search (cost-safe).
     const cluster = buildSearchTargets(map, 'cluster');
-    assert(cluster.length >= 1 && cluster.every((t) => t.outcode === 'SP11'), 'clusters carry their outcode');
+    assertEqual(cluster.length, 1, 'a coarse village forces a single outcode search');
+    assertEqual(cluster[0].locationIdentifier, null);
+    assertEqual(cluster[0].radiusMiles, null);
+    assertEqual(cluster[0].areas.length, 2, 'the outcode search still covers both villages');
+  });
+
+  test('fetch-listings: a FULLY-tight outcode clusters into tight disk searches', () => {
+    const map = new Map([
+      ['SO32', [
+        { id: 'a-so32', name: 'A', outcode: 'SO32', lat: 50.96, lng: -1.18, searchRadiusMi: 3, rightmove: { locationIdentifier: 'POSTCODE^1', identifierQuality: 'tight' } },
+        { id: 'b-so32', name: 'B', outcode: 'SO32', lat: 50.965, lng: -1.182, searchRadiusMi: 3, rightmove: { locationIdentifier: 'POSTCODE^2', identifierQuality: 'tight' } },
+      ]],
+    ]);
+    const cluster = buildSearchTargets(map, 'cluster');
+    assert(cluster.every((t) => t.locationIdentifier && t.radiusMiles != null), 'fully-tight → disk searches with a radius');
+    assert(cluster.length <= 2, 'never more searches than villages');
   });
 
   test('fetch-listings: buildSearchUrl is plain L1 without a spec', () => {

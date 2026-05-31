@@ -139,7 +139,10 @@ function clusterVillages(villages, { capMiles = CLUSTER_CAP_MI } = {}) {
  */
 function buildSearchTargets(outcodeMap, mode = SEARCH_MODE) {
   const villages = flattenVillages(outcodeMap);
-  const idOf = (v) => v.rightmove?.locationIdentifier || null;     // populated by L7.3 resolver
+  // Only a TIGHT identifier (a point: POSTCODE/REGION/STATION) earns a radius disk.
+  // A coarse OUTCODE identifier is NOT village-precise, so it counts as unresolved
+  // here and the outcode falls back to a single whole-outcode search.
+  const idOf = (v) => (v.rightmove?.identifierQuality === 'tight' ? v.rightmove.locationIdentifier : null);
 
   if (mode === 'village') {
     return villages.map((v) => ({
@@ -149,14 +152,23 @@ function buildSearchTargets(outcodeMap, mode = SEARCH_MODE) {
     }));
   }
   if (mode === 'cluster') {
+    // Cost-safe by construction: cluster NEVER issues more searches than outcode
+    // mode. An outcode with ANY unresolved (coarse) village is fetched as ONE
+    // whole-outcode search (which also covers its tight villages — a tight disk
+    // there would just overlap and double-bill). Only a FULLY-tight outcode is
+    // searched as tight disks (no whole-outcode fetch). So savings grow as
+    // resolution completes per outcode, and can never regress.
     const targets = [];
-    // Cluster within each outcode so a cluster's fallback identifier is unambiguous.
     for (const [oc, arr] of outcodeMap) {
+      const allTight = arr.every((v) => idOf(v));
+      if (!allTight) {
+        targets.push({ label: oc, outcode: oc, locationIdentifier: null, radiusMiles: null, areas: arr });
+        continue;
+      }
       for (const c of clusterVillages(arr)) {
-        const id = idOf(c.center);
         targets.push({
           label: `${oc}:${c.center.id}+${c.members.length - 1}`, outcode: oc,
-          locationIdentifier: id, radiusMiles: id ? c.radiusMiles : null, areas: c.members,
+          locationIdentifier: idOf(c.center), radiusMiles: c.radiusMiles, areas: c.members,
         });
       }
     }
