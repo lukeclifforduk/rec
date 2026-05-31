@@ -153,5 +153,14 @@
       "title": "Trainline — Micheldever station",
       "url": "https://www.thetrainline.com/stations/micheldever"
     }
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "OUTCODE^2419",
+    "identifierType": "OUTCODE",
+    "identifierQuality": "coarse",
+    "resolvedAt": "2026-05-31T16:12:57.071Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

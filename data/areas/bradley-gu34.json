@@ -101,5 +101,14 @@
     "https://www.rightmove.co.uk/house-prices/gu34.html",
     "https://www.thetrainline.com/stations/alton",
     "https://www.streetlist.co.uk/gu/gu34"
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "OUTCODE^1031",
+    "identifierType": "OUTCODE",
+    "identifierQuality": "coarse",
+    "resolvedAt": "2026-05-31T16:11:38.731Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

@@ -101,5 +101,14 @@
       "label": "Winchester City Council",
       "url": "https://www.winchester.gov.uk/"
     }
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "OUTCODE^2422",
+    "identifierType": "OUTCODE",
+    "identifierQuality": "coarse",
+    "resolvedAt": "2026-05-31T16:11:41.011Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

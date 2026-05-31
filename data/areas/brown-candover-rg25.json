@@ -130,5 +130,14 @@
     "https://files.ofsted.gov.uk/v1/file/50209502",
     "https://www.thetrainline.com/train-times/basingstoke-to-london-waterloo",
     "https://wikishire.co.uk/wiki/Brown_Candover"
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "OUTCODE^2150",
+    "identifierType": "OUTCODE",
+    "identifierQuality": "coarse",
+    "resolvedAt": "2026-05-31T16:11:48.430Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

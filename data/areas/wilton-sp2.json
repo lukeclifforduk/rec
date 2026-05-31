@@ -35,5 +35,14 @@
   "nearestStation": null,
   "primarySupermarket": null,
   "images": [],
-  "sources": []
+  "sources": [],
+  "rightmove": {
+    "locationIdentifier": "OUTCODE^2438",
+    "identifierType": "OUTCODE",
+    "identifierQuality": "coarse",
+    "resolvedAt": "2026-05-31T16:14:11.803Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

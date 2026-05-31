@@ -143,5 +143,14 @@
     "https://www.thetrainline.com/stations/alton",
     "https://www.getthedata.com/postcode/GU34-5PF",
     "https://littleplaceinthecountry.com/en/medstead-local-guide"
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "POSTCODE^356968",
+    "identifierType": "POSTCODE",
+    "identifierQuality": "tight",
+    "resolvedAt": "2026-05-31T16:13:00.656Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

@@ -136,5 +136,14 @@
       "label": "Google Maps — Stockbridge to Winchester",
       "url": "https://www.google.com/maps/dir/Stockbridge,+Hampshire/Winchester"
     }
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "OUTCODE^2418",
+    "identifierType": "OUTCODE",
+    "identifierQuality": "coarse",
+    "resolvedAt": "2026-05-31T16:13:44.364Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

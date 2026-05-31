@@ -133,5 +133,14 @@
     "https://www.wallop.hants.sch.uk/",
     "https://www.thetrainline.com/train-times/andover-to-london-waterloo",
     "https://www.testvalley.gov.uk/benefitsandcounciltax/counciltax/council-tax-charges"
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "OUTCODE^2418",
+    "identifierType": "OUTCODE",
+    "identifierQuality": "coarse",
+    "resolvedAt": "2026-05-31T16:13:04.307Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

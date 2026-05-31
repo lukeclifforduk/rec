@@ -100,5 +100,14 @@
       "label": "Google Maps — Abbotstone to Winchester",
       "url": "https://www.google.com/maps/dir/Abbotstone/Winchester"
     }
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "POSTCODE^1389530",
+    "identifierType": "POSTCODE",
+    "identifierQuality": "tight",
+    "resolvedAt": "2026-05-31T16:11:16.230Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

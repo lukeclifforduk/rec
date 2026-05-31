@@ -95,5 +95,14 @@
       "label": "Wikipedia — Winchester District",
       "url": "https://en.wikipedia.org/wiki/City_of_Winchester"
     }
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "OUTCODE^2419",
+    "identifierType": "OUTCODE",
+    "identifierQuality": "coarse",
+    "resolvedAt": "2026-05-31T16:11:26.753Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

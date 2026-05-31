@@ -137,5 +137,14 @@
       "label": "Google Maps — Broughton to Andover station",
       "url": "https://www.google.com/maps/dir/Broughton,+Stockbridge/Andover+station"
     }
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "OUTCODE^2418",
+    "identifierType": "OUTCODE",
+    "identifierQuality": "coarse",
+    "resolvedAt": "2026-05-31T16:11:46.972Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

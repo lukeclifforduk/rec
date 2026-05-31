@@ -121,5 +121,14 @@
     "https://www.rightmove.co.uk/house-prices/gu34.html",
     "https://reports.ofsted.gov.uk/provider/21/116300",
     "https://www.alton.gov.uk/shopping-in-alton/"
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "OUTCODE^1031",
+    "identifierType": "OUTCODE",
+    "identifierQuality": "coarse",
+    "resolvedAt": "2026-05-31T16:11:28.614Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

@@ -156,5 +156,14 @@
       "title": "Trainline — Winchester to London Waterloo",
       "url": "https://www.thetrainline.com/train-times/winchester-to-london-waterloo"
     }
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "OUTCODE^2418",
+    "identifierType": "OUTCODE",
+    "identifierQuality": "coarse",
+    "resolvedAt": "2026-05-31T16:12:52.025Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }

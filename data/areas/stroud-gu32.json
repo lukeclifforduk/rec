@@ -141,5 +141,14 @@
       "label": "East Hants DC — Council Tax 2026/27 (Stroud parish)",
       "url": "https://www.easthants.gov.uk/sites/default/files/2026-03/Council%20tax%20per%20valuation%20band%202026-27.pdf"
     }
-  ]
+  ],
+  "rightmove": {
+    "locationIdentifier": "OUTCODE^1029",
+    "identifierType": "OUTCODE",
+    "identifierQuality": "coarse",
+    "resolvedAt": "2026-05-31T16:13:47.956Z"
+  },
+  "geofenceRadiusMi": 3,
+  "searchRadiusMi": 3,
+  "active": true
 }
