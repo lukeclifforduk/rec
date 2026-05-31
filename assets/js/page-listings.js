@@ -72,7 +72,36 @@ function lastPriceDrop(listing) {
   return null;
 }
 
-function buildWhy(scored) {
+// Build the geofence chips (distance · village, and the ⚠ flag for an unconfirmed
+// location). Shared by the row and the deck card. `area` is the matched area record.
+function geoChips(listing, area) {
+  const chips = [];
+  if (listing.distance_mi != null && listing.area_id) {
+    const village = area?.name || listing.area_id;
+    chips.push(el('span', { class: 'listing-tag listing-tag--geo' }, `${Number(listing.distance_mi).toFixed(1)} mi · ${village}`));
+  }
+  if (listing.corroborated === false) {
+    chips.push(el('span', { class: 'listing-tag listing-tag--warn', title: 'The map position and the address text disagree on the village' }, '⚠ location unconfirmed'));
+  }
+  return chips;
+}
+
+function buildWhy(scored, listing = null, area = null) {
+  // L7 location context (never silent): surface the geofence distance and, when
+  // the two location signals disagree, an explicit caution.
+  const context = [];
+  if (listing && listing.corroborated === false) {
+    const mi = listing.distance_mi != null ? `${Number(listing.distance_mi).toFixed(1)} mi from ${area?.name || 'the nearest village'}` : `near ${area?.name || 'the nearest village'}`;
+    context.push(el('li', { class: 'listing-why__item listing-why__item--warn' }, [
+      el('span', { class: 'listing-why__sign', 'aria-hidden': 'true' }, '⚠'),
+      el('span', { class: 'listing-why__label' }, `Coordinates place this ${mi}, but the listing's address text reads differently — check the location before trusting.`),
+    ]));
+  } else if (listing && listing.distance_mi != null && area) {
+    context.push(el('li', { class: 'listing-why__item listing-why__item--context' }, [
+      el('span', { class: 'listing-why__sign', 'aria-hidden': 'true' }, '📍'),
+      el('span', { class: 'listing-why__label' }, `${Number(listing.distance_mi).toFixed(1)} mi from ${area.name}.`),
+    ]));
+  }
   const items = (scored.contributions || [])
     .slice()
     .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
@@ -93,7 +122,7 @@ function buildWhy(scored) {
   if (!items.length) items.push(el('li', { class: 'listing-why__item' }, 'No distinguishing signals — neutral fit.'));
   return el('details', { class: 'listing-why' }, [
     el('summary', {}, 'Why this verdict'),
-    el('ul', { class: 'listing-why__list' }, items),
+    el('ul', { class: 'listing-why__list' }, [...context, ...items]),
   ]);
 }
 
@@ -163,6 +192,7 @@ function buildRow(listing, idx, scored, area, ctx = {}) {
   const drop = lastPriceDrop(listing);
   if (drop) tags.push(el('span', { class: 'listing-tag listing-tag--drop' }, `↓ ${fmtPrice(drop)}`));
   if (listing.update_reason === 'new') tags.push(el('span', { class: 'listing-tag listing-tag--new' }, 'New'));
+  tags.push(...geoChips(listing, area));
   const tagRow = tags.length ? el('div', { class: 'listing-tags' }, tags) : null;
 
   const controls = ctx.onSave
@@ -196,7 +226,7 @@ function buildRow(listing, idx, scored, area, ctx = {}) {
     el('p', { class: 'listing-card__place' }, placeBits.join(' · ')),
     el('p', { class: 'listing-card__meta num' }, metaLine(listing)),
     tagRow,
-    buildWhy(scored),
+    buildWhy(scored, listing, area),
     controls,
     open,
   ].filter(Boolean));
@@ -324,6 +354,7 @@ function buildDeckCard(listing, scored, area, handlers) {
   if (listing.status && listing.status !== 'live') tags.push(el('span', { class: `listing-tag listing-tag--${listing.status}` }, STATUS_LABELS[listing.status] || listing.status));
   const drop = lastPriceDrop(listing);
   if (drop) tags.push(el('span', { class: 'listing-tag listing-tag--drop' }, `↓ ${fmtPrice(drop)}`));
+  tags.push(...geoChips(listing, area));
 
   const placeBits = [];
   if (listing.address) placeBits.push(listing.address);
@@ -347,7 +378,7 @@ function buildDeckCard(listing, scored, area, handlers) {
     el('p', { class: 'deck-card__place' }, placeBits.join(' · ')),
     el('p', { class: 'deck-card__meta num' }, metaBits.join(' · ')),
     tags.length ? el('div', { class: 'listing-tags' }, tags) : null,
-    buildWhy(scored),
+    buildWhy(scored, listing, area),
     el('div', { class: 'deck-card__links' }, [
       el('a', { class: 'deck-card__open', href: dossierHref(listing) }, 'Full details →'),
       listing.url ? el('a', { class: 'deck-card__rm btn-rm', href: listing.url, target: '_blank', rel: 'noopener' }, 'View on Rightmove ↗') : null,
