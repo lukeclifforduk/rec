@@ -17,6 +17,8 @@ export const DETAIL_FIELDS = [
   'thingsToDo', 'placesToEat', 'pros', 'cons', 'whoItSuits',
   'councilTaxBand', 'broadbandMedianMbps', 'nearestStation', 'primarySupermarket',
   'images', 'sources',
+  // Fetch-infrastructure fields written by resolve-areas.mjs — must survive build-areas rebuilds.
+  'rightmove', 'geofenceRadiusMi', 'searchRadiusMi', 'active',
 ];
 
 // Fields that count toward "researched" completeness. Each entry says how to

@@ -110,6 +110,11 @@ const areas = vRows
       images: p.images ?? [],
       sources: p.sources ?? [],
       status: p.status ?? 'directory',
+      // Preserve fields written by resolve-areas.mjs so build-areas doesn't strip them.
+      ...(p.rightmove        != null ? { rightmove: p.rightmove }               : {}),
+      ...(p.geofenceRadiusMi != null ? { geofenceRadiusMi: p.geofenceRadiusMi } : {}),
+      ...(p.searchRadiusMi   != null ? { searchRadiusMi: p.searchRadiusMi }     : {}),
+      ...(p.active           != null ? { active: p.active }                     : {}),
     };
   });
 
