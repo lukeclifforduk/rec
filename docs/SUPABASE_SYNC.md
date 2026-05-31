@@ -11,16 +11,17 @@ the table in §1 as authoritative — every data type in the app belongs to exac
 
 ## 0. Canonical table inventory (single source of truth)
 
-**Live schema = 22 curated tables** (verified via `list_tables` 2026-05-31, all RLS-enabled):
+**Live schema = 23 curated tables** (verified via `list_tables` 2026-05-31, all RLS-enabled):
 
-- **17 user-state** (per household_id, source of truth = Supabase): `profile`, `criteria`,
+- **18 user-state** (per household_id, source of truth = Supabase): `profile`, `criteria`,
   `finances`, `goals`, `shortlist`, `zones`, `journey_checks`, `contacts`, `outreach`,
   `readiness_checklist`, `investments_accounts`, `investments_history`, `debts_credit_cards`,
-  `debts_student_loans`, `debts_other`, `listing_reactions`, `learned_preferences`.
+  `debts_student_loans`, `debts_other`, `listing_reactions`, `learned_preferences`,
+  `area_confirmations`.
 - **2 content mirrors** (source of truth = repo JSON): `areas` (195 rows), `house_types` (15 rows).
 - **3 system** (Supabase-managed, never synced by Claude): `households`, `household_members`, `sync_log`.
 
-**19 of the 22 are "tracked"** for the sync contract (17 user-state + 2 content) and appear in
+**20 of the 23 are "tracked"** for the sync contract (18 user-state + 2 content) and appear in
 `data/snapshots/sync-state.json`. Note: `checklists` and `outreach_templates` have **no** mirror
 table — those catalogues are repo-JSON-only. Any other doc, test, or rule that states a different
 count is wrong and must be reconciled to this section.
@@ -41,8 +42,13 @@ tracked sync table #18.
 household_id), holding the distilled `derived` weights (Layer 2, recomputed from the
 `listing_reactions` log — base-rate calibrated · recency decayed · traceable) and the `overrides`
 (Layer 3, manual/AI intent). Created by migration `learned_preferences_l4`. RLS allows household
-members to read + insert + update. It is tracked sync table #19. Physical table count is now **24**
-(the 22 curated above + the un-curated `reports` table + the live-content `listings` table).
+members to read + insert + update. It is tracked sync table #19.
+
+**v3 Step5 addition (2026-05-31):** `area_confirmations` — a **user-state** table (one blob row per
+household_id), holding the map of explicitly user-confirmed area locations (`{ confirmed: { areaId:
+isoTimestamp } }`). Created by migration `area_confirmations_step5`. RLS allows household members to
+read + insert + update. It is tracked sync table #20. Physical table count is now **25**
+(the 23 curated above + the un-curated `reports` table + the live-content `listings` table).
 
 ---
 

@@ -369,6 +369,24 @@ CREATE POLICY "household members can update learned_preferences"
   ON learned_preferences FOR UPDATE USING (is_household_member(household_id));
 
 -- -----------------------------------------------------------------------
+-- area_confirmations (v3 Step5 — per-household area location review map)
+-- -----------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS area_confirmations (
+  id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  household_id uuid NOT NULL REFERENCES households(id) ON DELETE CASCADE,
+  data         jsonb NOT NULL DEFAULT '{}'::jsonb,
+  updated_at   timestamptz DEFAULT now(),
+  CONSTRAINT area_confirmations_household_unique UNIQUE (household_id)
+);
+
+ALTER TABLE area_confirmations ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "household members manage area_confirmations" ON area_confirmations;
+CREATE POLICY "household members manage area_confirmations"
+  ON area_confirmations
+  FOR ALL USING (is_household_member(household_id)) WITH CHECK (is_household_member(household_id));
+
+-- -----------------------------------------------------------------------
 -- updated_at trigger — applied to every data table
 -- DROP TRIGGER IF EXISTS inside a DO block is already idempotent.
 -- -----------------------------------------------------------------------
@@ -383,7 +401,7 @@ BEGIN
   FOREACH tbl IN ARRAY ARRAY[
     'profile','criteria','finances','shortlist',
     'zones','journey_checks','contacts','outreach',
-    'areas','house_types','learned_preferences'
+    'areas','house_types','learned_preferences','area_confirmations'
   ]
   LOOP
     EXECUTE format(
