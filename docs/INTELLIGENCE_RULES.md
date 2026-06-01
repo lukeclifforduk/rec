@@ -186,8 +186,15 @@ affordability comfortable +0.25 / stretch +0.10 / tight -0.05 · beds ideal +0.1
 below-min -0.30 · type preferred +0.15 / acceptable 0 / excluded -0.40 · price in-budget +0.10 /
 over-budget -0.20 · LISA-eligible +0.08 · EPC meets min +0.05.
 
+**Manual rating (`ratingMax` +0.20, POSITIVE-ONLY).** A saved listing can carry a 1–10
+priority rating (stored on the `shortlist` row). It enters `scoreListingFit` as a single
+contribution `clamp(ratingMax × (rating−1)/9, 0, ratingMax)` — rating 10 adds the full +0.20,
+rating 1 adds +0, and it is **never negative**: a low rating is a weaker boost, not a penalty.
+This keeps the user's explicit prioritisation aligned with the ranking without letting it
+demote a home below an unrated one.
+
 Constants live in `assets/js/intelligence-constants.js` (`LISTING_VERDICTS`, `FIT_BANDS`,
-`FIT_WEIGHTS`). Change them and this section together. *(v3 L2 — added 2026-05-30.)*
+`FIT_WEIGHTS`). Change them and this section together. *(v3 L2 — added 2026-05-30; rating signal 2026-06-01.)*
 
 ## Learned preferences (v3 L4)
 

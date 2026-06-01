@@ -223,11 +223,21 @@
 .listing-why__item--warn { color: color-mix(in oklch, oklch(55% 0.16 60) 70%, var(--ink)); }
 
 /* ── Reaction + personal-status controls (L3) ─────────────────────────────── */
+/* A calm vertical stack: the verbs/reasons/save picker, then the single secondary
+   control (status on the feed, priority on Saved) set off by a hairline. Reads far
+   tidier than the old wrap-and-float row. */
 .listing-controls {
-  display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
-  margin: var(--space-3) 0 0;
+  display: flex; flex-direction: column; align-items: stretch; gap: var(--space-3);
+  margin: var(--space-3) 0 0; padding-top: var(--space-3); border-top: 1px solid var(--hairline);
 }
-.listing-react { display: inline-flex; gap: var(--space-2); }
+.listing-controls > .reaction-picker--row { width: 100%; }
+.listing-controls > .listing-status-wrap,
+.listing-controls > .listing-rating-wrap {
+  align-self: flex-start; padding-top: var(--space-3); border-top: 1px solid var(--hairline);
+}
+.listing-react { display: inline-flex; flex-wrap: wrap; gap: var(--space-2); }
+/* Row-variant verbs read as proper buttons (comfortable 40px target, §10/§11). */
+.reaction-picker--row .listing-react__btn { min-height: 40px; padding: 0.4rem 0.95rem; font-size: var(--text-sm); }
 .listing-react__btn,
 .listing-chip {
   font-family: var(--font-body); font-size: var(--text-xs); line-height: 1.2;
