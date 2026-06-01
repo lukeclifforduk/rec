@@ -8,12 +8,15 @@
 import {
   getListings, getReactionLog, getCriteria, getFinances, getAreas,
   getLearnedPreferences, saveListingReaction,
+  getListingRatings, setListingRating,
 } from './storage.js';
 import { deriveFinances } from './finance-derive.js';
 import { scoreListingFit } from './listing-fit.js';
 import { effectiveWeights, listingLearnedPrefs } from './learned-preferences.js';
 import { latestPerListing, LIKE_REASONS, LIKE_SUBREASONS } from './listing-reactions.js';
 import { buildReasonPicker } from './listing-reactions-ui.js';
+import { createListingsControls } from './listings-controls.js';
+import { buildRatingControl } from './listing-rating-ui.js';
 import { url } from './config.js';
 import { el, clear } from './dom.js';
 
@@ -74,7 +77,7 @@ function metaLine(listing) {
   ].filter(Boolean).join(' · ');
 }
 
-function buildCard(listing, { reaction, onSave }) {
+function buildCard(listing, { reaction, rating, onSave, onRate }) {
   const place = [listing.address, listing.outcode].filter(Boolean).join(' · ');
   const meta = metaLine(listing);
   const content = el('div', { class: 'listing-card__content' }, [
@@ -91,6 +94,7 @@ function buildCard(listing, { reaction, onSave }) {
     buildPositives(reaction?.reasons),
     el('div', { class: 'listing-controls' }, [
       buildReasonPicker({ variant: 'row', current: reaction, onSave: (d) => onSave(listing, d) }),
+      buildRatingControl({ value: rating, onChange: (n) => onRate(listing, n) }),
     ]),
     listing.url
       ? el('a', { class: 'listing-card__rm btn-rm', href: listing.url, target: '_blank', rel: 'noopener' }, 'View on Rightmove ↗')
@@ -108,8 +112,11 @@ async function render() {
   const summaryEl = main.querySelector('[data-saved-summary]');
   if (!listEl) return;
 
-  const [listings, log, criteria, rawFinances, areas, learned] = await Promise.all([
+  const filterBar = main.querySelector('[data-listings-filter]');
+
+  const [listings, log, criteria, rawFinances, areas, learned, ratings] = await Promise.all([
     getListings({ limit: 200 }), getReactionLog(), getCriteria(), getFinances(), getAreas(), getLearnedPreferences(),
+    getListingRatings(),
   ]);
   const finances = rawFinances ? deriveFinances(rawFinances) : null;
   const areasById = new Map((areas || []).map((a) => [a.id, a]));
@@ -135,13 +142,18 @@ async function render() {
 
   const areaOf = (l) => (l.area_id ? areasById.get(l.area_id) : null);
   const scoreOf = (l) => (finances
-    ? scoreListingFit({ listing: l, finances, criteria, area: areaOf(l), learnedPrefs: listingLearnedPrefs(l, effective) })
+    ? scoreListingFit({ listing: l, finances, criteria, area: areaOf(l), learnedPrefs: listingLearnedPrefs(l, effective), rating: ratings[l.rightmove_id] })
     : null);
 
-  // Best-fit first, then most-recently liked.
-  liked.sort((a, b) =>
-    ((scoreOf(b.listing)?.score ?? -Infinity) - (scoreOf(a.listing)?.score ?? -Infinity)) ||
-    (new Date(b.created_at) - new Date(a.created_at)));
+  // Shared search/sort/filter — same module as the live feed. The saved view
+  // defaults to "Your rating" so the prioritisation you set drives the order.
+  const controls = createListingsControls({
+    scoreOf: (l) => scoreOf(l)?.score ?? 0,
+    ratingOf: (l) => Number(ratings[l.rightmove_id]) || 0,
+    areaNameOf: (l) => areaOf(l)?.name || '',
+    defaults: { sort: 'rating' },
+    onChange: () => paint(),
+  });
 
   const snapshotOf = (l) => ({
     rightmove_id: l.rightmove_id, title: l.title, address: l.address, outcode: l.outcode,
@@ -166,10 +178,22 @@ async function render() {
     return true;
   };
 
+  // Set/clear the 1–10 priority on the shortlist row, then repaint so the rating
+  // sort and the positive-only fit nudge take effect immediately.
+  const onRate = async (listing, n) => {
+    const ok = await setListingRating(listing.rightmove_id, n);
+    if (!ok) return false;
+    if (n == null) delete ratings[listing.rightmove_id];
+    else ratings[listing.rightmove_id] = n;
+    paint();
+    return true;
+  };
+
   function paint() {
     clear(listEl);
     if (summaryEl) summaryEl.textContent = '';
     if (!liked.length) {
+      if (filterBar) filterBar.hidden = true;
       listEl.appendChild(el('li', { class: 'listings-empty' }, [
         el('p', {}, 'No saved listings yet.'),
         el('p', { class: 'listings-empty__hint' }, [
@@ -180,17 +204,32 @@ async function render() {
       ]));
       return;
     }
-    for (const item of liked) {
+    if (filterBar) filterBar.hidden = false;
+
+    // Sort/filter by like-recency: stamp each liked listing's recency with the time
+    // it was liked (created_at), so "Most recent" means most-recently saved here.
+    const byId = new Map(liked.map((item) => [String(item.listing.rightmove_id), item]));
+    const pool = liked.map((item) => ({ ...item.listing, first_seen: item.created_at }));
+    const visible = controls.apply(pool);
+
+    for (const l of visible) {
+      const item = byId.get(String(l.rightmove_id));
       listEl.appendChild(buildCard(item.listing, {
         reaction: reactions[String(item.listing.rightmove_id)] || null,
+        rating: ratings[item.listing.rightmove_id] ?? null,
         onSave,
+        onRate,
       }));
     }
     if (summaryEl) {
-      summaryEl.textContent = `${liked.length} saved listing${liked.length === 1 ? '' : 's'}`;
+      const shown = visible.length;
+      summaryEl.textContent = shown === liked.length
+        ? `${liked.length} saved listing${liked.length === 1 ? '' : 's'}`
+        : `${shown} of ${liked.length} saved listings`;
     }
   }
 
+  controls.wire(filterBar, liked.map((item) => item.listing));
   paint();
 }
 

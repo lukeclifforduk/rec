@@ -106,14 +106,15 @@ const URL_KEYS = { search: 'q', sort: 'sort', type: 'type', beds: 'beds', status
  * @param {boolean}     [opts.urlSync=true] keep shareable ?q/&sort/... in the URL
  * @returns {{ state, apply, wire, populate, syncControls }}
  */
-export function createListingsControls({ scoreOf, ratingOf, areaNameOf, onChange, urlSync = true } = {}) {
-  const state = { ...DEFAULT_CONTROLS_STATE };
+export function createListingsControls({ scoreOf, ratingOf, areaNameOf, onChange, urlSync = true, defaults } = {}) {
+  const base = { ...DEFAULT_CONTROLS_STATE, ...(defaults || {}) };
+  const state = { ...base };
 
   function readStateFromURL() {
     if (!urlSync) return;
     const p = new URLSearchParams(location.search);
     for (const [k, urlKey] of Object.entries(URL_KEYS)) {
-      if (p.has(urlKey)) state[k] = p.get(urlKey) || DEFAULT_CONTROLS_STATE[k];
+      if (p.has(urlKey)) state[k] = p.get(urlKey) || base[k];
     }
   }
 
@@ -121,7 +122,7 @@ export function createListingsControls({ scoreOf, ratingOf, areaNameOf, onChange
     if (!urlSync) return;
     const p = new URLSearchParams(location.search);
     for (const [k, urlKey] of Object.entries(URL_KEYS)) {
-      if (state[k] && state[k] !== DEFAULT_CONTROLS_STATE[k]) p.set(urlKey, state[k]);
+      if (state[k] && state[k] !== base[k]) p.set(urlKey, state[k]);
       else p.delete(urlKey);
     }
     const qs = p.toString();
@@ -177,7 +178,7 @@ export function createListingsControls({ scoreOf, ratingOf, areaNameOf, onChange
     bind('beds', 'change');
     bind('status', 'change');
     root.querySelector('[data-control="clear"]')?.addEventListener('click', () => {
-      Object.assign(state, DEFAULT_CONTROLS_STATE);
+      Object.assign(state, base);
       syncControls(root);
       fire();
     });

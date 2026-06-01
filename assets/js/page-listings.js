@@ -12,7 +12,9 @@ import {
   getLearnedPreferences, recomputeLearnedPreferences,
   getReactionLog, dismissConflict,
   getReviewedListings, addReviewedListing,
+  getListingRatings,
 } from './storage.js';
+import { createListingsControls } from './listings-controls.js';
 import { detectConflicts, dismissUntil } from './meta-observations.js';
 import { deriveFinances } from './finance-derive.js';
 import { scoreListingFit } from './listing-fit.js';
@@ -415,13 +417,15 @@ async function render() {
   const conflictsEl = main.querySelector('[data-conflicts]');
   const showOOR = main.querySelector('[data-show-oor]');
   const browseOnly = main.querySelector('[data-browse-only]');
+  const filterBar = main.querySelector('[data-listings-filter]');
   const reviewCountEl = main.querySelector('[data-review-count]');
   const modeBtns = [...main.querySelectorAll('[data-mode]')];
   if (!listEl) return;
 
-  const [listings, criteria, rawFinances, areas, reactions, statuses, learned, reactionLogInit] = await Promise.all([
+  const [listings, criteria, rawFinances, areas, reactions, statuses, learned, reactionLogInit, ratings] = await Promise.all([
     getListings({ limit: 200 }), getCriteria(), getFinances(), getAreas(),
     getListingReactions(), getShortlistStatuses(), getLearnedPreferences(), getReactionLog(),
+    getListingRatings(),
   ]);
   const finances = rawFinances ? deriveFinances(rawFinances) : null;
   const areasById = new Map((areas || []).map((a) => [a.id, a]));
@@ -435,8 +439,19 @@ async function render() {
 
   const areaOf = (l) => (l.area_id ? areasById.get(l.area_id) : null);
   const scoreOf = (l) => (finances
-    ? scoreListingFit({ listing: l, finances, criteria, area: areaOf(l), learnedPrefs: listingLearnedPrefs(l, effective) })
+    ? scoreListingFit({ listing: l, finances, criteria, area: areaOf(l), learnedPrefs: listingLearnedPrefs(l, effective), rating: ratings[l.rightmove_id] })
     : { verdict: 'unknown', score: 0, gated: false, contributions: [] });
+
+  // Shared search/sort/filter (same module as the saved view). Score and rating are
+  // read from the per-paint cache below so sorting never re-runs the fit engine.
+  let scoreById = new Map();
+  const controls = createListingsControls({
+    scoreOf: (l) => scoreById.get(l.rightmove_id) ?? 0,
+    ratingOf: (l) => Number(ratings[l.rightmove_id]) || 0,
+    areaNameOf: (l) => areaOf(l)?.name || '',
+    onChange: () => { if (mode === 'browse') paint(); },
+  });
+  controls.wire(filterBar, listings);
 
   // Reviewed set (Stage 4 Browse collapse). "Reviewed" = the user pressed Save on
   // the property. Seeded from the local marker store UNION the ids that already
@@ -584,10 +599,16 @@ async function render() {
     }
     const scoredRows = listings.map((listing) => ({ listing, scored: scoreOf(listing), area: areaOf(listing) }));
     const gated = scoredRows.filter((r) => r.scored.gated);
-    const visible = includeOOR ? scoredRows : scoredRows.filter((r) => !r.scored.gated);
-    visible.sort((a, b) =>
-      (b.scored.score - a.scored.score) ||
-      (new Date(b.listing.first_seen) - new Date(a.listing.first_seen)));
+    // Refresh the per-listing score cache the controls read, then let the shared
+    // module do the search/filter/sort (default 'fit' = score desc, recency tiebreak —
+    // identical to the prior hand-rolled ordering).
+    scoreById = new Map(scoredRows.map((r) => [r.listing.rightmove_id, r.scored.score]));
+    const rowById = new Map(scoredRows.map((r) => [r.listing.rightmove_id, r]));
+    const pool = includeOOR ? scoredRows : scoredRows.filter((r) => !r.scored.gated);
+    const visible = controls
+      .apply(pool.map((r) => r.listing))
+      .map((l) => rowById.get(l.rightmove_id))
+      .filter(Boolean);
 
     // Stage 4: partition into still-to-review (top, fit-ranked) and reviewed
     // (collapsed at the bottom). Reviewed = a Saved consolidated decision.
@@ -672,6 +693,7 @@ async function render() {
     listEl.hidden = review;
     if (deckEl) deckEl.hidden = !review;
     if (browseOnly) browseOnly.hidden = review;
+    if (filterBar) filterBar.hidden = review;
     if (review) { if (summaryEl) clear(summaryEl); paintDeck(); } else { paint(); }
     updateLearning(); // re-evaluates the mode guard (hides the top widget in review)
   }
