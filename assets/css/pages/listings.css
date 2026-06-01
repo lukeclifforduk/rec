@@ -54,6 +54,10 @@
    recency window (24h or 3 days). The static site holds no actions:write token, so
    the click dispatches the workflow via the user's saved GitHub PAT (see
    listings-fetch.js). Dedup is guaranteed downstream, so re-pulling is always safe. */
+/* Confirm-before-fetch dialog footer: buttons inline-right, not stacked full-width. */
+.confirm-dialog .dialog-foot { display: flex; justify-content: flex-end; gap: var(--space-3); }
+.confirm-dialog .dialog-foot button { margin: 0; min-height: 44px; width: auto; }
+
 .listings-fetch-group { display: inline-flex; flex-wrap: wrap; gap: var(--space-2); }
 .listings-fetch-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);

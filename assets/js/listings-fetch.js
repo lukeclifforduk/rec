@@ -13,7 +13,7 @@
 // Re-pulling the same window is always safe: dedup is guaranteed downstream by
 // the `rightmove_id` UNIQUE constraint + UPSERT merge, independent of timing.
 
-import { byId } from './dom.js';
+import { byId, el } from './dom.js';
 
 const GH_PAT_KEY = 'rec:gh-pat';
 const GH_REPO    = 'seanparkerai/rec';
@@ -54,6 +54,32 @@ export function isValidPat(token) {
 
 function loadPat()  { try { return localStorage.getItem(GH_PAT_KEY) || ''; } catch { return ''; } }
 function savePat(t) { try { localStorage.setItem(GH_PAT_KEY, t); } catch { /* private mode */ } }
+
+/** Native-<dialog> confirmation before dispatching a pull. Resolves true only if
+ *  the user confirms (Cancel, Escape and backdrop click all resolve false). */
+function confirmFetch(days) {
+  const label = windowLabel(days);
+  return new Promise((resolve) => {
+    const cancelBtn = el('button', { type: 'button', class: 'outline secondary' }, 'Cancel');
+    const okBtn = el('button', { type: 'button' }, `Pull ${label}`);
+    const dlg = el('dialog', { class: 'confirm-dialog', 'aria-labelledby': 'confirm-fetch-title' }, [
+      el('article', {}, [
+        el('header', { class: 'dialog-head' }, el('h2', { id: 'confirm-fetch-title' }, 'Pull new listings?')),
+        el('p', {}, `This starts the ${label} Rightmove pull on GitHub Actions. New listings appear within a few minutes once the run finishes — refresh the page to see them.`),
+        el('footer', { class: 'dialog-foot' }, [cancelBtn, okBtn]),
+      ]),
+    ]);
+    let done = false;
+    const finish = (val) => { if (done) return; done = true; resolve(val); dlg.close(); };
+    cancelBtn.addEventListener('click', () => finish(false));
+    okBtn.addEventListener('click', () => finish(true));
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) finish(false); }); // backdrop
+    dlg.addEventListener('close', () => { if (!done) resolve(false); dlg.remove(); });
+    document.body.appendChild(dlg);
+    dlg.showModal();
+    okBtn.focus();
+  });
+}
 
 // ── DOM wiring ──────────────────────────────────────────────────────────────
 export function wireListingsFetch(root = document) {
@@ -122,7 +148,10 @@ export function wireListingsFetch(root = document) {
     }
   }
 
-  buttons.forEach((b) => b.addEventListener('click', () => dispatch(Number(b.dataset.fetchDays))));
+  buttons.forEach((b) => b.addEventListener('click', async () => {
+    const days = Number(b.dataset.fetchDays);
+    if (await confirmFetch(days)) dispatch(days);
+  }));
 
   tokenBtn?.addEventListener('click', () => {
     const val = (tokenIn?.value || '').trim();
