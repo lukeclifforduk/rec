@@ -59,6 +59,7 @@ const { register: registerFetchListings } = await import('../tests/fetch-listing
 const { register: registerListingsFetchCtl } = await import('../tests/listings-fetch.test.js');
 const { register: registerMetaObservations } = await import('../tests/meta-observations.test.js');
 const { register: registerListingDetail } = await import('../tests/listing-detail.test.js');
+const { register: registerListingsControls } = await import('../tests/listings-controls.test.js');
 const { register: registerDomUtils }                 = await import('../tests/dom-utils.test.js');
 const { register: registerCharacterizationHome }     = await import('../tests/characterization-home.test.js');
 const { register: registerCharacterizationFinances } = await import('../tests/characterization-finances.test.js');
@@ -84,6 +85,7 @@ await registerFetchListings({ test, assert, assertEqual, fixtures });
 await registerListingsFetchCtl({ test, assert, assertEqual });
 await registerMetaObservations({ test, assert, assertEqual, fixtures });
 await registerListingDetail({ test, assert, assertEqual, fixtures });
+await registerListingsControls({ test, assert, assertEqual });
 await registerDomUtils({ test, assert, assertEqual });
 await registerCharacterizationHome({ test, assert, assertEqual, fixtures });
 await registerCharacterizationFinances({ test, assert, assertEqual, fixtures });
