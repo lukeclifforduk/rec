@@ -21,21 +21,54 @@
 .listings-toggle input { margin: 0; }
 .listings-actions { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
 
-/* "Fetch new listings" — a deep link to the GitHub Actions run page (the static
-   site cannot hold an actions:write token, so it hands off to GitHub). */
-.listings-fetch {
-  display: inline-flex; align-items: center; gap: var(--space-2);
+/* "Pull listings" — trigger the fetch-listings workflow with an explicit Rightmove
+   recency window (24h or 3 days). The static site holds no actions:write token, so
+   the click dispatches the workflow via the user's saved GitHub PAT (see
+   listings-fetch.js). Dedup is guaranteed downstream, so re-pulling is always safe. */
+.listings-fetch-group { display: inline-flex; flex-wrap: wrap; gap: var(--space-2); }
+.listings-fetch-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
   min-height: 44px; padding: 0.4rem 0.9rem; /* full 44px touch target (§10) */
   font-family: var(--font-body); font-size: var(--text-sm); font-weight: 500;
-  color: var(--paper); text-decoration: none;
+  color: var(--paper); cursor: pointer;
   background: color-mix(in oklch, var(--accent) 80%, var(--ink));
   border: 1px solid color-mix(in oklch, var(--accent) 80%, var(--ink));
   border-radius: var(--rec-radius-sm);
-  transition: background 0.12s, border-color 0.12s;
+  transition: background 0.12s, border-color 0.12s, opacity 0.12s;
 }
-.listings-fetch:hover { background: var(--accent); border-color: var(--accent); }
-.listings-fetch:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
-.listings-fetch__ext { font-size: var(--text-base); line-height: 1; }
+.listings-fetch-btn:hover { background: var(--accent); border-color: var(--accent); }
+.listings-fetch-btn:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+.listings-fetch-btn:disabled { opacity: 0.55; cursor: progress; }
+
+/* Status line + token box wrap onto their own full-width row beneath the controls. */
+.listings-fetch-status {
+  flex-basis: 100%; width: 100%; margin: var(--space-1) 0 0;
+  font-family: var(--font-data); font-feature-settings: "tnum";
+  font-size: var(--text-sm); color: var(--ink-muted);
+}
+.listings-fetch-status[hidden] { display: none; }
+.listings-fetch-status.is-ok  { color: var(--positive); }
+.listings-fetch-status.is-err { color: var(--danger); }
+
+.listings-fetch-token {
+  flex-basis: 100%; width: 100%; margin: var(--space-2) 0 0; padding: var(--space-3);
+  border: 1px solid var(--hairline); border-radius: var(--rec-radius-sm);
+}
+.listings-fetch-token[hidden] { display: none; }
+.listings-fetch-token > label {
+  display: block; margin: 0 0 var(--space-2);
+  font-size: var(--text-sm); color: var(--ink);
+}
+.listings-fetch-token-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.listings-fetch-token-row input {
+  flex: 1 1 16rem; min-height: 44px; margin: 0;
+  font-family: var(--font-data); font-size: var(--text-sm);
+}
+.listings-fetch-token-row button {
+  min-height: 44px; margin: 0; padding: 0.4rem 0.9rem;
+  font-size: var(--text-sm); white-space: nowrap;
+}
+.listings-fetch-token-hint { margin: var(--space-2) 0 0; font-size: var(--text-xs); color: var(--ink-muted); }
 
 /* ── List + media cards (overhauled) ──────────────────────────────────────────
    Editorial media rows: a cover-cropped photo + a generously-spaced content

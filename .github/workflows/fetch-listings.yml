@@ -27,6 +27,15 @@ on:
         description: 'Foundation pull (14-day backfill). ALWAYS dry-run first to review projected cost before enabling writes.'
         type: boolean
         default: false
+      max_days_since_added:
+        description: 'Recency window in days. Rightmove accepts 1, 3, 7, 14 only; any other value returns 0 results. Ignored when foundation_mode is on (forces 14).'
+        type: choice
+        default: '1'
+        options:
+          - '1'
+          - '3'
+          - '7'
+          - '14'
       search_mode:
         description: 'Search granularity: outcode (whole districts), village (per-village disks), or cluster (recommended)'
         type: choice
@@ -78,9 +87,10 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
           # foundation_mode overrides the recency window to 14 days in the fetcher.
-          # Scheduled runs always use the 24h window (MAX_DAYS_SINCE_ADDED=1).
+          # Scheduled runs carry no inputs, so the `|| '1'` fallback keeps them on the
+          # 24h window; manual dispatch can pick 1/3/7/14 via max_days_since_added.
           FOUNDATION_MODE: ${{ inputs.foundation_mode && '1' || '0' }}
-          MAX_DAYS_SINCE_ADDED: '1'
+          MAX_DAYS_SINCE_ADDED: ${{ inputs.max_days_since_added || '1' }}
           # Hard spend cap: actor self-terminates at this USD limit (PPE — no overrun).
           # Dispatch can override; scheduled runs use the hardcoded default of $25.
           APIFY_MAX_BUDGET_USD: ${{ inputs.apify_budget_usd || '25' }}

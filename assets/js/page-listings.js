@@ -26,6 +26,7 @@ import {
 import { LEARNED_PREF, RECENCY_DAYS } from './intelligence-constants.js';
 import { url } from './config.js';
 import { el, clear } from './dom.js';
+import { wireListingsFetch } from './listings-fetch.js';
 
 const dossierHref = (listing) => `${url('pages/property.html')}?id=${encodeURIComponent(listing.rightmove_id)}`;
 
@@ -683,4 +684,5 @@ async function render() {
   setMode('browse');
 }
 
+wireListingsFetch();
 render();

@@ -56,6 +56,7 @@ const { register: registerListingFit } = await import('../tests/listing-fit.test
 const { register: registerListingReactions } = await import('../tests/listing-reactions.test.js');
 const { register: registerLearnedPreferences } = await import('../tests/learned-preferences.test.js');
 const { register: registerFetchListings } = await import('../tests/fetch-listings.test.js');
+const { register: registerListingsFetchCtl } = await import('../tests/listings-fetch.test.js');
 const { register: registerMetaObservations } = await import('../tests/meta-observations.test.js');
 const { register: registerListingDetail } = await import('../tests/listing-detail.test.js');
 const { register: registerDomUtils }                 = await import('../tests/dom-utils.test.js');
@@ -80,6 +81,7 @@ await registerListingFit({ test, assert, assertEqual, fixtures });
 await registerListingReactions({ test, assert, assertEqual, fixtures });
 await registerLearnedPreferences({ test, assert, assertEqual, fixtures });
 await registerFetchListings({ test, assert, assertEqual, fixtures });
+await registerListingsFetchCtl({ test, assert, assertEqual });
 await registerMetaObservations({ test, assert, assertEqual, fixtures });
 await registerListingDetail({ test, assert, assertEqual, fixtures });
 await registerDomUtils({ test, assert, assertEqual });
