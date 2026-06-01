@@ -49,9 +49,11 @@ const EPC_RANK = { A: 7, B: 6, C: 5, D: 4, E: 3, F: 2, G: 1 };
  * @param {object} [args.area]        the matched area record (for council tax etc).
  * @param {object} [args.learnedPrefs] L4 effective preference weights (signal→weight).
  *                                      Empty/absent in L2 — the seam is reserved here.
+ * @param {number} [args.rating]       manual 1–10 saved-listing priority. Applied
+ *                                      positive-only (see FIT_WEIGHTS.ratingMax).
  * @returns {{verdict, score, gated, contributions, affordability}}
  */
-export function scoreListingFit({ listing, finances, criteria, area, learnedPrefs } = {}) {
+export function scoreListingFit({ listing, finances, criteria, area, learnedPrefs, rating } = {}) {
   const contributions = [];
   const add = (signal, label, delta, detail) => {
     if (!delta) return;
@@ -128,6 +130,15 @@ export function scoreListingFit({ listing, finances, criteria, area, learnedPref
       const w = Number(weight);
       if (w) add(`learned:${signal}`, `Learned preference: ${signal}`, w);
     }
+  }
+
+  // 4. MANUAL RATING (1–10). Positive-only: full ratingMax at 10, linearly to +0 at
+  // 1, and never below 0 — a low rating is a weaker boost, not a penalty.
+  const r = Number(rating);
+  if (Number.isFinite(r) && r >= 1) {
+    const clamped = Math.min(10, r);
+    const delta = Math.max(0, W.ratingMax * (clamped - 1) / 9);
+    if (delta) add('rating', `You rated this ${Math.round(clamped)}/10`, delta);
   }
 
   for (const c of contributions) score += c.delta;

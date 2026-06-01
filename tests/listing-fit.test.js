@@ -52,4 +52,33 @@ export async function register({ test, assert, assertEqual, fixtures }) {
     assert(boosted.score >= base.score, 'positive learned weight does not lower the score');
     assert(boosted.contributions.some((c) => c.signal.startsWith('learned:')), 'learned contribution surfaced');
   });
+
+  test('listing-fit: a rating of 1 adds no contribution (positive-only floor)', () => {
+    const base = scoreListingFit({ listing: mk(), finances, criteria });
+    const rated = scoreListingFit({ listing: mk(), finances, criteria, rating: 1 });
+    assertEqual(rated.score, base.score);
+    assert(!rated.contributions.some((c) => c.signal === 'rating'), 'no rating contribution at rating 1');
+  });
+
+  test('listing-fit: a rating of 10 adds the full positive rating contribution', () => {
+    const base = scoreListingFit({ listing: mk(), finances, criteria });
+    const rated = scoreListingFit({ listing: mk(), finances, criteria, rating: 10 });
+    assert(rated.score >= base.score, 'a top rating never lowers the score');
+    const c = rated.contributions.find((x) => x.signal === 'rating');
+    assert(c && c.delta === 0.2, `rating 10 contributes ratingMax, got ${c && c.delta}`);
+  });
+
+  test('listing-fit: a mid rating boosts less than a top rating, never negative', () => {
+    const mid = scoreListingFit({ listing: mk(), finances, criteria, rating: 5 });
+    const top = scoreListingFit({ listing: mk(), finances, criteria, rating: 10 });
+    const midC = mid.contributions.find((x) => x.signal === 'rating');
+    assert(midC && midC.delta > 0 && midC.delta < 0.2, `mid rating between 0 and max, got ${midC && midC.delta}`);
+    assert(top.score >= mid.score, 'higher rating ranks at least as high');
+  });
+
+  test('listing-fit: an absent rating leaves the score unchanged', () => {
+    const base = scoreListingFit({ listing: mk(), finances, criteria });
+    const noRating = scoreListingFit({ listing: mk(), finances, criteria, rating: undefined });
+    assertEqual(noRating.score, base.score);
+  });
 }

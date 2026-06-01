@@ -60,6 +60,10 @@ export const FIT_WEIGHTS = {
   priceOverBudget: -0.20,
   lisaEligible: 0.08,
   epcMeetsMin: 0.05,
+  // Manual 1–10 saved-listing priority rating, applied POSITIVE-ONLY: the full
+  // ratingMax at 10, scaling linearly to +0 at 1 (a low rating is a weaker boost,
+  // never a penalty). Kept ≤ the strongest positive (affordabilityComfortable).
+  ratingMax: 0.20,
 };
 
 // ── Learned preferences (v3 L4) ──────────────────────────────────────────────
