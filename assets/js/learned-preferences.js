@@ -172,6 +172,8 @@ export const REASON_SIGNAL_KINDS = {
   poor_layout:   ['baths'],
   needs_work:    ['type'],   // work-intensity correlates with property type/age
   no_outdoor:    ['outdoor'],
+  wrong_house_type: ['type'],   // explicit "not this kind of home" → property type
+
   // like reasons (positive)
   great_area:    ['outcode', 'area'],
   good_value:    ['price-band'],
@@ -230,6 +232,13 @@ export const SUBREASON_SIGNAL_KINDS = {
     commute:    ['outcode', 'area'],
     schools:    ['outcode', 'area'],
     flood:      ['outcode', 'area'],
+  },
+  wrong_house_type: {
+    mid_terrace: ['type'],
+    maisonette:  ['type'],
+    flat:        ['type'],
+    apartment:   ['type'],
+    caravan:     ['type'],
   },
   // like sub-reasons
   great_area: {

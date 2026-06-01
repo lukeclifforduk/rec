@@ -95,6 +95,15 @@ export async function register({ test, assert, assertEqual }) {
     assert(Array.isArray(LIKE_SUBREASONS.great_area), 'great_area sub-reasons present');
   });
 
+  test('reactions: wrong_house_type is a reject reason with its house-type sub-chips', () => {
+    assert(REJECT_REASONS.some((r) => r.key === 'wrong_house_type'), 'wrong_house_type is a reject reason');
+    assert(isReasonKey('wrong_house_type'), 'wrong_house_type is a recognised reason key');
+    for (const sub of ['mid_terrace', 'maisonette', 'flat', 'apartment', 'caravan']) {
+      assert(isSubReasonKey('wrong_house_type', sub), `${sub} is a wrong_house_type sub-reason`);
+    }
+    assert(!isSubReasonKey('wrong_house_type', 'commute'), 'commute does not belong to wrong_house_type');
+  });
+
   test('reactions: like vocabulary covers feature-level positives + sub-reasons', () => {
     // The positive-feedback overhaul adds feature-level like chips so the user can
     // call out the specific elements they love.

@@ -146,6 +146,10 @@ export async function register({ test, assert, assertEqual }) {
     assert(!implicatedKinds([{ key: 'wrong_area' }]).has('beds'), 'wrong_area does not implicate beds');
     assertEqual(implicatedKinds([{ key: 'other' }]).size, 0, 'unmappable reason → empty set (generic discount)');
     assert(Array.isArray(REASON_SIGNAL_KINDS.too_small), 'attribution map is exported');
+    // wrong_house_type (primary and each sub-chip) attributes to the property type signal.
+    assert(implicatedKinds([{ key: 'wrong_house_type' }]).has('type'), 'wrong_house_type → type');
+    assert(implicatedKinds([{ key: 'wrong_house_type', detail: 'maisonette' }]).has('type'), 'wrong_house_type:maisonette → type');
+    assert(!implicatedKinds([{ key: 'wrong_house_type' }]).has('area'), 'wrong_house_type does not implicate area');
   });
 
   test('learned-prefs: wrong_area rejects sharpen outcode/area, NOT beds/price (attribution)', () => {

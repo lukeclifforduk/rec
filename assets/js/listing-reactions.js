@@ -28,6 +28,7 @@ export const REJECT_REASONS = [
   { key: 'no_outdoor',    label: 'No outdoor space' },
   { key: 'poor_layout',   label: 'Poor layout' },
   { key: 'busy_road',     label: 'Busy road / location' },
+  { key: 'wrong_house_type', label: 'Wrong house type' },
 ];
 
 const REJECT_REASON_KEYS = new Set(REJECT_REASONS.map((r) => r.key));
@@ -75,6 +76,13 @@ export const REJECT_SUBREASONS = {
     { key: 'noise',   label: 'Noise' },
     { key: 'safety',  label: 'Road safety' },
     { key: 'parking', label: 'Parking' },
+  ],
+  wrong_house_type: [
+    { key: 'mid_terrace', label: 'Mid-terrace' },
+    { key: 'maisonette',  label: 'Maisonette' },
+    { key: 'flat',        label: 'Flat' },
+    { key: 'apartment',   label: 'Apartment' },
+    { key: 'caravan',     label: 'Caravan / park home' },
   ],
 };
 
