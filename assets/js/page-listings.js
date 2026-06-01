@@ -15,6 +15,7 @@ import {
   getListingRatings,
 } from './storage.js';
 import { createListingsControls } from './listings-controls.js';
+import { wireReturnTracking, restoreListFocus } from './listing-nav.js';
 import { detectConflicts, dismissUntil } from './meta-observations.js';
 import { deriveFinances } from './finance-derive.js';
 import { scoreListingFit } from './listing-fit.js';
@@ -30,7 +31,7 @@ import { url } from './config.js';
 import { el, clear } from './dom.js';
 import { wireListingsFetch } from './listings-fetch.js';
 
-const dossierHref = (listing) => `${url('pages/property.html')}?id=${encodeURIComponent(listing.rightmove_id)}`;
+const dossierHref = (listing) => `${url('pages/property.html')}?id=${encodeURIComponent(listing.rightmove_id)}&from=listings`;
 
 const mapBtn = (listing) => {
   if (listing.lat == null || listing.lng == null) return null;
@@ -700,10 +701,14 @@ async function render() {
   modeBtns.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
   if (showOOR) showOOR.addEventListener('change', () => { if (mode === 'browse') paint(); });
 
+  wireReturnTracking(listEl, 'listings');
+
   updateLearning();
   updateReviewCount();
   updateConflicts();
   setMode('browse');
+  // After the first Browse paint, snap focus back to the card the user came from.
+  restoreListFocus(listEl, 'listings');
 }
 
 wireListingsFetch();

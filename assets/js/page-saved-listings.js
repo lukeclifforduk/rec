@@ -17,10 +17,11 @@ import { latestPerListing, LIKE_REASONS, LIKE_SUBREASONS } from './listing-react
 import { buildReasonPicker } from './listing-reactions-ui.js';
 import { createListingsControls } from './listings-controls.js';
 import { buildRatingControl } from './listing-rating-ui.js';
+import { wireReturnTracking, restoreListFocus } from './listing-nav.js';
 import { url } from './config.js';
 import { el, clear } from './dom.js';
 
-const dossierHref = (id) => `${url('pages/property.html')}?id=${encodeURIComponent(id)}`;
+const dossierHref = (id) => `${url('pages/property.html')}?id=${encodeURIComponent(id)}&from=saved`;
 const fmtPrice = (n) => (n == null ? '—' : '£' + Math.round(n).toLocaleString('en-GB'));
 
 // like key → label, and parent → { sub key → label }, for the read-only positives.
@@ -230,7 +231,9 @@ async function render() {
   }
 
   controls.wire(filterBar, liked.map((item) => item.listing));
+  wireReturnTracking(listEl, 'saved');
   paint();
+  restoreListFocus(listEl, 'saved');
 }
 
 render();

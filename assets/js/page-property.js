@@ -10,6 +10,7 @@ import {
   getListingReactions, saveListingReaction,
   getShortlistStatuses, setShortlistStatus,
   getLearnedPreferences, recomputeLearnedPreferences,
+  getListingRatings, setListingRating,
 } from './storage.js';
 import { deriveFinances } from './finance-derive.js';
 import { scoreListingFit } from './listing-fit.js';
@@ -17,8 +18,19 @@ import { effectiveWeights, listingLearnedPrefs, describeSignal } from './learned
 import { galleryImages, floorplanImages, priceHistorySeries, netPriceChange } from './listing-detail.js';
 import { PERSONAL_STATUSES } from './listing-reactions.js';
 import { buildReasonPicker } from './listing-reactions-ui.js';
+import { buildRatingControl } from './listing-rating-ui.js';
+import { backTargetFrom } from './listing-nav.js';
 import { url } from './config.js';
 import { el, clear, byId } from './dom.js';
+
+// Reusable Google-Maps button (same idiom as the listings feed). Null unless the
+// listing carries coordinates.
+const mapBtn = (listing) => {
+  if (listing.lat == null || listing.lng == null) return null;
+  const a = el('a', { class: 'btn-map', href: `https://maps.google.com/?q=${listing.lat},${listing.lng}`, target: '_blank', rel: 'noopener', 'aria-label': 'Open location in Google Maps' });
+  a.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false"><path d="M8 1.5C5.515 1.5 3.5 3.515 3.5 6c0 3.5 4.5 8.5 4.5 8.5s4.5-5 4.5-8.5C12.5 3.515 10.485 1.5 8 1.5zm0 6.25A1.75 1.75 0 1 1 8 4.25a1.75 1.75 0 0 1 0 3.5z" fill="currentColor"/></svg><span class="btn-map__text">Open maps</span>`;
+  return a;
+};
 
 const VERDICT_LABELS = { strong: 'Strong match', possible: 'Possible match', stretch: 'Stretch', weak: 'Weak match', reject: 'Reject', unknown: 'Unscored' };
 const STATUS_LABELS = { live: 'For sale', under_offer: 'Under offer', sstc: 'Sold STC', withdrawn: 'Withdrawn' };
@@ -53,9 +65,13 @@ function buildGallery(listing) {
   const next = el('button', { type: 'button', class: 'dossier-gallery__nav dossier-gallery__nav--next', 'aria-label': 'Next photo' }, '›');
   const multi = imgs.length > 1;
 
+  // Full-screen affordance: the hero image and an explicit expand button both
+  // open the lightbox (Phase 7). Built lazily on first open.
+  const expand = el('button', { type: 'button', class: 'dossier-gallery__expand', 'aria-label': 'View photos full screen' }, '⤢');
   const main = el('div', { class: 'dossier-gallery__main' },
-    [mainImg, multi ? prev : null, multi ? next : null, counter].filter(Boolean));
+    [mainImg, multi ? prev : null, multi ? next : null, expand, counter].filter(Boolean));
   mainImg.addEventListener('error', () => { main.classList.add('is-broken'); }, { once: true });
+  mainImg.style.cursor = 'zoom-in';
 
   let thumbBtns = [];
   const show = (n) => {
@@ -69,6 +85,45 @@ function buildGallery(listing) {
   };
   prev.addEventListener('click', () => show(i - 1));
   next.addEventListener('click', () => show(i + 1));
+
+  // ── Lightbox (native <dialog>, full-screen) ────────────────────────────────
+  let lb = null, lbImg = null, lbCounter = null, lbIdx = 0;
+  const lbShow = (n) => {
+    lbIdx = (n + imgs.length) % imgs.length;
+    lbImg.src = imgs[lbIdx];
+    if (lbCounter) lbCounter.textContent = `${lbIdx + 1} / ${imgs.length}`;
+  };
+  const ensureLightbox = () => {
+    if (lb) return lb;
+    lbImg = el('img', { class: 'lightbox__img', alt: listing.title || 'Property photo', decoding: 'async', referrerpolicy: 'no-referrer' });
+    lbCounter = el('span', { class: 'lightbox__count num' });
+    const lbPrev = el('button', { type: 'button', class: 'lightbox__nav lightbox__nav--prev', 'aria-label': 'Previous photo' }, '‹');
+    const lbNext = el('button', { type: 'button', class: 'lightbox__nav lightbox__nav--next', 'aria-label': 'Next photo' }, '›');
+    const lbClose = el('button', { type: 'button', class: 'lightbox__close', 'aria-label': 'Close full-screen viewer' }, '✕');
+    lbPrev.addEventListener('click', () => lbShow(lbIdx - 1));
+    lbNext.addEventListener('click', () => lbShow(lbIdx + 1));
+    lbClose.addEventListener('click', () => lb.close());
+    const stage = el('div', { class: 'lightbox__stage' }, [lbImg, multi ? lbPrev : null, multi ? lbNext : null].filter(Boolean));
+    lb = el('dialog', { class: 'lightbox', 'aria-label': `Photos (${imgs.length})` }, [
+      el('div', { class: 'lightbox__bar' }, [lbCounter, lbClose]),
+      stage,
+    ]);
+    if (multi) {
+      lb.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') { e.preventDefault(); lbShow(lbIdx + 1); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); lbShow(lbIdx - 1); }
+      });
+    }
+    // Click the dialog backdrop or the empty stage area (not the image/controls) to close.
+    lb.addEventListener('click', (e) => { if (e.target === lb || e.target === stage) lb.close(); });
+    // Keep the inline gallery in sync with wherever the lightbox ended.
+    lb.addEventListener('close', () => show(lbIdx));
+    document.body.appendChild(lb);
+    return lb;
+  };
+  const openLightbox = () => { ensureLightbox(); lbShow(i); lb.showModal(); };
+  mainImg.addEventListener('click', openLightbox);
+  expand.addEventListener('click', openLightbox);
 
   // Keyboard arrows when the gallery (or anything inside it) has focus.
   const wrap = el('div', { class: 'dossier-gallery', tabindex: '0', role: 'group', 'aria-label': `Photos (${imgs.length})` });
@@ -116,9 +171,15 @@ function buildHeadline(listing, scored) {
     el('h1', { class: 'dossier-head__title' }, listing.title || `${listing.beds ?? '?'}-bed ${listing.property_type || 'property'}`),
     placeBits.length ? el('p', { class: 'dossier-head__place' }, placeBits.join(' · ')) : null,
     tags.length ? el('div', { class: 'listing-tags' }, tags) : null,
-    // Stage 6a: the external Rightmove link as the most obvious action, up top.
-    listing.url
-      ? el('a', { class: 'dossier-head__rm btn-rm btn-rm--primary', href: listing.url, target: '_blank', rel: 'noopener' }, 'View on Rightmove ↗')
+    // Stage 6a: the external Rightmove link as the most obvious action, up top,
+    // alongside an Open-maps button when the listing has coordinates.
+    (listing.url || mapBtn(listing))
+      ? el('div', { class: 'dossier-head__actions' }, [
+          listing.url
+            ? el('a', { class: 'dossier-head__rm btn-rm btn-rm--primary', href: listing.url, target: '_blank', rel: 'noopener' }, 'View on Rightmove ↗')
+            : null,
+          mapBtn(listing),
+        ].filter(Boolean))
       : null,
   ].filter(Boolean));
 }
@@ -252,7 +313,7 @@ function buildAreaCard(area) {
 // The Rightmove link now lives prominently in the dossier header (buildHeadline),
 // not buried here. The shared picker gives the same multi-select reasons +
 // sub-reasons + Save as the listings surfaces.
-function buildActions(listing, current, onSave, onStatus) {
+function buildActions(listing, current, onSave, onStatus, onRate) {
   const sel = el('select', { class: 'listing-status', 'aria-label': 'Personal status' }, [
     el('option', { value: '' }, 'No status'),
     ...PERSONAL_STATUSES.map((s) => el('option', { value: s, selected: current?.status === s }, PERSONAL_STATUS_LABELS[s])),
@@ -262,7 +323,10 @@ function buildActions(listing, current, onSave, onStatus) {
   return el('div', { class: 'dossier-actions' }, [
     el('p', { class: 'dossier-card__label' }, 'Your call'),
     buildReasonPicker({ variant: 'dossier', current, onSave }),
-    el('label', { class: 'listing-status-wrap' }, [el('span', { class: 'listing-status__label' }, 'Status'), sel]),
+    el('div', { class: 'dossier-actions__row' }, [
+      el('label', { class: 'listing-status-wrap' }, [el('span', { class: 'listing-status__label' }, 'Status'), sel]),
+      buildRatingControl({ value: current?.rating ?? null, onChange: onRate }),
+    ]),
   ]);
 }
 
@@ -284,20 +348,22 @@ async function render() {
   const listing = await getListing(id);
   if (!listing) { notFound(mount, 'Listing not found'); return; }
 
-  const [rawFinances, criteria, areas, reactions, statuses, learned] = await Promise.all([
+  const [rawFinances, criteria, areas, reactions, statuses, learned, ratings] = await Promise.all([
     getFinances(), getCriteria(), getAreas(), getListingReactions(), getShortlistStatuses(), getLearnedPreferences(),
+    getListingRatings(),
   ]);
   const finances = rawFinances ? deriveFinances(rawFinances) : null;
   const area = (areas || []).find((a) => a.id === listing.area_id) || null;
   const effective = effectiveWeights(learned?.derived || {}, learned?.overrides || {});
   const scored = finances
-    ? scoreListingFit({ listing, finances, criteria, area, learnedPrefs: listingLearnedPrefs(listing, effective) })
+    ? scoreListingFit({ listing, finances, criteria, area, learnedPrefs: listingLearnedPrefs(listing, effective), rating: ratings[listing.rightmove_id] })
     : { verdict: 'unknown', score: 0, gated: false, contributions: [] };
 
   const current = {
     reaction: reactions[listing.rightmove_id]?.reaction || null,
     reasons: reactions[listing.rightmove_id]?.reasons || [],
     status: statuses[listing.rightmove_id] || '',
+    rating: ratings[listing.rightmove_id] ?? null,
   };
   const snapshotOf = (l) => ({
     rightmove_id: l.rightmove_id, title: l.title, address: l.address, outcode: l.outcode,
@@ -312,9 +378,14 @@ async function render() {
     retrainTimer = setTimeout(() => { recomputeLearnedPreferences({ now: new Date() }).catch(() => {}); }, 1500);
   };
   const onStatus = (status) => setShortlistStatus(listing.rightmove_id, status);
+  const onRate = (n) => setListingRating(listing.rightmove_id, n);
+
+  // Context-aware back link: return to the live feed or the saved view depending
+  // on where the user opened this dossier from (?from=…).
+  const back = backTargetFrom();
 
   clear(mount);
-  mount.appendChild(el('a', { class: 'dossier-back', href: url('pages/listings.html') }, '← Back to listings'));
+  mount.appendChild(el('a', { class: 'dossier-back', href: url(back.page) }, back.label));
   mount.appendChild(el('div', { class: 'dossier' }, [
     el('div', { class: 'dossier__main' }, [
       buildGallery(listing),
@@ -326,7 +397,7 @@ async function render() {
       buildDescription(listing),
     ].filter(Boolean)),
     el('aside', { class: 'dossier__rail' }, [
-      buildActions(listing, current, onSave, onStatus),
+      buildActions(listing, current, onSave, onStatus, onRate),
       buildAreaCard(area),
     ].filter(Boolean)),
   ]));

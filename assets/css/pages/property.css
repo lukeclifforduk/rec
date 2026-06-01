@@ -87,6 +87,72 @@
 }
 .dossier-head__place { margin: 0; font-size: var(--text-base); color: var(--ink-muted); }
 
+/* Primary actions row: Rightmove link + Open-maps button, side by side. */
+.dossier-head__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-top: var(--space-2); }
+.dossier-head__actions .dossier-head__rm { margin-top: 0; }
+/* The shared .btn-map is a fixed 40px icon square in the feed; on the dossier it
+   carries a label, so let it grow and show its text. */
+.dossier-head__actions .btn-map {
+  width: auto; min-height: 44px; gap: var(--space-2); padding: 0 var(--space-3);
+  font-family: var(--font-body); font-size: var(--text-sm);
+}
+.btn-map__text { white-space: nowrap; }
+
+/* Expand-to-full-screen affordance over the hero. */
+.dossier-gallery__expand {
+  position: absolute; top: var(--space-2); right: var(--space-2);
+  width: 2.25rem; height: 2.25rem; display: flex; align-items: center; justify-content: center;
+  padding: 0; cursor: pointer; font-size: var(--text-lg); line-height: 1; color: var(--ink);
+  background: color-mix(in oklch, var(--paper) 82%, transparent);
+  border: 1px solid var(--hairline); border-radius: var(--rec-radius-sm);
+  backdrop-filter: blur(6px); transition: background 0.12s;
+}
+.dossier-gallery__expand:hover { background: var(--paper); }
+.dossier-gallery__expand:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+
+/* ── Full-screen lightbox (native <dialog>) ───────────────────────────────── */
+.lightbox {
+  width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh;
+  margin: 0; padding: 0; border: 0; background: transparent; color: var(--paper);
+}
+.lightbox::backdrop { background: color-mix(in oklch, var(--ink) 88%, transparent); backdrop-filter: blur(2px); }
+.lightbox__bar {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 1;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: max(var(--space-3), env(safe-area-inset-top)) var(--space-4) var(--space-3);
+}
+.lightbox__count { font-family: var(--font-data); font-size: var(--text-sm); color: var(--paper); }
+.lightbox__close {
+  width: 2.75rem; height: 2.75rem; display: flex; align-items: center; justify-content: center;
+  padding: 0; cursor: pointer; font-size: var(--text-xl); line-height: 1; color: var(--paper);
+  background: color-mix(in oklch, var(--paper) 16%, transparent);
+  border: 1px solid color-mix(in oklch, var(--paper) 30%, transparent); border-radius: 999px;
+}
+.lightbox__close:hover { background: color-mix(in oklch, var(--paper) 26%, transparent); }
+.lightbox__close:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+.lightbox__stage {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  padding: var(--space-6) var(--space-3);
+}
+.lightbox__img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+.lightbox__nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 3rem; height: 3rem; display: flex; align-items: center; justify-content: center;
+  padding: 0; cursor: pointer; font-size: var(--text-2xl); line-height: 1; color: var(--paper);
+  background: color-mix(in oklch, var(--paper) 16%, transparent);
+  border: 1px solid color-mix(in oklch, var(--paper) 30%, transparent); border-radius: 999px;
+}
+.lightbox__nav:hover { background: color-mix(in oklch, var(--paper) 26%, transparent); }
+.lightbox__nav:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+.lightbox__nav--prev { left: var(--space-3); }
+.lightbox__nav--next { right: var(--space-3); }
+@media (prefers-reduced-motion: reduce) {
+  .dossier-gallery__expand, .lightbox__close, .lightbox__nav { transition: none; }
+}
+
+/* The status + rating controls share a row in the actions rail. */
+.dossier-actions__row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); margin-top: var(--space-1); }
+
 /* ── Sections ─────────────────────────────────────────────────────────────── */
 .dossier-section { display: grid; gap: var(--space-3); padding-top: var(--space-4); border-top: 1px solid var(--hairline); }
 .dossier-section__label, .dossier-card__label {
