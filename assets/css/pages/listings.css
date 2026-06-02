@@ -12,6 +12,13 @@
   margin: 0; font-family: var(--font-data); font-feature-settings: "tnum";
   font-size: var(--text-sm); color: var(--ink-muted);
 }
+/* Review-pipeline breakdown: to review · liked · passed · rejected · gated.
+   The bold count sits in full ink so the numbers read first; the still-to-review
+   segment stays full ink (the actionable one), the rest fade to muted. */
+.listings-summary__seg { white-space: nowrap; }
+.listings-summary__seg--review { color: var(--ink); }
+.listings-summary__n { font-weight: 600; color: var(--ink); }
+.listings-summary__sep { margin: 0 var(--space-1); color: var(--hairline-strong); }
 .listings-toggle {
   display: inline-flex; align-items: center; gap: var(--space-2);
   font-size: var(--text-sm); color: var(--ink-muted);

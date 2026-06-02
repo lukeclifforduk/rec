@@ -280,11 +280,30 @@ function buildReviewedGroup(cfg, rows) {
   return el('li', { class: 'reviewed-collapse-item' }, [details]);
 }
 
-function buildSummary(shown, total, gatedCount) {
-  const bits = [`${shown} listing${shown === 1 ? '' : 's'} shown`];
-  if (gatedCount) bits.push(`${gatedCount} out of reach (hidden)`);
-  if (total !== shown + gatedCount) bits.push(`${total} fetched`);
-  return el('p', { class: 'listings-summary' }, bits.join(' · '));
+// The listings summary makes the review pipeline legible at a glance: how many
+// are still to review vs already handled (liked / passed / rejected), plus the
+// affordability gate and any filter-hidden count. Returns an array of segment
+// nodes (separator-interleaved) appended into the summary <p>; recomputed live as
+// the user reacts (renderSummary re-runs on every Save), so the totals move.
+function buildSummary({ review, like, pass, reject, gated, hiddenByFilter }) {
+  const seg = (n, label, mod) => el('span', { class: `listings-summary__seg listings-summary__seg--${mod}` }, [
+    el('b', { class: 'listings-summary__n' }, String(n)),
+    ` ${label}`,
+  ]);
+  const segs = [
+    seg(review, 'to review', 'review'),
+    seg(like, 'liked', 'like'),
+    seg(pass, 'passed', 'pass'),
+    seg(reject, 'rejected', 'reject'),
+  ];
+  if (gated) segs.push(seg(gated, 'out of reach (hidden)', 'gated'));
+  if (hiddenByFilter) segs.push(seg(hiddenByFilter, 'hidden by filters', 'filtered'));
+  const nodes = [];
+  segs.forEach((s, i) => {
+    if (i) nodes.push(el('span', { class: 'listings-summary__sep', 'aria-hidden': 'true' }, '·'));
+    nodes.push(s);
+  });
+  return nodes;
 }
 
 // ── Review deck (cold-start bulk triage) ────────────────────────────────────
@@ -501,6 +520,18 @@ async function render() {
     const ok = await setShortlistStatus(listing.rightmove_id, status);
     if (ok) { if (status) statuses[listing.rightmove_id] = status; else delete statuses[listing.rightmove_id]; }
   };
+  // Browse rows: persist, then refresh the live counts in place (summary + Review
+  // badge + training widget) so handling a listing visibly moves the totals. The
+  // card itself stays put (no repaint) — Stage 4's collapse happens on the next
+  // full paint, e.g. on mode switch.
+  const browseOnSave = async (listing, d) => {
+    const ok = await onSave(listing, d);
+    if (!ok) return false;
+    renderSummary();
+    updateReviewCount();
+    updateLearning();
+    return true;
+  };
 
   // The recent "wave" the cold-start deck reviews: added within RECENCY_DAYS and
   // not affordability-gated (gating is learning-independent, so the wave is
@@ -527,6 +558,33 @@ async function render() {
   function updateReviewCount() {
     const n = deckOrder.filter((l) => !isReviewed(l.rightmove_id)).length;
     if (reviewCountEl) { reviewCountEl.hidden = n === 0; reviewCountEl.textContent = n ? ` ${n}` : ''; }
+  }
+
+  // ── live summary (review pipeline counts) ─────────────────────────────────
+  // The last Browse paint stashes the visible pool so the summary can be
+  // recomputed from the current reactions/reviewedSet WITHOUT a full repaint —
+  // that's what makes the totals move the instant a row is liked/passed/rejected
+  // (the card stays put; only the counts change).
+  let lastBrowse = { visible: [], gatedCount: 0, hiddenByFilter: 0 };
+  function summaryCounts(visible) {
+    const c = { review: 0, like: 0, pass: 0, reject: 0 };
+    for (const r of visible) {
+      const id = r.listing.rightmove_id;
+      if (!isReviewed(id)) { c.review += 1; continue; }
+      const verb = reactions[id]?.reaction;
+      if (verb === 'like') c.like += 1;
+      else if (verb === 'reject') c.reject += 1;
+      else c.pass += 1; // pass (or a reviewed row with no stored verb) reads as passed
+    }
+    return c;
+  }
+  function renderSummary() {
+    if (!summaryEl) return;
+    clear(summaryEl);
+    if (!listings.length || mode !== 'browse') return;
+    const { visible, gatedCount, hiddenByFilter } = lastBrowse;
+    const nodes = buildSummary({ ...summaryCounts(visible), gated: gatedCount, hiddenByFilter });
+    for (const node of nodes) summaryEl.appendChild(node);
   }
 
   // ── conflict prompts (L5) — likes that contradict stated criteria ─────────
@@ -616,7 +674,7 @@ async function render() {
     const rowCtx = (r, reviewed) => buildRow(r.listing, 0, r.scored, r.area, {
       reaction: reactions[r.listing.rightmove_id] || null,
       status: statuses[r.listing.rightmove_id] || '',
-      reviewed, onSave, onStatus,
+      reviewed, onSave: browseOnSave, onStatus,
     });
     const unreviewed = visible.filter((r) => !isReviewed(r.listing.rightmove_id));
     const reviewed = visible.filter((r) => isReviewed(r.listing.rightmove_id));
@@ -638,7 +696,13 @@ async function render() {
       }
     }
 
-    if (summaryEl) { clear(summaryEl); summaryEl.appendChild(buildSummary(visible.length, listings.length, includeOOR ? 0 : gated.length)); }
+    const gatedCount = includeOOR ? 0 : gated.length;
+    lastBrowse = {
+      visible,
+      gatedCount,
+      hiddenByFilter: Math.max(0, listings.length - visible.length - gatedCount),
+    };
+    renderSummary();
   }
 
   // ── Review mode (the deck) ──────────────────────────────────────────────
