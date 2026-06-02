@@ -20,6 +20,7 @@
 .legend-dot--researched  { background: color-mix(in oklch, var(--accent) 60%, var(--paper)); border: 1.5px solid var(--accent); }
 .legend-dot--partial     { background: var(--paper); border: 1.5px solid var(--ink); }
 .legend-dot--stub        { background: var(--paper); border: 1px solid var(--ink-muted); }
+.legend-dot--geofence    { background: color-mix(in oklch, var(--accent) 14%, var(--paper)); border: 1.5px solid color-mix(in oklch, var(--accent) 55%, var(--paper)); }
 
 /* House-types: typical price band + shortlist callout. */
 .ht-band {

@@ -33,6 +33,16 @@
 .leaflet-bar a { background: var(--paper) !important; color: var(--ink) !important; border-color: var(--hairline) !important; }
 .leaflet-bar a:hover { background: var(--paper-2) !important; }
 
+/* Geofence-layer toggle, sat inline with the page-head actions. Generous padding
+   keeps the hit area comfortable (WCAG 2.2 SC 2.5.8). */
+.map-toggle {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm); color: var(--ink-muted);
+  cursor: pointer; user-select: none;
+}
+.map-toggle input { accent-color: var(--accent); inline-size: 1.1rem; block-size: 1.1rem; margin: 0; }
+
 @media (max-width: 800px) {
   .map-canvas { height: 100%; min-height: 0; border-radius: 0; }
 }

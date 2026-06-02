@@ -24,7 +24,10 @@
       "avgFlat": null,
       "asOf": "2026-05"
     },
-    "councilTaxBand": "G"
+    "councilTaxBand": "G",
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "bradley-gu34",
@@ -45,7 +48,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "chidden-gu34",
@@ -66,7 +72,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "filmore-hill-gu34",
@@ -93,7 +102,10 @@
       "avgFlat": null,
       "asOf": "2025"
     },
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "four-marks-gu34",
@@ -114,7 +126,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": "D"
+    "councilTaxBand": "D",
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "medstead-gu34",
@@ -141,7 +156,10 @@
       "avgFlat": null,
       "asOf": "2025"
     },
-    "councilTaxBand": "D"
+    "councilTaxBand": "D",
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "upper-farringdon-gu34",
@@ -162,7 +180,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": "D"
+    "councilTaxBand": "D",
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "chilbolton-so20",
@@ -183,7 +204,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": "D"
+    "councilTaxBand": "D",
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "leckford-so20",
@@ -204,7 +228,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": "D"
+    "councilTaxBand": "D",
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "longstock-so20",
@@ -225,7 +252,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": "D"
+    "councilTaxBand": "D",
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "middle-wallop-so20",
@@ -246,7 +276,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": "D"
+    "councilTaxBand": "D",
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "over-wallop-so20",
@@ -267,7 +300,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": "D"
+    "councilTaxBand": "D",
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "newton-stacey-sp11",
@@ -288,7 +324,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "wherwell-sp11",
@@ -309,7 +348,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": "D"
+    "councilTaxBand": "D",
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "wield-so24",
@@ -330,7 +372,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "brown-candover-so24",
@@ -351,7 +396,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "farley-mount-so21",
@@ -372,7 +420,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "preston-candover-rg25",
@@ -393,7 +444,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": "D"
+    "councilTaxBand": "D",
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "bordon-gu35",
@@ -414,7 +468,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "bordean-gu32",
@@ -435,7 +492,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "coombe-gu32",
@@ -456,7 +516,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "flexcombe-gu32",
@@ -477,7 +540,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "high-cross-gu32",
@@ -498,7 +564,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "steep-gu32",
@@ -519,7 +588,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "steep-marsh-gu32",
@@ -540,7 +612,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "stroud-gu32",
@@ -561,7 +636,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "charlwood-gu34",
@@ -582,7 +660,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "colemore-gu34",
@@ -603,7 +684,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "east-tisted-gu34",
@@ -624,7 +708,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "froxfield-green-gu34",
@@ -645,7 +732,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "monkwood-gu34",
@@ -666,7 +756,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "privett-gu34",
@@ -687,7 +780,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "selborne-gu34",
@@ -708,7 +804,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "bramdean-so24",
@@ -729,7 +828,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "brockwood-park-so24",
@@ -750,7 +852,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "kitwood-so24",
@@ -771,7 +876,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "southwick-po17",
@@ -792,7 +900,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "awbridge-so51",
@@ -813,7 +924,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "dunbridge-so51",
@@ -834,7 +948,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "lockerley-so51",
@@ -855,7 +972,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "sherfield-english-so51",
@@ -876,7 +996,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "bramshaw-so43",
@@ -897,7 +1020,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "chillworth-so16",
@@ -918,7 +1044,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "ashton-so32",
@@ -939,7 +1068,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "bishop-s-waltham-so32",
@@ -960,7 +1092,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "droxford-so32",
@@ -981,7 +1116,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "dundridge-so32",
@@ -1002,7 +1140,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "meonstoke-so32",
@@ -1023,7 +1164,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "soberton-so32",
@@ -1044,7 +1188,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "soberton-heath-so32",
@@ -1065,7 +1212,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "swanmore-so32",
@@ -1086,7 +1236,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "waltham-chase-so32",
@@ -1107,7 +1260,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "lyndhurst-so43",
@@ -1128,7 +1284,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "pucknall-so51",
@@ -1149,7 +1308,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "bossington-so20",
@@ -1170,7 +1332,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "broughton-so20",
@@ -1191,7 +1356,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "nether-wallop-so20",
@@ -1212,7 +1380,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "hambledon-po7",
@@ -1233,7 +1404,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "east-meon-gu32",
@@ -1254,7 +1428,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "west-meon-gu32",
@@ -1275,7 +1452,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "bentworth-gu34",
@@ -1296,7 +1476,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "upper-wield-so24",
@@ -1317,7 +1500,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "ashley-so20",
@@ -1338,7 +1524,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "brook-so20",
@@ -1359,7 +1548,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "chilbolton-down-so20",
@@ -1380,7 +1572,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "houghton-so20",
@@ -1401,7 +1596,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "king-s-somborne-so20",
@@ -1422,7 +1620,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "little-sombourne-so20",
@@ -1449,7 +1650,10 @@
       "avgFlat": null,
       "asOf": "2026-05"
     },
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "shootash-so51",
@@ -1470,7 +1674,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "stockbridge-so20",
@@ -1491,7 +1698,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "totford-so20",
@@ -1512,7 +1722,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "up-somborne-so20",
@@ -1533,7 +1746,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "abbotstone-so24",
@@ -1554,7 +1770,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "avington-so21",
@@ -1575,7 +1794,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "barton-stacey-so21",
@@ -1596,7 +1818,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "baybridge-so21",
@@ -1617,7 +1842,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "chilcomb-so21",
@@ -1638,7 +1866,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "colden-common-so21",
@@ -1659,7 +1890,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "compton-so21",
@@ -1680,7 +1914,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "crawley-so21",
@@ -1701,7 +1938,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "east-stratton-so21",
@@ -1722,7 +1962,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "easton-so21",
@@ -1743,7 +1986,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "hursley-so21",
@@ -1764,7 +2010,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "itchen-abbas-so21",
@@ -1785,7 +2034,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "lane-end-so21",
@@ -1812,7 +2064,10 @@
       "avgFlat": null,
       "asOf": "2026-05"
     },
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "lower-bullington-so21",
@@ -1839,7 +2094,10 @@
       "avgFlat": null,
       "asOf": "2026-05"
     },
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "micheldever-so21",
@@ -1866,7 +2124,10 @@
       "avgFlat": null,
       "asOf": "2026-05"
     },
-    "councilTaxBand": "D"
+    "councilTaxBand": "D",
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "morestead-so21",
@@ -1893,7 +2154,10 @@
       "avgFlat": null,
       "asOf": "2026-05"
     },
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "otterbourne-so21",
@@ -1914,7 +2178,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "owlsbury-so21",
@@ -1935,7 +2202,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "silkstead-so21",
@@ -1956,7 +2226,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "south-wonston-so21",
@@ -1977,7 +2250,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "sparsholt-so21",
@@ -1998,7 +2274,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "stoke-charity-so21",
@@ -2019,7 +2298,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "sutton-scotney-so21",
@@ -2040,7 +2322,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "twyford-so21",
@@ -2061,7 +2346,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "west-stratton-so21",
@@ -2082,7 +2370,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "wonston-so21",
@@ -2103,7 +2394,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "worthy-down-so21",
@@ -2124,7 +2418,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "littleton-so22",
@@ -2151,7 +2448,10 @@
       "avgFlat": null,
       "asOf": "2026-05"
     },
-    "councilTaxBand": "D"
+    "councilTaxBand": "D",
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "kings-worthy-so23",
@@ -2178,7 +2478,10 @@
       "avgFlat": null,
       "asOf": "2026-05"
     },
-    "councilTaxBand": "D"
+    "councilTaxBand": "D",
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "avington-park-so21",
@@ -2199,7 +2502,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "beauworth-so24",
@@ -2220,7 +2526,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "bighton-so24",
@@ -2241,7 +2550,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "bishop-s-sutton-so24",
@@ -2262,7 +2574,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "cheriton-so24",
@@ -2283,7 +2598,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "hinton-ampner-so24",
@@ -2304,7 +2622,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "kilmeston-so24",
@@ -2325,7 +2646,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "northington-so24",
@@ -2346,7 +2670,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "old-alresford-so24",
@@ -2367,7 +2694,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "ovington-so24",
@@ -2388,7 +2718,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "ropley-so24",
@@ -2409,7 +2742,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "shorley-so24",
@@ -2430,7 +2766,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "standon-so24",
@@ -2451,7 +2790,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "tichborne-so24",
@@ -2472,7 +2814,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "west-tisted-so24",
@@ -2493,7 +2838,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "preshaw-so32",
@@ -2514,7 +2862,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "upham-so32",
@@ -2535,7 +2886,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "braishfield-so51",
@@ -2556,7 +2910,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "embley-so51",
@@ -2577,7 +2934,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "kimbridge-so51",
@@ -2598,7 +2958,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "michelmersh-so51",
@@ -2619,7 +2982,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "timsbury-so51",
@@ -2640,7 +3006,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "sherrington-ba12",
@@ -2661,7 +3030,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "bishopdown-sp1",
@@ -2682,7 +3054,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "stratford-sub-castle-sp1",
@@ -2703,7 +3078,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "bemerton-sp2",
@@ -2724,7 +3102,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "burcombe-sp2",
@@ -2745,7 +3126,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "great-wishford-sp2",
@@ -2766,7 +3150,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "little-wishford-sp2",
@@ -2787,7 +3174,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "netherhampton-sp2",
@@ -2808,7 +3198,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "south-newton-sp2",
@@ -2829,7 +3222,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "stapleford-sp3",
@@ -2850,7 +3246,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "stoford-sp2",
@@ -2871,7 +3270,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "wilton-sp2",
@@ -2892,7 +3294,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "chilmark-sp3",
@@ -2913,7 +3318,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "dinton-sp3",
@@ -2934,7 +3342,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "lake-sp3",
@@ -2955,7 +3366,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "lower-chicksgrove-sp3",
@@ -2976,7 +3390,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "sutton-mandeville-sp3",
@@ -2997,7 +3414,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "tisbury-sp3",
@@ -3018,7 +3438,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "ford-sp4",
@@ -3039,7 +3462,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "gomeldon-sp4",
@@ -3060,7 +3486,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "little-durnford-sp4",
@@ -3081,7 +3510,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "little-langford-sp4",
@@ -3102,7 +3534,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "middle-woodford-sp4",
@@ -3123,7 +3558,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "porton-down-sp4",
@@ -3144,7 +3582,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "steeple-langford-sp4",
@@ -3165,7 +3606,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "ugford-sp4",
@@ -3186,7 +3630,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "upper-woodford-sp4",
@@ -3207,7 +3654,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "winterbourne-earls-sp4",
@@ -3228,7 +3678,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "winterbourne-gunner-sp4",
@@ -3249,7 +3702,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "alderbury-sp5",
@@ -3270,7 +3726,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "barford-st-martin-sp5",
@@ -3291,7 +3750,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "bishopstone-sp5",
@@ -3312,7 +3774,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "bowerchalke-sp5",
@@ -3333,7 +3798,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "broad-chalke-sp5",
@@ -3354,7 +3822,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "charlton-all-saints-sp5",
@@ -3375,7 +3846,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "coombe-bissett-sp5",
@@ -3396,7 +3870,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "dean-land-sp5",
@@ -3417,7 +3894,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "downton-sp5",
@@ -3438,7 +3918,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "east-dean-sp5",
@@ -3459,7 +3942,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "east-grimstead-sp5",
@@ -3480,7 +3966,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "east-tytherely-sp5",
@@ -3501,7 +3990,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "ebbesbourne-wake-sp5",
@@ -3522,7 +4014,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "ebble-sp5",
@@ -3543,7 +4038,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "farley-sp5",
@@ -3564,7 +4062,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "firsdown-sp5",
@@ -3585,7 +4086,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "hampworth-sp5",
@@ -3606,7 +4110,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "homington-sp5",
@@ -3627,7 +4134,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "landford-sp5",
@@ -3648,7 +4158,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "lanford-wood-sp5",
@@ -3669,7 +4182,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "lover-sp5",
@@ -3690,7 +4206,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "mead-end-sp5",
@@ -3711,7 +4230,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "middle-winterslow-sp5",
@@ -3732,7 +4254,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "newtown-sp5",
@@ -3753,7 +4278,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "nunton-sp5",
@@ -3774,7 +4302,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "odstock-sp5",
@@ -3795,7 +4326,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "pitton-sp5",
@@ -3816,7 +4350,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "plaitford-green-sp5",
@@ -3837,7 +4374,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "redlynch-sp5",
@@ -3858,7 +4398,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "ridge-sp5",
@@ -3879,7 +4422,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "west-dean-sp5",
@@ -3900,7 +4446,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "west-grimstead-sp5",
@@ -3921,7 +4470,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "west-tytherely-sp5",
@@ -3942,7 +4494,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "west-winterslow-sp5",
@@ -3963,7 +4518,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "whiteparish-sp5",
@@ -3984,7 +4542,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "witherington-sp5",
@@ -4005,7 +4566,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "woodminton-sp5",
@@ -4026,7 +4590,10 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "breamore-sp6",
@@ -4047,7 +4614,10 @@
     "houseTypeIds": [],
     "status": "researched",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   },
   {
     "id": "whitsbury-sp6",
@@ -4068,6 +4638,9 @@
     "houseTypeIds": [],
     "status": "directory",
     "priceSummary": null,
-    "councilTaxBand": null
+    "councilTaxBand": null,
+    "geofenceRadiusMi": 3,
+    "searchRadiusMi": 3,
+    "active": true
   }
 ]

@@ -9,6 +9,11 @@ export const INDEX_FIELDS = [
   'hubCity', 'regionDir', 'settlementType', 'subRegion',
   'coords', 'coordsSource', 'houseTypeIds', 'status',
   'priceSummary', 'councilTaxBand',
+  // Geofence/search-catchment fields (written by resolve-areas.mjs). Shipped in the
+  // lightweight index so the Map page can draw the REAL per-area listings catchment
+  // (radius + active flag), not just a point marker. `active:false` areas are pruned
+  // from the fetch (tools/fetch-listings.mjs) and so are excluded from the catchment.
+  'geofenceRadiusMi', 'searchRadiusMi', 'active',
 ];
 
 export const DETAIL_FIELDS = [
@@ -17,8 +22,9 @@ export const DETAIL_FIELDS = [
   'thingsToDo', 'placesToEat', 'pros', 'cons', 'whoItSuits',
   'councilTaxBand', 'broadbandMedianMbps', 'nearestStation', 'primarySupermarket',
   'images', 'sources',
-  // Fetch-infrastructure fields written by resolve-areas.mjs — must survive build-areas rebuilds.
-  'rightmove', 'geofenceRadiusMi', 'searchRadiusMi', 'active',
+  // Fetch-infrastructure field written by resolve-areas.mjs — must survive build-areas
+  // rebuilds. (geofenceRadiusMi/searchRadiusMi/active now live in INDEX_FIELDS above.)
+  'rightmove',
 ];
 
 // Fields that count toward "researched" completeness. Each entry says how to

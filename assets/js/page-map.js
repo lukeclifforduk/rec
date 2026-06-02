@@ -10,9 +10,12 @@ import { esc, byId as $ } from './dom.js';
 
 const HAMPS_WILTS_CENTRE = [51.05, -1.6];
 const DEFAULT_ZOOM = 9;
+const MILES_TO_M = 1609.344;        // statute miles → metres (Leaflet circle radius is in metres)
+const DEFAULT_GEOFENCE_MI = 3;      // resolve-areas.mjs default; ≈ the 4.8 km attribution radius the fetcher uses
 
 let map = null;
 let drawLayer = null;
+let geofenceLayer = null;           // the real per-area listings catchment (active areas only)
 
 function init() {
   if (!window.L) {
@@ -46,6 +49,7 @@ function init() {
   loadAreaMarkers();
   loadShortlistPanel();
   attachActions();
+  wireGeofenceToggle();
   attachSheet();
 }
 
@@ -134,6 +138,33 @@ function matchedPriceForMap(area, criteria) {
   return null;
 }
 
+// Build the real listings catchment: a circle of each area's geofenceRadiusMi (default
+// 3 mi) around its centre. This mirrors what the fetcher actually does — listings are
+// attributed to the nearest ACTIVE area whose geofence they fall inside
+// (tools/listings-normalise.mjs `withinGeofence`). Areas with `active:false` are pruned
+// from the fetch (tools/fetch-listings.mjs), so they are NOT part of the catchment and
+// are deliberately omitted here. Circles are non-interactive so clicks reach the markers
+// on top, and overlaps compound into a denser fill — a readable picture of coverage.
+function buildGeofenceLayer(areasWithCoords, shortlist) {
+  const accent = getCSSVar('--accent') || '#2e7d5b';
+  const layer = L.featureGroup();
+  areasWithCoords.forEach((a) => {
+    if (a.active === false) return; // pruned from the fetch → not in the catchment
+    const miles = Number(a.geofenceRadiusMi) > 0 ? Number(a.geofenceRadiusMi) : DEFAULT_GEOFENCE_MI;
+    const isShort = shortlist.has(a.id);
+    L.circle([a.coords.lat, a.coords.lng], {
+      radius: miles * MILES_TO_M,
+      interactive: false,
+      color: accent,
+      weight: isShort ? 1.5 : 1,
+      opacity: isShort ? 0.7 : 0.4,
+      fillColor: accent,
+      fillOpacity: isShort ? 0.12 : 0.06,
+    }).addTo(layer);
+  });
+  return layer;
+}
+
 async function loadAreaMarkers() {
   try {
     const areas = await getAreas();
@@ -151,6 +182,12 @@ async function loadAreaMarkers() {
     }
 
     const shortlist = new Set(await getShortlist());
+
+    // Geofence catchment underlay — drawn before the markers so the dots sit on top.
+    geofenceLayer = buildGeofenceLayer(withCoords, shortlist);
+    const activeGeofences = withCoords.filter((a) => a.active !== false).length;
+    if ($('toggle-geofences')?.checked ?? true) geofenceLayer.addTo(map);
+
     const cluster = L.featureGroup();
     withCoords.forEach((a) => {
       const isShort = shortlist.has(a.id);
@@ -186,11 +223,16 @@ async function loadAreaMarkers() {
       cluster.addLayer(marker);
     });
     cluster.addTo(map);
-    if (withCoords.length >= 3) map.fitBounds(cluster.getBounds(), { padding: [40, 40] });
+    // Fit to the catchment (circles extend ~3 mi beyond the edge markers) so the whole
+    // working area is visible, falling back to the markers when geofences are empty.
+    const fitTarget = geofenceLayer.getLayers().length
+      ? geofenceLayer.getBounds().extend(cluster.getBounds())
+      : cluster.getBounds();
+    if (withCoords.length >= 3) map.fitBounds(fitTarget, { padding: [40, 40] });
     addLegend();
     const approxCount = withCoords.filter((a) => a.coordsSource === 'postcode-outward-approx').length;
     const approxNote = approxCount ? ` <span class="muted">(${approxCount} at approximate postcode-area centroid; run <code>node tools/geocode-areas.mjs</code> for precise village locations.)</span>` : '';
-    $('map-status').innerHTML = `Showing <strong>${withCoords.length}</strong> of <strong>${areas.length}</strong> areas; ${shortlist.size} shortlisted.${approxNote}`;
+    $('map-status').innerHTML = `Showing <strong>${withCoords.length}</strong> of <strong>${areas.length}</strong> areas; <strong>${activeGeofences}</strong> active geofences (listings catchment, ≈3 mi radius); ${shortlist.size} shortlisted.${approxNote}`;
   } catch (e) {
     console.error('marker load error', e);
   }
@@ -209,6 +251,7 @@ function addLegend() {
         <li><span class="legend-dot legend-dot--researched"></span>Researched</li>
         <li><span class="legend-dot legend-dot--partial"></span>Partial</li>
         <li><span class="legend-dot legend-dot--stub"></span>Stub / directory</li>
+        <li style="margin-top:0.35rem;"><span class="legend-dot legend-dot--geofence"></span>Listings geofence (≈3&nbsp;mi)</li>
       </ul>
     `;
     return div;
@@ -275,6 +318,18 @@ function attachActions() {
     updateZoneCount();
   });
   $('btn-recentre').addEventListener('click', () => map.setView(HAMPS_WILTS_CENTRE, DEFAULT_ZOOM));
+}
+
+// Show/hide the geofence catchment underlay. Default on — the layer is what makes the
+// map an accurate picture of where the fetcher is actually looking.
+function wireGeofenceToggle() {
+  const cb = $('toggle-geofences');
+  if (!cb) return;
+  cb.addEventListener('change', () => {
+    if (!geofenceLayer || !map) return;
+    if (cb.checked) geofenceLayer.addTo(map);
+    else map.removeLayer(geofenceLayer);
+  });
 }
 
 function getCSSVar(name) {
