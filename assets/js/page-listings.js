@@ -259,10 +259,10 @@ function buildRow(listing, idx, scored, area, ctx = {}) {
 const REVIEWED_MOD = { like: 'liked', reject: 'rejected', pass: 'passed' };
 
 // Reviewed listings are split by the user's verdict so the end of a session lands
-// on a tidy, consolidated home: Liked (open by default — the thing you care about),
-// then Passed and Rejected (collapsed). Order is intentional.
+// on a tidy, consolidated home: Liked, then Passed, then Rejected — all collapsed
+// by default so a finished session is a compact set of summaries, not a long feed.
 const REVIEWED_GROUPS = [
-  { key: 'like',   title: 'Liked',    mod: 'liked',    open: true },
+  { key: 'like',   title: 'Liked',    mod: 'liked',    open: false },
   { key: 'pass',   title: 'Passed',   mod: 'passed',   open: false },
   { key: 'reject', title: 'Rejected', mod: 'rejected', open: false },
 ];
